@@ -20,6 +20,9 @@ add_subdirectory( deps/glfw )
 add_library(glad STATIC deps/glad/src/glad.c)
 target_include_directories(glad PUBLIC deps/glad/include)
 
+# compile with debug symbols and without optimization so we hit breakpoints
+set(CMAKE_BUILD_TYPE Debug)
+
 # add the executable
 add_executable(Gyokuro src/main.cpp)
 
