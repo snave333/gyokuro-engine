@@ -283,6 +283,7 @@
 					/Users/spencerevans/dev/glfw/include,
 					"/Users/spencerevans/pm-repos/gyokuro-engine/glad/include",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/";
 				LIBRARY_SEARCH_PATHS = /Users/spencerevans/dev/glfw/build/src/Debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -298,6 +299,7 @@
 					/Users/spencerevans/dev/glfw/include,
 					"/Users/spencerevans/pm-repos/gyokuro-engine/glad/include",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/";
 				LIBRARY_SEARCH_PATHS = /Users/spencerevans/dev/glfw/build/src/Debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

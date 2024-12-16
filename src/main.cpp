@@ -44,7 +44,7 @@ int main(int argc, const char * argv[]) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     // create the window object, and make the window context the main context
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Gyokuro", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(512, 512, "Gyokuro", NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
