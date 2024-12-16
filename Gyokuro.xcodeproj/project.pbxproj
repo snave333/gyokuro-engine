@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		01BE4A6E2D1074F500FB6F20 /* libglfw.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 01BE4A6D2D1074F400FB6F20 /* libglfw.3.dylib */; };
 		01BE4A6F2D1074F500FB6F20 /* libglfw.3.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 01BE4A6D2D1074F400FB6F20 /* libglfw.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		01BE4A732D10761300FB6F20 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 01BE4A722D10761300FB6F20 /* glad.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		01BE4A2C2D10355200FB6F20 /* Gyokuro */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Gyokuro; sourceTree = BUILT_PRODUCTS_DIR; };
 		01BE4A6D2D1074F400FB6F20 /* libglfw.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.dylib; path = ../../dev/glfw/build/src/Debug/libglfw.3.dylib; sourceTree = "<group>"; };
+		01BE4A722D10761300FB6F20 /* glad.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = glad.c; path = glad/src/glad.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -62,6 +64,7 @@
 		01BE4A232D10355200FB6F20 = {
 			isa = PBXGroup;
 			children = (
+				01BE4A722D10761300FB6F20 /* glad.c */,
 				01BE4A2E2D10355200FB6F20 /* src */,
 				01BE4A3A2D10372B00FB6F20 /* Frameworks */,
 				01BE4A2D2D10355200FB6F20 /* Products */,
@@ -148,6 +151,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01BE4A732D10761300FB6F20 /* glad.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,7 +279,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = MLV2RYH8DH;
 				ENABLE_HARDENED_RUNTIME = YES;
-				HEADER_SEARCH_PATHS = /Users/spencerevans/dev/glfw/include;
+				HEADER_SEARCH_PATHS = (
+					/Users/spencerevans/dev/glfw/include,
+					"/Users/spencerevans/pm-repos/gyokuro-engine/glad/include",
+				);
 				LIBRARY_SEARCH_PATHS = /Users/spencerevans/dev/glfw/build/src/Debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -287,7 +294,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = MLV2RYH8DH;
 				ENABLE_HARDENED_RUNTIME = YES;
-				HEADER_SEARCH_PATHS = /Users/spencerevans/dev/glfw/include;
+				HEADER_SEARCH_PATHS = (
+					/Users/spencerevans/dev/glfw/include,
+					"/Users/spencerevans/pm-repos/gyokuro-engine/glad/include",
+				);
 				LIBRARY_SEARCH_PATHS = /Users/spencerevans/dev/glfw/build/src/Debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
