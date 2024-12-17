@@ -13,22 +13,9 @@
 #include <renderer/Renderer.h>
 #include <scene/SceneController.h>
 
-void error_callback(int error, const char* description)
-{
-    fprintf(stderr, "Error: %s\n", description);
-}
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
-
-void processInput(GLFWwindow *window)
-{
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
-}
+void error_callback(int error, const char* description);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void processInput(GLFWwindow *window);
 
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
@@ -44,7 +31,9 @@ int main(int argc, const char * argv[]) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
     // create the window object, and make the window context the main context
     GLFWwindow* window = glfwCreateWindow(512, 512, "Gyokuro", NULL, NULL);
@@ -74,6 +63,10 @@ int main(int argc, const char * argv[]) {
     Renderer* renderer = new Renderer(window);
     SceneController* sceneController = new SceneController(renderer);
 
+    // uncomment to draw in wireframe
+    //glPolygonMode(GL_FRONT, GL_LINE);
+    glPolygonMode(GL_FRONT, GL_FILL);
+    
     // our render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -96,4 +89,21 @@ int main(int argc, const char * argv[]) {
     delete renderer;
     
     return 0;
+}
+
+void error_callback(int error, const char* description)
+{
+    fprintf(stderr, "Error: %s\n", description);
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow *window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
 }

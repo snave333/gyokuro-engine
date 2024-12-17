@@ -56,8 +56,9 @@ SceneController::SceneController(Renderer* r) {
 
 #pragma endregion
 
-    // create the vertex buffer and array objects
+    // create the vertex/index buffers and vertex array object
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
     glGenVertexArrays(1, &VAO);
     
     // bind Vertex Array Object first
@@ -66,14 +67,19 @@ SceneController::SceneController(Renderer* r) {
     // copy our vertices array in a buffer
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // copy our indices
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     
     // link the vertex attribute pointers
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // clean up
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // clean up and unbind
     glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 SceneController::~SceneController() {
@@ -81,6 +87,7 @@ SceneController::~SceneController() {
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderProgram);
 }
 
@@ -106,5 +113,5 @@ void SceneController::RenderScene() {
     
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
