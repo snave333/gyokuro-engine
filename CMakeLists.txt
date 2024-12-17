@@ -24,10 +24,13 @@ target_include_directories(glad PUBLIC deps/glad/include)
 set(CMAKE_BUILD_TYPE Debug)
 
 # add the executable
-add_executable(Gyokuro src/main.cpp)
+add_executable(Gyokuro
+    src/main.cpp
+    src/renderer/Renderer.cpp
+    src/scene/SceneController.cpp)
 
 # include any headers
-# target_include_directories(Gyokuro PRIVATE include)
+include_directories(src)
 
 # link with our dependencies
 target_link_libraries(Gyokuro glad glfw)

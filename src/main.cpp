@@ -10,6 +10,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <renderer/Renderer.h>
+#include <scene/SceneController.h>
+
 void error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error: %s\n", description);
@@ -34,7 +37,7 @@ int main(int argc, const char * argv[]) {
     
     if (!glfwInit()) {
         std::cout << "GLFW initialization failed" << std::endl;
-        return 1;
+        return -1;
     }
 
     // configure GLFW
@@ -48,17 +51,16 @@ int main(int argc, const char * argv[]) {
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
-        return 2;
+        return -1;
     }
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
     
     // initialize GLAD before we call any OpenGL function
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-    
-    glfwSwapInterval(1);
     
     // set our gl window size
     int width, height;
@@ -67,25 +69,31 @@ int main(int argc, const char * argv[]) {
     
     // listen for resize event
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    
+
+    // our rendering managers
+    Renderer* renderer = new Renderer(window);
+    SceneController* sceneController = new SceneController(renderer);
+
     // our render loop
     while (!glfwWindowShouldClose(window))
     {
         // input
         processInput(window);
-        
-        // rendering commands
-        glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
 
+        sceneController->Update(0.0);
+        sceneController->Render();
+        
         // check and call events and swap the buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    
+
     // clean up
     glfwDestroyWindow(window);
     glfwTerminate();
+    
+    delete sceneController;
+    delete renderer;
     
     return 0;
 }
