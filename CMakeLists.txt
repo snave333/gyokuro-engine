@@ -27,6 +27,7 @@ set(CMAKE_BUILD_TYPE Debug)
 add_executable(Gyokuro
     src/main.cpp
     src/renderer/Renderer.cpp
+    src/renderer/Shader.cpp
     src/scene/SceneController.cpp)
 
 # include any headers
@@ -34,3 +35,12 @@ include_directories(src)
 
 # link with our dependencies
 target_link_libraries(Gyokuro glad glfw)
+
+# copy shaders using a custom command to execute during the build process
+set(SHADER_SOURCE_DIR "${CMAKE_SOURCE_DIR}/resources/shaders")
+set(SHADER_BUILD_DIR "${CMAKE_BINARY_DIR}/resources/shaders")
+add_custom_command(
+    TARGET Gyokuro POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${SHADER_SOURCE_DIR} ${SHADER_BUILD_DIR}
+)

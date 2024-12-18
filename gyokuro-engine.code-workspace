@@ -58,7 +58,8 @@
 			"vector": "cpp",
 			"algorithm": "cpp",
 			"fstream": "cpp",
-			"iomanip": "cpp"
+			"iomanip": "cpp",
+			"filesystem": "cpp"
 		}
 	}
 }
