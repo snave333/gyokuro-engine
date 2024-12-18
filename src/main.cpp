@@ -63,21 +63,29 @@ int main(int argc, const char * argv[]) {
     Renderer* renderer = new Renderer(window);
     SceneController* sceneController = new SceneController(renderer);
 
-    // uncomment to draw in wireframe
-    //glPolygonMode(GL_FRONT, GL_LINE);
-    glPolygonMode(GL_FRONT, GL_FILL);
-    
+    // timing
+    float lastUpdateTime = glfwGetTime();
+    float time, dt, fps;
+
     // our render loop
     while (!glfwWindowShouldClose(window))
     {
         // input
         processInput(window);
 
-        sceneController->Update(0.0);
+        // update our delta time
+        time = glfwGetTime();
+        dt = time - lastUpdateTime;
+        lastUpdateTime = time;
+        if(dt > 0.0f) {
+            fps = 1.0f / dt;
+        }
+
+        // update and render our scene
+        sceneController->Update(dt);
         sceneController->Render();
         
         // check and call events and swap the buffers
-        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 

@@ -1,14 +1,25 @@
 
+#include <iostream>
+
 #include <renderer/Renderer.h>
 
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 Renderer::Renderer(GLFWwindow* window) {
     this->window = window;
+
+    // uncomment to draw in wireframe
+    //glPolygonMode(GL_FRONT, GL_LINE);
+    glPolygonMode(GL_FRONT, GL_FILL);
+
+    int nrAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+    std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 }
 
 Renderer::~Renderer() {
-    this->window = nullptr;
+    window = nullptr;
 }
 
 void Renderer::BeginFrame() {
@@ -16,11 +27,10 @@ void Renderer::BeginFrame() {
 }
 
 void Renderer::Clear() {
-    // rendering commands
     glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void Renderer::EndFrame() {
-    
+void Renderer::EndFrame() {    
+    glfwSwapBuffers(window);
 }

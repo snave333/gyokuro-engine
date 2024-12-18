@@ -73,8 +73,12 @@ SceneController::SceneController(Renderer* r) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     
     // link the vertex attribute pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     // clean up and unbind
     glBindVertexArray(0);
@@ -91,7 +95,7 @@ SceneController::~SceneController() {
     glDeleteProgram(shaderProgram);
 }
 
-void SceneController::Update(double dt) {
+void SceneController::Update(float dt) {
 }
 
 void SceneController::Render() {
@@ -112,6 +116,11 @@ void SceneController::RenderScene() {
     // draw scene objects
     
     glUseProgram(shaderProgram);
+
+    // set any shader uniforms
+    // int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+    // glUniform4f(vertexColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
