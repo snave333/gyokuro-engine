@@ -16,6 +16,9 @@ set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
 # set( BUILD_SHARED_LIBS ON CACHE BOOL  "GLFW dynamic lib" )
 add_subdirectory( deps/glfw )
 
+# add glm
+add_subdirectory( deps/glm )
+
 # add the glad lib from https://glad.dav1d.de/
 add_library(glad STATIC deps/glad/src/glad.c)
 target_include_directories(glad PUBLIC deps/glad/include)
@@ -33,13 +36,18 @@ add_executable(Gyokuro
     src/renderer/Renderer.cpp
     src/renderer/Shader.cpp
     src/renderer/Texture2D.cpp
+    src/renderer/Mesh.cpp
     src/scene/SceneController.cpp)
 
 # include any headers
 include_directories(src)
 
 # link with our dependencies
-target_link_libraries(Gyokuro glad glfw stb_image)
+target_link_libraries(Gyokuro
+    glad
+    glfw
+    stb_image
+    glm)
 
 # copy resources using a custom command to execute during the build process
 set(SHADER_SOURCE_DIR "${CMAKE_SOURCE_DIR}/resources")

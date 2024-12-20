@@ -59,7 +59,9 @@
 			"algorithm": "cpp",
 			"fstream": "cpp",
 			"iomanip": "cpp",
-			"filesystem": "cpp"
+			"filesystem": "cpp",
+			"charconv": "cpp",
+			"forward_list": "cpp"
 		}
 	}
 }
