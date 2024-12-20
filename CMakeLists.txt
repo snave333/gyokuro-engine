@@ -13,12 +13,16 @@ find_package(OpenGL REQUIRED)
 # configure and add glfw
 set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
 set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
-set( BUILD_SHARED_LIBS ON CACHE BOOL  "GLFW dynamic lib" )
+# set( BUILD_SHARED_LIBS ON CACHE BOOL  "GLFW dynamic lib" )
 add_subdirectory( deps/glfw )
 
-# add the downloaded glad lib from https://glad.dav1d.de/
+# add the glad lib from https://glad.dav1d.de/
 add_library(glad STATIC deps/glad/src/glad.c)
 target_include_directories(glad PUBLIC deps/glad/include)
+
+# add the stb_image lib from https://github.com/nothings/stb/tree/master
+add_library(stb_image STATIC deps/stb_image/src/stb_image_impl.c)
+target_include_directories(stb_image PUBLIC deps/stb_image/include)
 
 # compile with debug symbols and without optimization so we hit breakpoints
 set(CMAKE_BUILD_TYPE Debug)
@@ -28,17 +32,18 @@ add_executable(Gyokuro
     src/main.cpp
     src/renderer/Renderer.cpp
     src/renderer/Shader.cpp
+    src/renderer/Texture2D.cpp
     src/scene/SceneController.cpp)
 
 # include any headers
 include_directories(src)
 
 # link with our dependencies
-target_link_libraries(Gyokuro glad glfw)
+target_link_libraries(Gyokuro glad glfw stb_image)
 
-# copy shaders using a custom command to execute during the build process
-set(SHADER_SOURCE_DIR "${CMAKE_SOURCE_DIR}/resources/shaders")
-set(SHADER_BUILD_DIR "${CMAKE_BINARY_DIR}/resources/shaders")
+# copy resources using a custom command to execute during the build process
+set(SHADER_SOURCE_DIR "${CMAKE_SOURCE_DIR}/resources")
+set(SHADER_BUILD_DIR "${CMAKE_BINARY_DIR}/resources")
 add_custom_command(
     TARGET Gyokuro POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

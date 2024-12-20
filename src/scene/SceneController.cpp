@@ -4,6 +4,7 @@
 #include <scene/SceneController.h>
 #include <renderer/Renderer.h>
 #include <renderer/Shader.h>
+#include <renderer/Texture2D.h>
 
 #include <glad/glad.h>
 
@@ -11,6 +12,10 @@ SceneController::SceneController(Renderer* r) {
     renderer = r;
 
     ourShader = new Shader("shader.vert", "shader.frag");
+
+    // Texture2D* texture = new Texture2D("/Users/spencerevans/pm-repos/gyokuro-engine/build/resources/textures/wall.jpg");
+    // delete texture;
+    // texture = nullptr;
 
     // create the vertex/index buffers and vertex array object
     glGenBuffers(1, &VBO);
