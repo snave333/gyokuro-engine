@@ -18,7 +18,8 @@ private:
     Renderer* renderer;
 
     Mesh* mesh;
-    Texture2D* texture;
+    Texture2D* texture1;
+    Texture2D* texture2;
     Shader* shader;
 
     void RenderScene();

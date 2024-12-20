@@ -27,7 +27,13 @@ SceneController::SceneController(Renderer* r) {
 
     shader = new Shader("shader.vert", "shader.frag");
 
-    texture = new Texture2D("/Users/spencerevans/pm-repos/gyokuro-engine/build/resources/textures/wall.jpg");
+    texture1 = new Texture2D("/Users/spencerevans/pm-repos/gyokuro-engine/build/resources/textures/wall.jpg");
+    texture2 = new Texture2D("/Users/spencerevans/pm-repos/gyokuro-engine/build/resources/textures/awesomeface.png", true);
+
+    // assigned each sampler to a texture unit
+    shader->Use();
+    shader->SetInt("texture1", 0);
+    shader->SetInt("texture2", 1);
 }
 
 SceneController::~SceneController() {
@@ -39,8 +45,10 @@ SceneController::~SceneController() {
     delete shader;
     shader = nullptr;
 
-    delete texture;
-    texture = nullptr;
+    delete texture1;
+    texture1 = nullptr;
+    delete texture2;
+    texture2 = nullptr;
 }
 
 void SceneController::Update(float dt) {
@@ -68,7 +76,8 @@ void SceneController::RenderScene() {
     // set any shader uniforms
     // shader->SetFloat("asdf", 1.0f);
 
-    glBindTexture(GL_TEXTURE_2D, texture->ID);
+    texture1->Bind(0);
+    texture2->Bind(1);
 
     mesh->Draw(*shader);
 }
