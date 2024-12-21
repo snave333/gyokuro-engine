@@ -80,6 +80,7 @@ int main(int argc, const char * argv[]) {
         if(dt > 0.0f) {
             fps = 1.0f / dt;
         }
+        // std::cout << (int)(dt * 1000) << " ms, " << (int)fps << " fps" << std::endl;
 
         // update and render our scene
         sceneController->Update(dt);

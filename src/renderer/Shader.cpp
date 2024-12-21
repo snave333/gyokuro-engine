@@ -1,43 +1,12 @@
 
 #include <renderer/Shader.h>
+#include <FileUtils.h>
 
 #include <glad/glad.h>
 
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#ifdef __APPLE__
-#include <mach-o/dyld.h>
-#else
-#include <windows.h>
-#endif
-
-std::string GetCurrentWorkingDirectory() {
-#ifdef __APPLE__
-    char buffer[PATH_MAX];
-    uint32_t size = PATH_MAX;
-    if (_NSGetExecutablePath(buffer, &size) != 0) {
-        throw std::runtime_error("Failed to retrieve executable path");
-    }
-    std::string fullPath(buffer);
-    return fullPath.substr(0, fullPath.find_last_of("/")); // Remove executable name
-#else
-    char buffer[MAX_PATH];
-    GetModuleFileName(NULL, buffer, MAX_PATH);
-    std::string fullPath(buffer);
-    return fullPath.substr(0, fullPath.find_last_of("\\/")); // Remove executable name
-#endif
-}
-
-#ifdef __APPLE__
-    const char PATH_SEPARATOR = '/';
-#else
-    const char PATH_SEPARATOR = '\\';
-#endif
-
-std::string CombinePath(const std::string& path1, const std::string& path2) {
-    return path1 + PATH_SEPARATOR + path2;
-}
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     // retrieve the vertex/fragment source code from filePath
@@ -163,29 +132,38 @@ void Shader::SetFloat(const std::string &name, float value) const {
     glUniform1f(location, value);
 }
 
-void Shader::SetFloat2(const std::string &name, float value1, float value2) const {
+void Shader::SetVec2(const std::string &name, glm::vec2 value) const {
     int location = glGetUniformLocation(ID, name.c_str());
     if(location == -1) {
         std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND: " << name << std::endl;
         return;
     }
-    glUniform2f(location, value1, value2);
+    glUniform2f(location, value.x, value.y);
 }
 
-void Shader::SetFloat3(const std::string &name, float value1, float value2, float value3) const {
+void Shader::SetVec3(const std::string &name, glm::vec3 value) const {
     int location = glGetUniformLocation(ID, name.c_str());
     if(location == -1) {
         std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND: " << name << std::endl;
         return;
     }
-    glUniform3f(location, value1, value2, value3);
+    glUniform3f(location, value.x, value.y, value.z);
 }
 
-void Shader::SetFloat4(const std::string &name, float value1, float value2, float value3, float value4) const {
+void Shader::SetVec4(const std::string &name, glm::vec4 value) const {
     int location = glGetUniformLocation(ID, name.c_str());
     if(location == -1) {
         std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND: " << name << std::endl;
         return;
     }
-    glUniform4f(location, value1, value2, value3, value4);
+    glUniform4f(location, value.x, value.y, value.z, value.w);
+}
+
+void Shader::SetMat4(const std::string &name, glm::mat4 value) const {
+    int location = glGetUniformLocation(ID, name.c_str());
+    if(location == -1) {
+        std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND: " << name << std::endl;
+        return;
+    }
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 }

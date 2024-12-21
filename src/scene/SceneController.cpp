@@ -7,6 +7,8 @@
 #include <renderer/Texture2D.h>
 #include <renderer/Mesh.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <glad/glad.h>
 
 SceneController::SceneController(Renderer* r) {
@@ -34,6 +36,15 @@ SceneController::SceneController(Renderer* r) {
     shader->Use();
     shader->SetInt("texture1", 0);
     shader->SetInt("texture2", 1);
+
+
+
+    trans = glm::mat4(1.0f);
+    trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+    // trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+    // trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+
+    shader->SetMat4("transform", trans);
 }
 
 SceneController::~SceneController() {
@@ -52,6 +63,7 @@ SceneController::~SceneController() {
 }
 
 void SceneController::Update(float dt) {
+    trans = glm::rotate(trans, dt, glm::vec3(0.0, 0.0, 1.0));
 }
 
 void SceneController::Render() {
@@ -75,6 +87,7 @@ void SceneController::RenderScene() {
 
     // set any shader uniforms
     // shader->SetFloat("asdf", 1.0f);
+    shader->SetMat4("transform", trans);
 
     texture1->Bind(0);
     texture2->Bind(1);

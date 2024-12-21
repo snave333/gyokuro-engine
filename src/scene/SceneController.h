@@ -1,6 +1,8 @@
 #ifndef SCENE_CONTROLLER_H
 #define SCENE_CONTROLLER_H
 
+#include <glm/glm.hpp>
+
 class Renderer;
 class Shader;
 class Texture2D;
@@ -21,6 +23,8 @@ private:
     Texture2D* texture1;
     Texture2D* texture2;
     Shader* shader;
+
+    glm::mat4 trans;
 
     void RenderScene();
 };
