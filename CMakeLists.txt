@@ -36,7 +36,9 @@ add_executable(Gyokuro
     src/renderer/Renderer.cpp
     src/renderer/Shader.cpp
     src/renderer/Texture2D.cpp
-    src/renderer/Mesh.cpp
+    src/mesh/Mesh.cpp
+    src/mesh/Quad.cpp
+    src/mesh/Cube.cpp
     src/scene/SceneController.cpp)
 
 # include any headers

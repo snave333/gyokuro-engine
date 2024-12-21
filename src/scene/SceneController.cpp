@@ -5,7 +5,8 @@
 #include <renderer/Renderer.h>
 #include <renderer/Shader.h>
 #include <renderer/Texture2D.h>
-#include <renderer/Mesh.h>
+#include <mesh/Quad.h>
+#include <mesh/Cube.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -14,18 +15,7 @@
 SceneController::SceneController(Renderer* r) {
     renderer = r;
 
-    std::vector<Vertex> quadVertices = {
-        { {  0.5f,  0.5f, 0.0f }, { 1.0f, 0.5f, 0.0f }, { 1.0f, 1.0f } }, // top right
-        { {  0.5f, -0.5f, 0.0f }, { 0.5f, 1.0f, 0.0f }, { 1.0f, 0.0f } }, // bottom right
-        { { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.5f }, { 0.0f, 0.0f } }, // bottom left
-        { { -0.5f,  0.5f, 0.0f }, { 0.0f, 0.5f, 1.0f }, { 0.0f, 1.0f } }  // top left
-    };
-    std::vector<unsigned int> quadIndices = {
-        0, 1, 3, // first triangle
-        1, 2, 3 // second triangle
-    };
-
-    mesh = new Mesh(quadVertices, quadIndices);
+    mesh = new Cube();
 
     shader = new Shader("shader.vert", "shader.frag");
 
@@ -37,14 +27,21 @@ SceneController::SceneController(Renderer* r) {
     shader->SetInt("texture1", 0);
     shader->SetInt("texture2", 1);
 
+    // set our MVP matrices
 
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 
-    trans = glm::mat4(1.0f);
-    trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-    // trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-    // trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+    // move the camera back
+    glm::mat4 view = glm::mat4(1.0f);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
-    shader->SetMat4("transform", trans);
+    glm::mat4 projection;
+    projection = glm::perspective(glm::radians(45.0f), 512.0f / 512.0f, 0.1f, 100.0f);
+
+    shader->SetMat4("model", model);
+    shader->SetMat4("view", view);
+    shader->SetMat4("projection", projection);
 }
 
 SceneController::~SceneController() {
@@ -63,7 +60,7 @@ SceneController::~SceneController() {
 }
 
 void SceneController::Update(float dt) {
-    trans = glm::rotate(trans, dt, glm::vec3(0.0, 0.0, 1.0));
+    model = glm::rotate(model, dt, glm::normalize(glm::vec3(1.0, 1.0, 0.0)));
 }
 
 void SceneController::Render() {
@@ -87,7 +84,7 @@ void SceneController::RenderScene() {
 
     // set any shader uniforms
     // shader->SetFloat("asdf", 1.0f);
-    shader->SetMat4("transform", trans);
+    shader->SetMat4("model", model);
 
     texture1->Bind(0);
     texture2->Bind(1);

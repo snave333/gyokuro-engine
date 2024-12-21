@@ -1,11 +1,24 @@
 
-#include <renderer/Mesh.h>
+#include <mesh/Mesh.h>
 
 #include <glad/glad.h>
+
+Mesh::Mesh() {
+    vertices = {};
+    indices = {};
+}
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices) {
     this->vertices = vertices;
     this->indices = indices;
+
+    Initialize();
+}
+
+void Mesh::Initialize() {
+    if(VAO != 0) {
+        return;
+    }
 
     // create the vertex/index buffers and vertex array object
     glGenVertexArrays(1, &VAO);
@@ -29,10 +42,10 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices) {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     // normals
     glEnableVertexAttribArray(1);	
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
     // texture coords
     glEnableVertexAttribArray(2);	
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
 
     // clean up and unbind
     glBindVertexArray(0);
@@ -47,6 +60,10 @@ Mesh::~Mesh() {
 }
 
 void Mesh::Draw(Shader &shader) {
+    if(VAO == 0) {
+        return;
+    }
+
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

@@ -24,7 +24,7 @@ private:
     Texture2D* texture2;
     Shader* shader;
 
-    glm::mat4 trans;
+    glm::mat4 model;
 
     void RenderScene();
 };

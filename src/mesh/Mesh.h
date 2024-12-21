@@ -8,9 +8,9 @@
 class Shader;
 
 struct Vertex {
-    glm::vec3 Position;
-    glm::vec3 Normal;
-    glm::vec2 TexCoords;
+    glm::vec3 position;
+    glm::vec3 normal;
+    glm::vec2 texCoord;
 };
 
 class Mesh {
@@ -22,9 +22,11 @@ public:
     unsigned int VAO;
     
     // constructor
+    Mesh();
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
     ~Mesh();
 
+    void Initialize();
     void Draw(Shader &shader);
 
 private:
