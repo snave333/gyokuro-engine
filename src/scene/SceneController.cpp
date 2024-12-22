@@ -60,7 +60,7 @@ SceneController::~SceneController() {
 }
 
 void SceneController::Update(float dt) {
-    model = glm::rotate(model, dt, glm::normalize(glm::vec3(1.0, 1.0, 0.0)));
+    model = glm::rotate(model, dt, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
 }
 
 void SceneController::Render() {
