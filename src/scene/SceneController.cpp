@@ -9,7 +9,6 @@
 #include <mesh/Cube.h>
 
 #include <glm/gtc/matrix_transform.hpp>
-
 #include <glad/glad.h>
 
 SceneController::SceneController(Renderer* r) {
@@ -19,8 +18,8 @@ SceneController::SceneController(Renderer* r) {
 
     shader = new Shader("shader.vert", "shader.frag");
 
-    texture1 = new Texture2D("/Users/spencerevans/pm-repos/gyokuro-engine/build/resources/textures/wall.jpg");
-    texture2 = new Texture2D("/Users/spencerevans/pm-repos/gyokuro-engine/build/resources/textures/awesomeface.png", true);
+    texture1 = new Texture2D("wall.jpg");
+    texture2 = new Texture2D("awesomeface.png", true);
 
     // assigned each sampler to a texture unit
     shader->Use();

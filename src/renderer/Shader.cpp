@@ -3,6 +3,7 @@
 #include <FileUtils.h>
 
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -21,10 +22,10 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 
     try {
         // construct our full paths to the shader files
-        std::string cwd = GetCurrentWorkingDirectory();
-        std::string shaderDir = CombinePath(cwd, CombinePath("resources", "shaders"));
-        std::string fullVertexPath = CombinePath(shaderDir, std::string(vertexPath));
-        std::string fullFragmentPath = CombinePath(shaderDir, std::string(fragmentPath));
+        std::string cwd = FileUtils::GetCurrentWorkingDirectory();
+        std::string shaderDir = FileUtils::CombinePath(cwd, FileUtils::CombinePath("resources", "shaders"));
+        std::string fullVertexPath = FileUtils::CombinePath(shaderDir, std::string(vertexPath));
+        std::string fullFragmentPath = FileUtils::CombinePath(shaderDir, std::string(fragmentPath));
 
         // open files
         vShaderFile.open(fullVertexPath.c_str());

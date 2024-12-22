@@ -1,5 +1,6 @@
 
 #include <renderer/Texture2D.h>
+#include <FileUtils.h>
 
 #include <glad/glad.h>
 #include <stb_image.h>
@@ -7,8 +8,10 @@
 #include <iostream>
 
 Texture2D::Texture2D(const char* imagePath, bool transparency) {
-
-    // TODO prepend the full file path
+    // construct our full paths to the shader files
+    std::string cwd = FileUtils::GetCurrentWorkingDirectory();
+    std::string shaderDir = FileUtils::CombinePath(cwd, FileUtils::CombinePath("resources", "textures"));
+    std::string fullImagePath = FileUtils::CombinePath(shaderDir, std::string(imagePath));
 
     // create and bind the texture object
     glGenTextures(1, &ID);
@@ -25,7 +28,7 @@ Texture2D::Texture2D(const char* imagePath, bool transparency) {
     
     // load and generate the texture
     int width, height, nrChannels;
-    unsigned char *data = stbi_load(imagePath, &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load(fullImagePath.c_str(), &width, &height, &nrChannels, 0);
     if (data) {
         unsigned int format = transparency ? GL_RGBA : GL_RGB;
         
