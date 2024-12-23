@@ -7,12 +7,15 @@
 #include <renderer/Texture2D.h>
 #include <mesh/Quad.h>
 #include <mesh/Cube.h>
+#include <camera/PerspectiveCamera.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
 
 SceneController::SceneController(Renderer* r) {
     renderer = r;
+
+    camera = new PerspectiveCamera(60, 1, 0.1f, 100);
 
     mesh = new Cube();
 
@@ -31,20 +34,16 @@ SceneController::SceneController(Renderer* r) {
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 
-    // move the camera back
-    glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
-    glm::mat4 projection;
-    projection = glm::perspective(glm::radians(45.0f), 512.0f / 512.0f, 0.1f, 100.0f);
-
     shader->SetMat4("model", model);
-    shader->SetMat4("view", view);
-    shader->SetMat4("projection", projection);
+    shader->SetMat4("view", camera->GetView());
+    shader->SetMat4("projection", camera->GetProjection());
 }
 
 SceneController::~SceneController() {
     renderer = nullptr;
+
+    delete camera;
+    camera = nullptr;
 
     delete mesh;
     mesh = nullptr;

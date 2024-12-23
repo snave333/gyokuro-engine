@@ -7,6 +7,7 @@ class Renderer;
 class Shader;
 class Texture2D;
 class Mesh;
+class Camera;
 
 class SceneController {
 public:
@@ -18,6 +19,8 @@ public:
 
 private:
     Renderer* renderer;
+
+    Camera* camera;
 
     Mesh* mesh;
     Texture2D* texture1;
