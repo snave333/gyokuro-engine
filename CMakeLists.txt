@@ -40,6 +40,7 @@ add_executable(Gyokuro
     src/mesh/Quad.cpp
     src/mesh/Cube.cpp
     src/camera/Camera.cpp
+    src/camera/CameraNode.cpp
     src/scene/SceneController.cpp)
 
 # include any headers

@@ -17,6 +17,9 @@ void error_callback(int error, const char* description);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
+Renderer* renderer;
+SceneController* sceneController;
+
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
     
@@ -60,12 +63,16 @@ int main(int argc, const char * argv[]) {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // our rendering managers
-    Renderer* renderer = new Renderer(window);
-    SceneController* sceneController = new SceneController(renderer);
+    renderer = new Renderer(window);
+    sceneController = new SceneController(renderer);
+
+    glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        sceneController->OnKeyboardInput(key, action, mods);
+    });
 
     // timing
     float lastUpdateTime = glfwGetTime();
-    float time, dt, fps;
+    float dt, fps;
 
     // our render loop
     while (!glfwWindowShouldClose(window))
@@ -74,9 +81,9 @@ int main(int argc, const char * argv[]) {
         processInput(window);
 
         // update our delta time
-        time = glfwGetTime();
-        dt = time - lastUpdateTime;
-        lastUpdateTime = time;
+        float currentTime = glfwGetTime();
+        dt = currentTime - lastUpdateTime;
+        lastUpdateTime = currentTime;
         if(dt > 0.0f) {
             fps = 1.0f / dt;
         }

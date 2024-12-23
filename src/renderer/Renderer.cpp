@@ -9,10 +9,12 @@
 Renderer::Renderer(GLFWwindow* window) {
     this->window = window;
 
+    // enable depth testing and backface fulling
     glEnable(GL_DEPTH_TEST);
-
-    // uncomment to draw in wireframe
-    //glPolygonMode(GL_FRONT, GL_LINE);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    
+    //glPolygonMode(GL_FRONT, GL_LINE); // uncomment to draw in wireframe
     glPolygonMode(GL_FRONT, GL_FILL);
 
     int nrAttributes;

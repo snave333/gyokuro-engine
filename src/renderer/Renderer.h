@@ -13,7 +13,7 @@ public:
     void EndFrame();
 
 private:
-    GLFWwindow* window;
+    GLFWwindow* window = nullptr;
 };
 
 #endif // RENDERER_H

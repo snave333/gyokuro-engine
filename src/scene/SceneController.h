@@ -7,7 +7,7 @@ class Renderer;
 class Shader;
 class Texture2D;
 class Mesh;
-class Camera;
+class CameraNode;
 
 class SceneController {
 public:
@@ -17,15 +17,17 @@ public:
     void Update(float dt);
     void Render();
 
+    void OnKeyboardInput(int key, int action, int mods);
+
 private:
-    Renderer* renderer;
+    Renderer* renderer = nullptr;
 
-    Camera* camera;
+    CameraNode* camera = nullptr;
 
-    Mesh* mesh;
-    Texture2D* texture1;
-    Texture2D* texture2;
-    Shader* shader;
+    Mesh* mesh = nullptr;
+    Texture2D* texture1 = nullptr;
+    Texture2D* texture2 = nullptr;
+    Shader* shader = nullptr;
 
     glm::mat4 model;
 

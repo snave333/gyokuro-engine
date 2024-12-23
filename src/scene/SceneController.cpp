@@ -7,19 +7,21 @@
 #include <renderer/Texture2D.h>
 #include <mesh/Quad.h>
 #include <mesh/Cube.h>
-#include <camera/PerspectiveCamera.h>
-#include <camera/OrthographicCamera.h>
+#include <camera/CameraNode.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 SceneController::SceneController(Renderer* r) {
     renderer = r;
 
     float w = 800;
     float h = 600;
-    camera = new PerspectiveCamera(60, w / h);
-    // camera = new OrthographicCamera(3, w / h);
+    camera = new CameraNode(Camera::PerspectiveCamera(60, w / h));
+    // camera = new CameraNode(Camera::OrthographicCamera(3, w / h));
+
+    camera->position = glm::vec3(0, 0, 3);
 
     mesh = new Cube();
 
@@ -92,4 +94,15 @@ void SceneController::RenderScene() {
     texture2->Bind(1);
 
     mesh->Draw(*shader);
+}
+
+void SceneController::OnKeyboardInput(int key, int action, int mods) {
+    // TODO forward key presses to fly camera for movement
+
+    switch(key) {
+        case GLFW_KEY_W:
+            break;
+        case GLFW_KEY_S:
+            break;
+    }
 }
