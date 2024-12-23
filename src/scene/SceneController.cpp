@@ -7,7 +7,7 @@
 #include <renderer/Texture2D.h>
 #include <mesh/Quad.h>
 #include <mesh/Cube.h>
-#include <camera/CameraNode.h>
+#include <camera/FlyCamera.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
@@ -18,10 +18,10 @@ SceneController::SceneController(Renderer* r) {
 
     float w = 800;
     float h = 600;
-    camera = new CameraNode(Camera::PerspectiveCamera(60, w / h));
-    // camera = new CameraNode(Camera::OrthographicCamera(3, w / h));
+    camera = new FlyCamera(Camera::PerspectiveCamera(60, w / h));
+    // camera = new FlyCamera(Camera::OrthographicCamera(3, w / h));
 
-    camera->position = glm::vec3(0, 0, 3);
+    camera->Translate(0, 0, 3);
 
     mesh = new Cube();
 

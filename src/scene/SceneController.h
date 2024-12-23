@@ -7,7 +7,7 @@ class Renderer;
 class Shader;
 class Texture2D;
 class Mesh;
-class CameraNode;
+class FlyCamera;
 
 class SceneController {
 public:
@@ -22,7 +22,7 @@ public:
 private:
     Renderer* renderer = nullptr;
 
-    CameraNode* camera = nullptr;
+    FlyCamera* camera = nullptr;
 
     Mesh* mesh = nullptr;
     Texture2D* texture1 = nullptr;

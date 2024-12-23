@@ -10,13 +10,13 @@ public:
     CameraNode(Camera* camera) : SceneNode() { this->camera = camera; };
     ~CameraNode();
 
-    Camera* camera = nullptr;
-
     glm::mat4 GetView();
     glm::mat4 GetProjection() const {
         return camera->GetProjection();
     };
 
+protected:
+    Camera* camera = nullptr;
 };
 
 #endif // CAMERA_NODE_H
