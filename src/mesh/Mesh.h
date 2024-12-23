@@ -15,10 +15,6 @@ struct Vertex {
 
 class Mesh {
 public:
-    // mesh Data
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-
     unsigned int VAO;
     
     // constructor
@@ -28,6 +24,11 @@ public:
 
     void Initialize();
     void Draw(Shader &shader);
+
+protected:
+    // mesh Data
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
 
 private:
     // render data

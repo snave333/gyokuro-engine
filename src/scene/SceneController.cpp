@@ -8,6 +8,7 @@
 #include <mesh/Quad.h>
 #include <mesh/Cube.h>
 #include <camera/PerspectiveCamera.h>
+#include <camera/OrthographicCamera.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
@@ -15,7 +16,10 @@
 SceneController::SceneController(Renderer* r) {
     renderer = r;
 
-    camera = new PerspectiveCamera(60, 1, 0.1f, 100);
+    float w = 800;
+    float h = 600;
+    camera = new PerspectiveCamera(60, w / h);
+    // camera = new OrthographicCamera(3, w / h);
 
     mesh = new Cube();
 

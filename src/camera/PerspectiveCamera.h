@@ -7,8 +7,8 @@
 
 class PerspectiveCamera : public Camera {
 public:
-    PerspectiveCamera(float fovDeg, float aspectRatio, float near, float far)
-        : Camera(glm::perspective(glm::radians(fovDeg), aspectRatio, near, far)) {}
+    PerspectiveCamera(float fovYDeg, float aspectRatio, float near = 0.1f, float far = 100)
+        : Camera(glm::perspective(glm::radians(fovYDeg), aspectRatio, near, far)) {}
 };
 
 #endif // PERSPECTIVE_CAMERA_H
