@@ -38,6 +38,9 @@ int main(int argc, const char * argv[]) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
+    // enable msaa
+    glfwWindowHint(GLFW_SAMPLES, 4);
+
     // create the window object, and make the window context the main context
     GLFWwindow* window = glfwCreateWindow(800, 600, "Gyokuro", NULL, NULL);
     if (window == NULL) {

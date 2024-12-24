@@ -19,7 +19,7 @@ SceneController::SceneController(Renderer* r) {
 
     float w = 800;
     float h = 600;
-    camera = new FlyCamera(Camera::PerspectiveCamera(60, w / h));
+    camera = new FlyCamera(Camera::PerspectiveCamera(45, w / h));
     // camera = new FlyCamera(Camera::OrthographicCamera(3, w / h));
 
     camera->Translate(0, 0, 5);
@@ -64,13 +64,13 @@ SceneController::~SceneController() {
 void SceneController::Update(float dt) {
     // model->Translate(dt / 2, 0, 0);
     // model->Translate(glm::vec3(dt / 2, 0, 0));
-    // model->Rotate(dt * 60, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
+    model->Rotate(dt * 30, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
     // model->Rotate(0, dt * 60, 0);
     // model->SetScale(glm::sin(glfwGetTime()) + 1);
 
-    model->SetPosition(glm::sin(glfwGetTime()), 0, 0);
-    model->SetRotation(glm::sin(glfwGetTime()) * 30, 0, 0);
-    model->SetScale(glm::sin(glfwGetTime()) + 1);
+    // model->SetPosition(glm::sin(glfwGetTime()), 0, 0);
+    // model->SetRotation(glm::sin(glfwGetTime()) * 30, 0, 0);
+    // model->SetScale(glm::sin(glfwGetTime()) + 1);
 }
 
 void SceneController::Render() {

@@ -14,6 +14,8 @@ public:
 
 private:
     GLFWwindow* window = nullptr;
+
+    void PrintGLInfo();
 };
 
 #endif // RENDERER_H
