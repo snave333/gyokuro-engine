@@ -6,7 +6,7 @@
 class Renderer;
 class Shader;
 class Texture2D;
-class Mesh;
+class Model;
 class FlyCamera;
 
 class SceneController {
@@ -24,12 +24,10 @@ private:
 
     FlyCamera* camera = nullptr;
 
-    Mesh* mesh = nullptr;
+    Model* model = nullptr;
     Texture2D* texture1 = nullptr;
     Texture2D* texture2 = nullptr;
     Shader* shader = nullptr;
-
-    glm::mat4 model;
 
     void RenderScene();
 };

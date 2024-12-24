@@ -7,6 +7,7 @@
 #include <renderer/Texture2D.h>
 #include <mesh/Quad.h>
 #include <mesh/Cube.h>
+#include <mesh/Model.h>
 #include <camera/FlyCamera.h>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -21,9 +22,9 @@ SceneController::SceneController(Renderer* r) {
     camera = new FlyCamera(Camera::PerspectiveCamera(60, w / h));
     // camera = new FlyCamera(Camera::OrthographicCamera(3, w / h));
 
-    camera->Translate(0, 0, 3);
+    camera->Translate(0, 0, 5);
 
-    mesh = new Cube();
+    model = new Model(new Cube());
 
     shader = new Shader("shader.vert", "shader.frag");
 
@@ -37,10 +38,7 @@ SceneController::SceneController(Renderer* r) {
 
     // set our MVP matrices
 
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-
-    shader->SetMat4("model", model);
+    shader->SetMat4("model", model->GetTransform());
     shader->SetMat4("view", camera->GetView());
     shader->SetMat4("projection", camera->GetProjection());
 }
@@ -51,8 +49,8 @@ SceneController::~SceneController() {
     delete camera;
     camera = nullptr;
 
-    delete mesh;
-    mesh = nullptr;
+    delete model;
+    model = nullptr;
 
     delete shader;
     shader = nullptr;
@@ -64,7 +62,15 @@ SceneController::~SceneController() {
 }
 
 void SceneController::Update(float dt) {
-    model = glm::rotate(model, dt, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
+    // model->Translate(dt / 2, 0, 0);
+    // model->Translate(glm::vec3(dt / 2, 0, 0));
+    // model->Rotate(dt * 60, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
+    // model->Rotate(0, dt * 60, 0);
+    // model->SetScale(glm::sin(glfwGetTime()) + 1);
+
+    model->SetPosition(glm::sin(glfwGetTime()), 0, 0);
+    model->SetRotation(glm::sin(glfwGetTime()) * 30, 0, 0);
+    model->SetScale(glm::sin(glfwGetTime()) + 1);
 }
 
 void SceneController::Render() {
@@ -87,13 +93,12 @@ void SceneController::RenderScene() {
     shader->Use();
 
     // set any shader uniforms
-    // shader->SetFloat("asdf", 1.0f);
-    shader->SetMat4("model", model);
+    shader->SetMat4("model", model->GetTransform());
 
     texture1->Bind(0);
     texture2->Bind(1);
 
-    mesh->Draw(*shader);
+    model->Draw(*shader);
 }
 
 void SceneController::OnKeyboardInput(int key, int action, int mods) {

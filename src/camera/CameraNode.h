@@ -11,9 +11,7 @@ public:
     ~CameraNode();
 
     glm::mat4 GetView();
-    glm::mat4 GetProjection() const {
-        return camera->GetProjection();
-    };
+    glm::mat4 GetProjection() const { return camera->GetProjection(); };
 
 protected:
     Camera* camera = nullptr;

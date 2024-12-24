@@ -11,10 +11,20 @@ class SceneNode {
 public:
     SceneNode() {};
 
-    const glm::vec3& Position() { return position; }
-    const glm::fquat& Rotation() { return rotation; }
-    const glm::vec3& Scale() { return scale; }
-    const glm::mat4& Transform();
+    const glm::vec3& GetPosition() { return position; }
+    const glm::fquat& GetRotation() { return rotation; }
+    const glm::vec3& GetScale() { return scale; }
+    
+    void SetPosition(float x, float y, float z);
+    void SetPosition(const glm::vec3 &position);
+    void SetRotation(float pitchDeg, float yawDeg, float rollDeg);
+    void SetRotation(float angleDeg, glm::vec3 axis);
+    void SetRotation(const glm::fquat &rotation);
+    void SetScale(float scale);
+    void SetScale(float x, float y, float z);
+    void SetScale(const glm::vec3 &scale);
+
+    const glm::mat4& GetTransform();
 
     void Translate(float x, float y, float z);
     void Translate(glm::vec3 translation);
