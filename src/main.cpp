@@ -15,7 +15,7 @@
 
 void error_callback(int error, const char* description);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow *window);
+void processInput(GLFWwindow *window, float dt);
 
 Renderer* renderer;
 SceneController* sceneController;
@@ -69,10 +69,6 @@ int main(int argc, const char * argv[]) {
     renderer = new Renderer(window);
     sceneController = new SceneController(renderer);
 
-    glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-        sceneController->OnKeyboardInput(key, action, mods);
-    });
-
     // timing
     float lastUpdateTime = glfwGetTime();
     float dt, fps;
@@ -81,7 +77,7 @@ int main(int argc, const char * argv[]) {
     while (!glfwWindowShouldClose(window))
     {
         // input
-        processInput(window);
+        processInput(window, dt);
 
         // update our delta time
         float currentTime = glfwGetTime();
@@ -120,9 +116,24 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow *window, float dt)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+
+    // TODO a better solution for passing input to the scene controller
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        sceneController->OnKeyPressed(GLFW_KEY_W, dt);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        sceneController->OnKeyPressed(GLFW_KEY_S, dt);
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        sceneController->OnKeyPressed(GLFW_KEY_A, dt);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        sceneController->OnKeyPressed(GLFW_KEY_D, dt);
     }
 }

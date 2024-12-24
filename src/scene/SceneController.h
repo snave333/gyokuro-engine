@@ -17,7 +17,8 @@ public:
     void Update(float dt);
     void Render();
 
-    void OnKeyboardInput(int key, int action, int mods);
+    void OnKeyPressed(int key, float dt);
+    void OnKeyReleased(int key, float dt);
 
 private:
     Renderer* renderer = nullptr;

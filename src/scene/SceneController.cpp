@@ -23,8 +23,13 @@ SceneController::SceneController(Renderer* r) {
     // camera = new FlyCamera(Camera::OrthographicCamera(3, w / h));
 
     camera->Translate(0, 0, 5);
+    camera->Rotate(0, 15, 0);
 
     model = new Model(new Cube());
+
+    // model->Rotate(0, 0, 30);
+    // glm::vec3 dir = model->GetRight();
+    // std::cout << dir.x << ", " << dir.y << ", " << dir.z << std::endl;
 
     shader = new Shader("shader.vert", "shader.frag");
 
@@ -64,7 +69,7 @@ SceneController::~SceneController() {
 void SceneController::Update(float dt) {
     // model->Translate(dt / 2, 0, 0);
     // model->Translate(glm::vec3(dt / 2, 0, 0));
-    model->Rotate(dt * 30, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
+    // model->Rotate(dt * 30, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
     // model->Rotate(0, dt * 60, 0);
     // model->SetScale(glm::sin(glfwGetTime()) + 1);
 
@@ -94,6 +99,7 @@ void SceneController::RenderScene() {
 
     // set any shader uniforms
     shader->SetMat4("model", model->GetTransform());
+    shader->SetMat4("view", camera->GetView());
 
     texture1->Bind(0);
     texture2->Bind(1);
@@ -101,13 +107,26 @@ void SceneController::RenderScene() {
     model->Draw(*shader);
 }
 
-void SceneController::OnKeyboardInput(int key, int action, int mods) {
-    // TODO forward key presses to fly camera for movement
+void SceneController::OnKeyPressed(int key, float dt) {
+    float cameraSpeed = 1.2f;
+    glm::vec3 velocity(0);
 
     switch(key) {
         case GLFW_KEY_W:
+            velocity += camera->GetForward();
             break;
         case GLFW_KEY_S:
+            velocity -= camera->GetForward();
             break;
+        case GLFW_KEY_A:
+            velocity -= camera->GetRight();
+            break;
+        case GLFW_KEY_D:
+            velocity += camera->GetRight();
+            break;
+    }
+
+    if(velocity != glm::vec3(0)) {
+        camera->Translate(velocity * dt * cameraSpeed);
     }
 }

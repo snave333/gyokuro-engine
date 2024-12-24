@@ -18,23 +18,26 @@ public:
     void SetPosition(float x, float y, float z);
     void SetPosition(const glm::vec3 &position);
     void SetRotation(float pitchDeg, float yawDeg, float rollDeg);
-    void SetRotation(float angleDeg, glm::vec3 axis);
+    void SetRotation(float angleDeg, const glm::vec3 &axis);
     void SetRotation(const glm::fquat &rotation);
     void SetScale(float scale);
     void SetScale(float x, float y, float z);
     void SetScale(const glm::vec3 &scale);
 
     const glm::mat4& GetTransform();
+    glm::vec3 GetForward();
+    glm::vec3 GetRight();
+    glm::vec3 GetUp();
 
     void Translate(float x, float y, float z);
-    void Translate(glm::vec3 translation);
+    void Translate(const glm::vec3 &translation);
 
     void Rotate(float pitchDeg, float yawDeg, float rollDeg);
-    void Rotate(float angleDeg, glm::vec3 axis);
+    void Rotate(float angleDeg, const glm::vec3 &axis);
 
     void Scale(float scale);
     void Scale(float x, float y, float z);
-    void Scale(glm::vec3 scale);
+    void Scale(const glm::vec3 &scale);
 protected:
     glm::vec3 position = glm::vec3();
     glm::fquat rotation = glm::quat(1, 0, 0, 0);

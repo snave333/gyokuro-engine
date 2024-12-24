@@ -15,11 +15,22 @@ const glm::mat4& SceneNode::GetTransform() {
     glm::mat4 s = glm::mat4(1.0f);
     s = glm::scale(s, scale);
 
-    // transform = s * r * t;
     transform = t * r * s;
     isDirty = false;
 
     return transform;
+}
+
+glm::vec3 SceneNode::GetForward() {
+    return glm::normalize(glm::vec3(0, 0, -1) * rotation);
+}
+
+glm::vec3 SceneNode::GetRight() {
+    return glm::normalize(glm::vec3(1, 0, 0) * rotation);
+}
+
+glm::vec3 SceneNode::GetUp() {
+    return glm::normalize(glm::vec3(0, 1, 0) * rotation);
 }
 
 void SceneNode::SetPosition(float x, float y, float z) {
@@ -37,7 +48,7 @@ void SceneNode::SetRotation(float pitchDeg, float yawDeg, float rollDeg) {
     isDirty = true;
 }
 
-void SceneNode::SetRotation(float angleDeg, glm::vec3 axis) {
+void SceneNode::SetRotation(float angleDeg, const glm::vec3 &axis) {
     rotation = glm::normalize(glm::angleAxis(glm::radians(angleDeg), axis));
     isDirty = true;
 }
@@ -67,7 +78,7 @@ void SceneNode::Translate(float x, float y, float z) {
     isDirty = true;
 }
 
-void SceneNode::Translate(glm::vec3 translation) {
+void SceneNode::Translate(const glm::vec3 &translation) {
     position += translation;
     isDirty = true;
 }
@@ -77,7 +88,7 @@ void SceneNode::Rotate(float pitchDeg, float yawDeg, float rollDeg) {
     isDirty = true;
 }
 
-void SceneNode::Rotate(float angleDeg, glm::vec3 axis) {
+void SceneNode::Rotate(float angleDeg, const glm::vec3 &axis) {
     rotation = glm::normalize(rotation * glm::angleAxis(glm::radians(angleDeg), axis));
     isDirty = true;
 }
@@ -92,7 +103,7 @@ void SceneNode::Scale(float x, float y, float z) {
     isDirty = true;
 }
 
-void SceneNode::Scale(glm::vec3 scale) {
+void SceneNode::Scale(const glm::vec3 &scale) {
     this->scale *= scale;
     isDirty = true;
 }
