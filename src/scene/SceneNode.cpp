@@ -3,10 +3,14 @@
 
 
 const glm::mat4& SceneNode::GetTransform() {
-    if(!isDirty) {
-        return transform;
+    if(isDirty) {
+        UpdateMatrices();
     }
 
+    return transform;
+}
+
+void SceneNode::UpdateMatrices() {
     glm::mat4 t = glm::mat4(1.0f);
     t = glm::translate(t, position);
     
@@ -17,8 +21,6 @@ const glm::mat4& SceneNode::GetTransform() {
 
     transform = t * r * s;
     isDirty = false;
-
-    return transform;
 }
 
 glm::vec3 SceneNode::GetForward() {

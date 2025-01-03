@@ -10,7 +10,7 @@ struct AABB;
 
 class Model : public SceneNode {
 public:
-    Model(Mesh* mesh) : SceneNode() { this->mesh = mesh; };
+    Model(Mesh* mesh);
     ~Model();
 
     // TODO make mesh a list of meshes
@@ -18,10 +18,17 @@ public:
 
     void Draw(Shader &shader) const { mesh->Draw(shader); }
 
-    AABB GetBounds();
+    const AABB& GetBounds();
+    const std::array<glm::vec3, 8>& GetLUT() { return boundsLUT; }
 
 protected:
     Mesh* mesh = nullptr;
+
+private:
+    AABB bounds;
+    std::array<glm::vec3, 8> boundsLUT = {};
+
+    void UpdateBounds();
 };
 
 #endif // MODEL_NODE_H

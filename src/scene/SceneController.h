@@ -31,7 +31,6 @@ private:
     Texture2D* texture2 = nullptr;
     Shader* shader = nullptr;
 
-    const float mouseSensitivity = 0.1f;
     float lastMouseX;
     float lastMouseY;
 

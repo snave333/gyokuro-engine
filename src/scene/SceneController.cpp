@@ -128,13 +128,16 @@ void SceneController::RenderScene() {
      */
 
     const Frustum& cameraFrustum = camera->GetFrustum();
+    std::array<std::pair<int, int>, 6> frustumLUT = cameraFrustum.ComputeAABBTestLUT();
 
     int totalCount = models.size();
     int drawCount = 0;
     for(const auto& model : models) {
-        AABB bounds = model->GetBounds();
+        const AABB& bounds = model->GetBounds();
+        const std::array<glm::vec3, 8>& boundsLUT = model->GetLUT();
 
-        FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds);
+        // FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds);
+        FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT);
 
         if(result == Outside) {
             continue;
@@ -209,9 +212,6 @@ void SceneController::OnMouseMove(float x, float y) {
     float yOffset = y - lastMouseY;
     lastMouseX = x;
     lastMouseY = y;
-
-    xOffset *= mouseSensitivity;
-    yOffset *= mouseSensitivity;
 
     if(camera != nullptr) {
         camera->OnLook(xOffset, yOffset);

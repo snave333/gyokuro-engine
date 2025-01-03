@@ -38,14 +38,18 @@ public:
     void Scale(float scale);
     void Scale(float x, float y, float z);
     void Scale(const glm::vec3 &scale);
+
 protected:
     glm::vec3 position = glm::vec3();
     glm::fquat rotation = glm::quat(1, 0, 0, 0);
     glm::vec3 scale = glm::vec3(1);
+    
     glm::mat4 transform = glm::mat4(1.0f);
 
-private:
     bool isDirty = true;
+
+private:
+    void UpdateMatrices();
 };
 
 #endif // SCENE_NODE_H

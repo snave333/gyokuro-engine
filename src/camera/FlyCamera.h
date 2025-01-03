@@ -8,11 +8,12 @@ public:
     FlyCamera(Camera* camera) : CameraNode(camera) { };
     ~FlyCamera();
 
-    void OnLook(float yawDelta, float pitchDelta);
+    void OnLook(float xOffset, float yOffset);
 
 private:
     float yaw;
     float pitch;
+    const float mouseSensitivity = 0.1f;
 };
 
 #endif // FLY_CAMERA_H
