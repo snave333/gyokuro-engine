@@ -26,7 +26,7 @@ private:
 
     FlyCamera* camera = nullptr;
 
-    Model* model = nullptr;
+    std::vector<Model*> models = {};
     Texture2D* texture1 = nullptr;
     Texture2D* texture2 = nullptr;
     Shader* shader = nullptr;

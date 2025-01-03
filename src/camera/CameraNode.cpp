@@ -26,7 +26,7 @@ Frustum CameraNode::GetFrustum() {
     glm::mat4 viewMatrix = GetView();
     glm::mat4 clipMatrix = projectionMatrix * viewMatrix;
 
-    // extract the planes from the projection matrix
+    // extract planes from the clip matrix using Gribb/Hartmann method
 
     //left
     frustum.planes[0] = {
