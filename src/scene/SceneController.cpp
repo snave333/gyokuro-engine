@@ -108,7 +108,7 @@ void SceneController::RenderScene() {
 }
 
 void SceneController::OnKeyPressed(int key, float dt) {
-    float cameraSpeed = 1.2f;
+    float cameraSpeed = 4.0f;
     glm::vec3 velocity(0);
 
     switch(key) {
@@ -128,5 +128,27 @@ void SceneController::OnKeyPressed(int key, float dt) {
 
     if(velocity != glm::vec3(0)) {
         camera->Translate(velocity * dt * cameraSpeed);
+    }
+}
+
+void SceneController::OnMouseMove(float x, float y) {
+    // the first mouse move; initialize the position values
+    if(lastMouseX == 0 && lastMouseY == 0) {
+        lastMouseX = x;
+        lastMouseY = y;
+    }
+
+    // calculate our mouse delta
+
+    float xOffset = x - lastMouseX;
+    float yOffset = y - lastMouseY;
+    lastMouseX = x;
+    lastMouseY = y;
+
+    xOffset *= mouseSensitivity;
+    yOffset *= mouseSensitivity;
+
+    if(camera != nullptr) {
+        camera->OnLook(xOffset, yOffset);
     }
 }

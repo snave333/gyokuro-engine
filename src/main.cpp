@@ -16,9 +16,11 @@
 void error_callback(int error, const char* description);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window, float dt);
+void onMouseInput(GLFWwindow* window, double xpos, double ypos);
 
 Renderer* renderer;
 SceneController* sceneController;
+float dt, fps;
 
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
@@ -65,13 +67,17 @@ int main(int argc, const char * argv[]) {
     // listen for resize event
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    // capture the mouse cursor, and listen for position updates
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, onMouseInput);
+
     // our rendering managers
     renderer = new Renderer(window);
     sceneController = new SceneController(renderer);
 
     // timing
+    float currentTime;
     float lastUpdateTime = glfwGetTime();
-    float dt, fps;
 
     // our render loop
     while (!glfwWindowShouldClose(window))
@@ -80,7 +86,7 @@ int main(int argc, const char * argv[]) {
         processInput(window, dt);
 
         // update our delta time
-        float currentTime = glfwGetTime();
+        currentTime = glfwGetTime();
         dt = currentTime - lastUpdateTime;
         lastUpdateTime = currentTime;
         if(dt > 0.0f) {
@@ -124,6 +130,10 @@ void processInput(GLFWwindow *window, float dt)
 
     // TODO a better solution for passing input to the scene controller
 
+    if(sceneController == nullptr) {
+        return;
+    }
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         sceneController->OnKeyPressed(GLFW_KEY_W, dt);
     }
@@ -136,4 +146,12 @@ void processInput(GLFWwindow *window, float dt)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         sceneController->OnKeyPressed(GLFW_KEY_D, dt);
     }
+}
+
+void onMouseInput(GLFWwindow* window, double xpos, double ypos) {
+    if(sceneController == nullptr) {
+        return;
+    }
+
+    sceneController->OnMouseMove(xpos, ypos);
 }

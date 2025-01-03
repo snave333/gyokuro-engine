@@ -8,7 +8,11 @@ public:
     FlyCamera(Camera* camera) : CameraNode(camera) { };
     ~FlyCamera();
 
-    
+    void OnLook(float yawDelta, float pitchDelta);
+
+private:
+    float yaw;
+    float pitch;
 };
 
 #endif // FLY_CAMERA_H

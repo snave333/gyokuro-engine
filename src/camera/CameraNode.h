@@ -3,7 +3,6 @@
 
 #include <camera/Camera.h>
 #include <scene/SceneNode.h>
-// #include <glm/gtc/matrix_transform.hpp>
 
 class CameraNode : public SceneNode {
 public:

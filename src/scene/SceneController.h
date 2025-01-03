@@ -19,6 +19,7 @@ public:
 
     void OnKeyPressed(int key, float dt);
     void OnKeyReleased(int key, float dt);
+    void OnMouseMove(float x, float y);
 
 private:
     Renderer* renderer = nullptr;
@@ -29,6 +30,10 @@ private:
     Texture2D* texture1 = nullptr;
     Texture2D* texture2 = nullptr;
     Shader* shader = nullptr;
+
+    const float mouseSensitivity = 0.1f;
+    float lastMouseX;
+    float lastMouseY;
 
     void RenderScene();
 };
