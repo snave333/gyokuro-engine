@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include <vector>
+#include <math/AABB.h>
 
 class Shader;
 
@@ -22,13 +23,18 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
     ~Mesh();
 
-    void Initialize();
     void Draw(Shader &shader);
+
+    const AABB& GetBounds() { return bounds; }
 
 protected:
     // mesh Data
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+    AABB bounds;
+
+    void Initialize();
+    void ComputeBounds();
 
 private:
     // render data

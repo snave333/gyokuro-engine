@@ -6,6 +6,8 @@
 
 #include <glm/glm.hpp>
 
+struct AABB;
+
 class Model : public SceneNode {
 public:
     Model(Mesh* mesh) : SceneNode() { this->mesh = mesh; };
@@ -15,6 +17,8 @@ public:
     // void AddMesh(const Mesh &mesh);
 
     void Draw(Shader &shader) const { mesh->Draw(shader); }
+
+    AABB GetBounds();
 
 protected:
     Mesh* mesh = nullptr;

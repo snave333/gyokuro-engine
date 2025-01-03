@@ -11,7 +11,7 @@ class FlyCamera;
 
 class SceneController {
 public:
-    SceneController(Renderer* renderer);
+    SceneController(Renderer* renderer, const int& width, const int& height);
     ~SceneController();
 
     void Update(float dt);

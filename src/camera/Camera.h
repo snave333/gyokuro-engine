@@ -2,7 +2,6 @@
 #define CAMERA_H
 
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 class Camera {
 public:
@@ -13,9 +12,7 @@ public:
     // constructor
     Camera(glm::mat4 projection) { this->projection = projection; };
 
-    glm::mat4 GetProjection() const {
-        return projection;
-    };
+    const glm::mat4& GetProjection() { return projection; };
 
 protected:
     glm::mat4 view;

@@ -16,6 +16,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices) {
 }
 
 void Mesh::Initialize() {
+    ComputeBounds();
+    
     if(VAO != 0) {
         return;
     }
@@ -51,6 +53,20 @@ void Mesh::Initialize() {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void Mesh::ComputeBounds() {
+    // init min and max with extreme values
+    glm::vec3 minPoint(std::numeric_limits<float>::max());
+    glm::vec3 maxPoint(std::numeric_limits<float>::lowest());
+
+    // iterate through the vertex array
+    for (const auto& vertex : vertices) {
+        minPoint = glm::min(minPoint, vertex.position);
+        maxPoint = glm::max(maxPoint, vertex.position);
+    }
+
+    bounds = { minPoint, maxPoint };
 }
 
 Mesh::~Mesh() {

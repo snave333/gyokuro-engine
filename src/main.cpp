@@ -44,7 +44,7 @@ int main(int argc, const char * argv[]) {
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     // create the window object, and make the window context the main context
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Gyokuro", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(512, 512, "Gyokuro", NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -73,7 +73,7 @@ int main(int argc, const char * argv[]) {
 
     // our rendering managers
     renderer = new Renderer(window);
-    sceneController = new SceneController(renderer);
+    sceneController = new SceneController(renderer, width, height);
 
     // timing
     float currentTime;

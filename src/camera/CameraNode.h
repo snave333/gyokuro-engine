@@ -3,6 +3,9 @@
 
 #include <camera/Camera.h>
 #include <scene/SceneNode.h>
+#include <math/Frustum.h>
+
+struct Frustum;
 
 class CameraNode : public SceneNode {
 public:
@@ -10,7 +13,9 @@ public:
     ~CameraNode();
 
     glm::mat4 GetView();
-    glm::mat4 GetProjection() const { return camera->GetProjection(); };
+    const glm::mat4& GetProjection() { return camera->GetProjection(); };
+    
+    Frustum GetFrustum();
 
 protected:
     Camera* camera = nullptr;

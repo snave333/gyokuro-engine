@@ -14,16 +14,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-SceneController::SceneController(Renderer* r) {
+SceneController::SceneController(Renderer* r, const int& width, const int& height) {
     renderer = r;
 
-    float w = 800;
-    float h = 600;
-    camera = new FlyCamera(Camera::PerspectiveCamera(45, w / h));
-    // camera = new FlyCamera(Camera::OrthographicCamera(3, w / h));
+    camera = new FlyCamera(Camera::PerspectiveCamera(90, width / height));
+    // camera = new FlyCamera(Camera::OrthographicCamera(3, width / height));
 
     camera->Translate(0, 0, 5);
-    camera->Rotate(0, 15, 0);
+    // camera->Rotate(0, 45, 0);
 
     model = new Model(new Cube());
 
@@ -92,6 +90,31 @@ void SceneController::Render() {
 
 void SceneController::RenderScene() {
     renderer->Clear();
+
+    /**
+     * vector<Mesh*> visible
+     * vector<Mesh*> opaque
+     * vector<Mesh*> transparent
+     * 
+     * - update view matrix uniform block
+     * - frustum culling
+     * - separate opaque/transparent
+     * - render opaque :: renderer->RenderOpaque(opaque)
+     * - skybox pass
+     * - sort transparent back to front
+     * - render transparent :: renderer->RenderOpaque(opaque)
+     */
+
+    const Frustum& cameraFrustum = camera->GetFrustum();
+    AABB bounds = model->GetBounds();
+
+    FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds);
+    bool visible = result == Inside || result == Intersecting;
+
+    if(!visible) {
+        std::cout << "Not visible" << std::endl;
+        return;
+    }
 
     // draw scene objects
     

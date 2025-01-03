@@ -116,7 +116,9 @@ void Renderer::PrintGLInfo() {
 }
 
 void Renderer::BeginFrame() {
-
+    /**
+     * bind frame buffer
+     */
 }
 
 void Renderer::Clear() {
@@ -124,6 +126,12 @@ void Renderer::Clear() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::EndFrame() {    
+void Renderer::EndFrame() {
+    /**
+     * post-processing
+     * unbind frame buffer
+     * render full-screen quad (with gamma correction)
+     */
+
     glfwSwapBuffers(window);
 }
