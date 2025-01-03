@@ -3,6 +3,12 @@
 
 struct GLFWwindow;
 
+enum RenderType {
+    Opaque,
+    Transparent,
+    Additive
+};
+
 class Renderer {
 public:
     Renderer(GLFWwindow* window);

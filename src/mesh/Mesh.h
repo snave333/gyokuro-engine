@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <math/AABB.h>
+#include <renderer/Renderer.h>
 
 class Shader;
 
@@ -24,6 +25,7 @@ public:
     ~Mesh();
 
     void Draw(Shader &shader);
+    const RenderType& GetRenderType() { return renderType; }
 
     const AABB& GetBounds() { return bounds; }
 
@@ -32,6 +34,7 @@ protected:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     AABB bounds;
+    RenderType renderType = Opaque;
 
     void Initialize();
     void ComputeBounds();

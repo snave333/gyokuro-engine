@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 struct AABB;
+enum RenderType;
 
 class Model : public SceneNode {
 public:
@@ -17,6 +18,7 @@ public:
     // void AddMesh(const Mesh &mesh);
 
     void Draw(Shader &shader) const { mesh->Draw(shader); }
+    const RenderType& GetRenderType() { return mesh->GetRenderType(); }
 
     const AABB& GetBounds();
     const std::array<glm::vec3, 8>& GetLUT() { return boundsLUT; }

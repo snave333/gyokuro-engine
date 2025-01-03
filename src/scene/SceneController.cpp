@@ -9,6 +9,7 @@
 #include <mesh/Cube.h>
 #include <mesh/Model.h>
 #include <camera/FlyCamera.h>
+#include <utilities/Clock.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
@@ -127,52 +128,58 @@ void SceneController::RenderScene() {
      * - render transparent :: renderer->RenderOpaque(opaque)
      */
 
-    const Frustum& cameraFrustum = camera->GetFrustum();
-    std::array<std::pair<int, int>, 6> frustumLUT = cameraFrustum.ComputeAABBTestLUT();
+    std::vector<Model*> visibleModels = {};
+    {
+        CLOCK(frustum_culling);
 
-    int totalCount = models.size();
-    int drawCount = 0;
-    for(const auto& model : models) {
-        const AABB& bounds = model->GetBounds();
-        const std::array<glm::vec3, 8>& boundsLUT = model->GetLUT();
+        const Frustum& cameraFrustum = camera->GetFrustum();
+        std::array<std::pair<int, int>, 6> frustumLUT = cameraFrustum.ComputeAABBTestLUT();
 
-        // FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds);
-        FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT);
+        for(const auto& model : models) {
+            const AABB& bounds = model->GetBounds();
+            const std::array<glm::vec3, 8>& boundsLUT = model->GetLUT();
 
-        if(result == Outside) {
-            continue;
+            // FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds);
+            FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT);
+
+            if(result != Outside) {
+                visibleModels.push_back(model);
+            }
         }
-
-        // draw scene objects
-        
-        shader->Use();
-
-        // set any shader uniforms
-        shader->SetMat4("model", model->GetTransform());
-        shader->SetMat4("view", camera->GetView());
-
-        switch (result)
-        {
-            case Inside:
-                shader->SetVec4("tint", glm::vec4(1));
-                break;
-            case Intersecting:
-                shader->SetVec4("tint", glm::vec4(0.5f, 0.5f, 1, 1));
-                break;
-            case Outside:
-                shader->SetVec4("tint", glm::vec4(1, 0.5f, 0.5f, 1));
-                break;
-        }
-
-        texture1->Bind(0);
-        texture2->Bind(1);
-
-        model->Draw(*shader);
-
-        drawCount++;
     }
 
-    std::cout << "Culled " << (totalCount - drawCount) << " meshes" << std::endl;
+    // FIXME this should be done as models are added to the scene
+    std::vector<Model*> opaqueModels = {};
+    std::vector<Model*> transparentModels = {};
+    for(const auto& model : visibleModels) {
+        if(model->GetRenderType() == Opaque) {
+            opaqueModels.push_back(model);
+        }
+        else {
+            transparentModels.push_back(model);
+        }
+    }
+
+    {
+        // CLOCK(render_opaque);
+
+        for(const auto& model : opaqueModels) {
+            shader->Use();
+
+            // set any shader uniforms
+            shader->SetMat4("model", model->GetTransform());
+            shader->SetMat4("view", camera->GetView());
+
+            texture1->Bind(0);
+            texture2->Bind(1);
+
+            model->Draw(*shader);
+        }
+    }
+
+    // int totalCount = models.size();
+    // int drawCount = visibleModels.size();
+    // std::cout << "Culled " << (totalCount - drawCount) << " meshes" << std::endl;
 }
 
 void SceneController::OnKeyPressed(int key, float dt) {
