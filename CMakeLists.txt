@@ -38,8 +38,6 @@ add_executable(Gyokuro
     src/shading/Shader.cpp
     src/shading/Texture2D.cpp
     src/mesh/Mesh.cpp
-    src/mesh/Quad.cpp
-    src/mesh/Cube.cpp
     src/mesh/Model.cpp
     src/camera/Camera.cpp
     src/camera/CameraNode.cpp
