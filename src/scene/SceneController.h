@@ -23,6 +23,7 @@ public:
 
 private:
     Renderer* renderer = nullptr;
+    glm::vec2 size;
 
     FlyCamera* camera = nullptr;
 

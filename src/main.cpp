@@ -40,9 +40,6 @@ int main(int argc, const char * argv[]) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    // enable msaa
-    glfwWindowHint(GLFW_SAMPLES, 4);
-
     // create the window object, and make the window context the main context
     GLFWwindow* window = glfwCreateWindow(512, 512, "Gyokuro", NULL, NULL);
     if (window == NULL) {
@@ -72,7 +69,7 @@ int main(int argc, const char * argv[]) {
     glfwSetCursorPosCallback(window, onMouseInput);
 
     // our rendering managers
-    renderer = new Renderer(window);
+    renderer = new Renderer(window, width, height);
     sceneController = new SceneController(renderer, width, height);
 
     // timing
@@ -103,11 +100,10 @@ int main(int argc, const char * argv[]) {
     }
 
     // clean up
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    
     delete sceneController;
     delete renderer;
+    glfwDestroyWindow(window);
+    glfwTerminate();
     
     return 0;
 }

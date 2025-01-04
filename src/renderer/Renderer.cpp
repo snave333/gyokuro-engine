@@ -2,29 +2,67 @@
 #include <iostream>
 
 #include <renderer/Renderer.h>
+#include <renderer/ScreenQuad.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-Renderer::Renderer(GLFWwindow* window) {
+Renderer::Renderer(GLFWwindow* window, const int& width, const int& height) {
     this->window = window;
+    size = glm::vec2(width, height);
+
+    CreateFrameBuffer();
 
     PrintGLInfo();
 
-    // enable depth testing and backface fulling
-    glEnable(GL_DEPTH_TEST);
+    // enable backface fulling
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    // enable msaa
-    glEnable(GL_MULTISAMPLE);
-    
-    //glPolygonMode(GL_FRONT, GL_LINE); // uncomment to draw in wireframe
     glPolygonMode(GL_FRONT, GL_FILL);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // uncomment to draw in wireframe
 }
 
 Renderer::~Renderer() {
     window = nullptr;
+
+    delete screenQuad;
+    screenQuad = nullptr;
+
+    glDeleteFramebuffers(1, &framebuffer);
+    glDeleteTextures(1, &textureColorbuffer);
+    glDeleteRenderbuffers(1, &depthRenderbuffer);
+}
+
+void Renderer::CreateFrameBuffer() {
+    screenQuad = new ScreenQuad();
+    
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    // generate texture
+    glGenTextures(1, &textureColorbuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // attach it to currently bound framebuffer object
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+
+    // render buffer object for depth / stencil
+    glGenRenderbuffers(1, &depthRenderbuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer); 
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, size.x, size.y);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "ERROR::RENDERER::FRAMEBUFFER_NOT_COMPLETE" << std::endl;
+    }
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);  
 }
 
 void Renderer::PrintGLInfo() {
@@ -116,22 +154,25 @@ void Renderer::PrintGLInfo() {
 }
 
 void Renderer::BeginFrame() {
-    /**
-     * bind frame buffer
-     */
-}
+    // bind and clear our frame buffer
 
-void Renderer::Clear() {
-    glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glEnable(GL_DEPTH_TEST);
+
+    glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Renderer::EndFrame() {
-    /**
-     * post-processing
-     * unbind frame buffer
-     * render full-screen quad (with gamma correction)
-     */
+    // unbind our framebuffer, and render the full screen quad
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+    glDisable(GL_DEPTH_TEST);
+
+    glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    screenQuad->Draw(textureColorbuffer);
 
     glfwSwapBuffers(window);
 }

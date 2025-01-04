@@ -17,14 +17,12 @@ struct Vertex {
 
 class Mesh {
 public:
-    unsigned int VAO;
-    
     // constructor
     Mesh();
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
     ~Mesh();
 
-    void Draw(Shader &shader);
+    void Draw(const Shader& shader);
     const RenderType& GetRenderType() { return renderType; }
 
     const AABB& GetBounds() { return bounds; }
@@ -41,6 +39,7 @@ protected:
 
 private:
     // render data
+    unsigned int VAO;
     unsigned int VBO;
     unsigned int EBO;
 };

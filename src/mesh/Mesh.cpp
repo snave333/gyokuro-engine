@@ -75,7 +75,7 @@ Mesh::~Mesh() {
     glDeleteBuffers(1, &EBO);
 }
 
-void Mesh::Draw(Shader &shader) {
+void Mesh::Draw(const Shader& shader) {
     if(VAO == 0) {
         return;
     }

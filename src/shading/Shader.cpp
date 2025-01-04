@@ -1,5 +1,5 @@
 
-#include <renderer/Shader.h>
+#include <shading/Shader.h>
 #include <FileUtils.h>
 
 #include <glad/glad.h>
@@ -102,7 +102,7 @@ Shader::~Shader() {
     glDeleteProgram(ID);
 }
 
-void Shader::Use() {
+void Shader::Use() const {
     glUseProgram(ID);
 }
 

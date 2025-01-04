@@ -34,8 +34,9 @@ set(CMAKE_BUILD_TYPE Debug)
 add_executable(Gyokuro
     src/main.cpp
     src/renderer/Renderer.cpp
-    src/renderer/Shader.cpp
-    src/renderer/Texture2D.cpp
+    src/renderer/ScreenQuad.cpp
+    src/shading/Shader.cpp
+    src/shading/Texture2D.cpp
     src/mesh/Mesh.cpp
     src/mesh/Quad.cpp
     src/mesh/Cube.cpp

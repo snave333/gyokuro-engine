@@ -3,8 +3,8 @@
 
 #include <scene/SceneController.h>
 #include <renderer/Renderer.h>
-#include <renderer/Shader.h>
-#include <renderer/Texture2D.h>
+#include <shading/Shader.h>
+#include <shading/Texture2D.h>
 #include <mesh/Quad.h>
 #include <mesh/Cube.h>
 #include <mesh/Model.h>
@@ -17,6 +17,7 @@
 
 SceneController::SceneController(Renderer* r, const int& width, const int& height) {
     renderer = r;
+    size = glm::vec2(width, height);
 
     camera = new FlyCamera(Camera::PerspectiveCamera(60, width / height));
     // camera = new FlyCamera(Camera::OrthographicCamera(3, width / height));
@@ -49,7 +50,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     // glm::vec3 dir = model->GetRight();
     // std::cout << dir.x << ", " << dir.y << ", " << dir.z << std::endl;
 
-    shader = new Shader("shader.vert", "shader.frag");
+    shader = new Shader("default.vert", "shader.frag");
 
     texture1 = new Texture2D("wall.jpg");
     texture2 = new Texture2D("awesomeface.png", true);
@@ -112,8 +113,6 @@ void SceneController::Render() {
 }
 
 void SceneController::RenderScene() {
-    renderer->Clear();
-
     /**
      * vector<Mesh*> visible
      * vector<Mesh*> opaque
@@ -130,7 +129,7 @@ void SceneController::RenderScene() {
 
     std::vector<Model*> visibleModels = {};
     {
-        CLOCK(frustum_culling);
+        // CLOCK(frustum_culling);
 
         const Frustum& cameraFrustum = camera->GetFrustum();
         std::array<std::pair<int, int>, 6> frustumLUT = cameraFrustum.ComputeAABBTestLUT();

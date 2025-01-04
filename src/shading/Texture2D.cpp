@@ -1,5 +1,5 @@
 
-#include <renderer/Texture2D.h>
+#include <shading/Texture2D.h>
 #include <FileUtils.h>
 
 #include <glad/glad.h>
