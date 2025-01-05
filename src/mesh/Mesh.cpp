@@ -1,23 +1,19 @@
 
 #include <mesh/Mesh.h>
+#include <mesh/Geometry.h>
+#include <shading/Material.h>
 
 #include <glad/glad.h>
 
-Mesh::Mesh() {
-    vertices = {};
-    indices = {};
-}
-
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices) {
-    this->vertices = vertices;
-    this->indices = indices;
+Mesh::Mesh(Geometry* geometry, Material* material) {
+    this->geometry = geometry;
+    this->material = material;
 
     Initialize();
+    ComputeBounds();
 }
 
 void Mesh::Initialize() {
-    ComputeBounds();
-    
     if(VAO != 0) {
         return;
     }
@@ -32,11 +28,11 @@ void Mesh::Initialize() {
     
     // copy our vertices array in a buffer
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, geometry->vertices.size() * sizeof(Vertex), &geometry->vertices[0], GL_STATIC_DRAW);
 
     // copy our indices
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, geometry->indices.size() * sizeof(unsigned int), &geometry->indices[0], GL_STATIC_DRAW);
     
     // link the vertex attribute pointers
     // positions
@@ -61,7 +57,7 @@ void Mesh::ComputeBounds() {
     glm::vec3 maxPoint(std::numeric_limits<float>::lowest());
 
     // iterate through the vertex array
-    for (const auto& vertex : vertices) {
+    for (const auto& vertex : geometry->vertices) {
         minPoint = glm::min(minPoint, vertex.position);
         maxPoint = glm::max(maxPoint, vertex.position);
     }
@@ -70,17 +66,23 @@ void Mesh::ComputeBounds() {
 }
 
 Mesh::~Mesh() {
+    delete geometry;
+    geometry = nullptr;
+
+    delete material;
+    material = nullptr;
+
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
 }
 
-void Mesh::Draw(const Shader& shader) {
+void Mesh::Draw() {
     if(VAO == 0) {
         return;
     }
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, geometry->indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

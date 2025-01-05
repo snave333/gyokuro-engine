@@ -3,10 +3,12 @@
 
 #include <scene/SceneController.h>
 #include <renderer/Renderer.h>
+#include <shading/UnlitMaterial.h>
 #include <shading/Shader.h>
 #include <shading/Texture2D.h>
 #include <mesh/Quad.h>
 #include <mesh/Cube.h>
+#include <mesh/Torus.h>
 #include <mesh/Model.h>
 #include <camera/FlyCamera.h>
 #include <utilities/Clock.h>
@@ -21,10 +23,10 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
     camera = new FlyCamera(Camera::PerspectiveCamera(60, width / height));
     // camera = new FlyCamera(Camera::OrthographicCamera(3, width / height));
-
-    camera->Translate(0, 0, 5);
+    camera->Translate(0, 0, 3);
 
     // spawn an array of models for frustum culling testing
+    /*
     int w = 10;
     int h = 5;
     int d = 10;
@@ -35,36 +37,23 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     for(int x = -floorf(halfW); x < ceilf(halfW); x++) {
         for(int y = -floorf(halfH); y < ceilf(halfH); y++) {
             for(int z = -floorf(halfD); z < ceilf(halfD); z++) {
-                Model* model = new Model(new Cube());
+                Model* model = new Model(new Mesh(new Torus(), new UnlitMaterial()));
                 model->SetPosition(x * spacing, y * spacing, z * spacing);
                 model->SetScale(0.5f);
                 models.push_back(model);
             }
         }
     }
-    // model = new Model(new Cube());
+    */
+    
+    Model* model = new Model(new Mesh(new Torus(), new UnlitMaterial(glm::vec4(1, 0, 0, 1), "wall.jpg")));
+    models.push_back(model);
 
-    // model->Translate(2, 0, 0);
-    // model->Rotate(0, 0, 30);
+    model->Translate(0, -1, 0);
+    model->Rotate(90, 0, 0);
     // model->Scale(2);
     // glm::vec3 dir = model->GetRight();
     // std::cout << dir.x << ", " << dir.y << ", " << dir.z << std::endl;
-
-    shader = new Shader("default.vert", "shader.frag");
-
-    texture1 = new Texture2D("wall.jpg");
-    texture2 = new Texture2D("awesomeface.png", true);
-
-    // assigned each sampler to a texture unit
-    shader->Use();
-    shader->SetInt("texture1", 0);
-    shader->SetInt("texture2", 1);
-
-    // set our MVP matrices
-
-    // shader->SetMat4("model", model->GetTransform());
-    // shader->SetMat4("view", camera->GetView());
-    shader->SetMat4("projection", camera->GetProjection());
 }
 
 SceneController::~SceneController() {
@@ -75,17 +64,8 @@ SceneController::~SceneController() {
 
     for(const auto& model : models) {
         delete model;
-        // model = nullptr;
     }
     models.clear();
-
-    delete shader;
-    shader = nullptr;
-
-    delete texture1;
-    texture1 = nullptr;
-    delete texture2;
-    texture2 = nullptr;
 }
 
 void SceneController::Update(float dt) {
@@ -163,16 +143,17 @@ void SceneController::RenderScene() {
         // CLOCK(render_opaque);
 
         for(const auto& model : opaqueModels) {
-            shader->Use();
+            model->Queue();
+            const Shader& shader = model->GetShader();
 
             // set any shader uniforms
-            shader->SetMat4("model", model->GetTransform());
-            shader->SetMat4("view", camera->GetView());
+            shader.SetMat4("model", model->GetTransform());
+            shader.SetMat4("view", camera->GetView());
+            shader.SetMat4("projection", camera->GetProjection());
 
-            texture1->Bind(0);
-            texture2->Bind(1);
+            // TODO set uniform data for any scene direct lights, if applicable
 
-            model->Draw(*shader);
+            model->Draw();
         }
     }
 

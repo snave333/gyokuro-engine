@@ -6,6 +6,7 @@
 
 #include <glm/glm.hpp>
 
+class Shader;
 struct AABB;
 enum RenderType;
 
@@ -17,7 +18,10 @@ public:
     // TODO make mesh a list of meshes
     // void AddMesh(const Mesh &mesh);
 
-    void Draw(Shader &shader) const { mesh->Draw(shader); }
+    void Queue() const { mesh->Queue(); }
+    void Draw() const { mesh->Draw(); }
+
+    const Shader& GetShader() { return mesh->GetShader(); }
     const RenderType& GetRenderType() { return mesh->GetRenderType(); }
 
     const AABB& GetBounds();

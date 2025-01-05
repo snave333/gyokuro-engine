@@ -5,6 +5,7 @@
 
 Model::Model(Mesh* mesh) : SceneNode() {
     this->mesh = mesh;
+    
     UpdateBounds();
 };
 

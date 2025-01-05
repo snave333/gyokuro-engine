@@ -1,38 +1,36 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include <vector>
+
 #include <glm/glm.hpp>
 
-#include <vector>
 #include <math/AABB.h>
-#include <renderer/Renderer.h>
+#include <shading/Material.h>
 
 class Shader;
-
-struct Vertex {
-    glm::vec3 position;
-    glm::vec3 normal;
-    glm::vec2 texCoord;
-};
+struct Geometry;
+enum RenderType;
 
 class Mesh {
 public:
     // constructor
-    Mesh();
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
+    Mesh(Geometry* geometry, Material* material);
     ~Mesh();
 
-    void Draw(const Shader& shader);
-    const RenderType& GetRenderType() { return renderType; }
+    void Queue() { material->Queue(); }
+    void Draw();
+
+    const Shader& GetShader() { return material->GetShader(); }
+    const RenderType& GetRenderType() { return material->renderType; }
 
     const AABB& GetBounds() { return bounds; }
 
 protected:
-    // mesh Data
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
+    Geometry* geometry = nullptr;
+    Material* material = nullptr;
+
     AABB bounds;
-    RenderType renderType = Opaque;
 
     void Initialize();
     void ComputeBounds();

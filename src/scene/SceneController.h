@@ -18,7 +18,7 @@ public:
     void Render();
 
     void OnKeyPressed(int key, float dt);
-    void OnKeyReleased(int key, float dt);
+    // void OnKeyReleased(int key, float dt);
     void OnMouseMove(float x, float y);
 
 private:
@@ -28,9 +28,6 @@ private:
     FlyCamera* camera = nullptr;
 
     std::vector<Model*> models = {};
-    Texture2D* texture1 = nullptr;
-    Texture2D* texture2 = nullptr;
-    Shader* shader = nullptr;
 
     float lastMouseX;
     float lastMouseY;

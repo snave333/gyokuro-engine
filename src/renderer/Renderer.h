@@ -14,7 +14,6 @@ public:
     void CreateFrameBuffer();
 
     void BeginFrame();
-    // void Clear();
     // void RenderOpaque();
     // void RenderTransparent();
     void EndFrame();
@@ -26,7 +25,7 @@ private:
     const glm::vec3 clearColor = { 0.39f, 0.58f, 0.93f };
 
     // frame buffer
-    ScreenQuad* screenQuad;
+    ScreenQuad* screenQuad = nullptr;
     unsigned int framebuffer;
     unsigned int textureColorbuffer;
     unsigned int depthRenderbuffer;
