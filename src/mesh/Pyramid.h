@@ -1,10 +1,9 @@
 #ifndef PYRAMID_H
 #define PYRAMID_H
 
-#include <mesh/Mesh.h>
+#include <mesh/Geometry.h>
 
-class Pyramid : public Mesh {
-public:
+struct Pyramid : public Geometry {
     Pyramid(float halfBase = 0.5f, float height = 1.0f) {
         // define the vertices of the pyramid
         glm::vec3 top0(0.0f, height, 0.0f);             // 0
@@ -62,8 +61,6 @@ public:
             12, 14, 13, // base tri 1
             12, 15, 14, // base tri 2
         };
-
-        Initialize();
     }
 };
 

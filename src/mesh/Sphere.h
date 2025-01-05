@@ -1,11 +1,10 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include <mesh/Mesh.h>
+#include <mesh/Geometry.h>
 #include <glm/gtc/constants.hpp>
 
-class Sphere : public Mesh {
-public:
+struct Sphere : public Geometry {
     Sphere(float radius = 0.5f, int stacks = 20, int slices = 20) {
         // generate vertices
         for (int stack = 0; stack <= stacks; ++stack) {
@@ -44,8 +43,6 @@ public:
                 indices.push_back(first + 1);
             }
         }
-
-        Initialize();
     }
 };
 

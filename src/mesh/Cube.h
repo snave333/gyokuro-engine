@@ -1,10 +1,9 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-#include <mesh/Mesh.h>
+#include <mesh/Geometry.h>
 
-class Cube : public Mesh {
-public:
+struct Cube : public Geometry {
     Cube() {
         glm::vec3 positions[] = {
             // +x
@@ -118,8 +117,6 @@ public:
             16, 17, 18, 16, 18, 19,
             20, 21, 22, 20, 22, 23
         };
-
-        Initialize();
     }
 };
 

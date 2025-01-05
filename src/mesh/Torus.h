@@ -1,11 +1,10 @@
 #ifndef TORUS_H
 #define TORUS_H
 
-#include <mesh/Mesh.h>
+#include <mesh/Geometry.h>
 #include <glm/gtc/constants.hpp>
 
-class Torus : public Mesh {
-public:
+struct Torus : public Geometry {
     Torus(float majorRadius = 0.5f,
           float minorRadius = 0.2f,
           int majorSegments = 20,
@@ -55,8 +54,6 @@ public:
                 indices.push_back(current + 1);
             }
         }
-
-        Initialize();
     }
 };
 

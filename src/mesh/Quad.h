@@ -1,10 +1,9 @@
 #ifndef QUAD_H
 #define QUAD_H
 
-#include <mesh/Mesh.h>
+#include <mesh/Geometry.h>
 
-class Quad : public Mesh {
-public:
+struct Quad : public Geometry {
     Quad() {
         vertices = {
             { { -0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f } }, // bottom left
@@ -16,8 +15,6 @@ public:
             0, 1, 2, // first triangle
             0, 2, 3  // second triangle
         };
-
-        Initialize();
     }
 };
 
