@@ -22,6 +22,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     renderer = r;
     size = glm::vec2(width, height);
 
+    // setup our default camera
     camera = new FlyCamera(Camera::PerspectiveCamera(60, width / height));
     // camera = new FlyCamera(Camera::OrthographicCamera(3, width / height));
     camera->Translate(0, 0, 3);
@@ -61,10 +62,16 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     models.push_back(m2);
     models.push_back(m3);
 
+    // set the uniform block binding points
     for(const auto& m : models) {
-        const Shader& shader = m->GetShader();
+        const Material& material = m->GetMaterial();
+        const Shader& shader = material.GetShader();
+
         shader.Use();
-        shader.SetMat4("projection", camera->GetProjection());
+        shader.SetUniformBlockBinding("Camera", 0);
+        if(material.usesDirectLighting) {
+            // shader.SetUniformBlockBinding("Lights", 1);
+        }
     }
 }
 
@@ -97,7 +104,7 @@ void SceneController::Render() {
         return;
     }
     
-    renderer->BeginFrame(); // set render targets, etc
+    renderer->BeginFrame(); // set frame buffer, clear
 
     RenderScene();
     
@@ -139,6 +146,14 @@ void SceneController::RenderScene() {
         }
     }
 
+    // early exit if nothing is visible
+    if(visibleModels.empty()) {
+        return;
+    }
+
+    // update the camera view matrix for our shaders
+    camera->UpdateViewMatrixUniform();
+
     // FIXME this should be done as models are added to the scene
     std::vector<Model*> opaqueModels = {};
     std::vector<Model*> transparentModels = {};
@@ -156,10 +171,10 @@ void SceneController::RenderScene() {
 
         for(const auto& model : opaqueModels) {
             model->Queue();
-            const Shader& shader = model->GetShader();
+            const Material& material = model->GetMaterial();
+            const Shader& shader = material.GetShader();
 
             // set any shader uniforms
-            shader.SetMat4("view", camera->GetView());
             shader.SetMat4("model", model->GetTransform());
             shader.SetMat4("normalMatrix", model->GetNormalMatrix());
 

@@ -10,8 +10,10 @@ out VS_OUT {
     vec2 TexCoord;
 } vs_out;
 
-uniform mat4 projection;
-uniform mat4 view;
+layout (std140) uniform Camera {
+    mat4 projection;
+    mat4 view;
+};
 
 uniform mat4 model;
 uniform mat4 normalMatrix;

@@ -15,7 +15,7 @@ public:
 
     virtual void Queue() = 0; // pure virtual
     
-    const Shader& GetShader() { return *shader; }
+    const Shader& GetShader() const { return *shader; }
 
     RenderType renderType = Opaque;
     bool usesDirectLighting = false; // include scene direct lighting

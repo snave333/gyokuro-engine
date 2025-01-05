@@ -21,7 +21,7 @@ public:
     void Queue() { material->Queue(); }
     void Draw();
 
-    const Shader& GetShader() { return material->GetShader(); }
+    const Material& GetMaterial() { return *material; }
     const RenderType& GetRenderType() { return material->renderType; }
 
     const AABB& GetBounds() { return bounds; }
