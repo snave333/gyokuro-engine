@@ -3,7 +3,7 @@
 #include <shading/Shader.h>
 #include <shading/Texture2D.h>
 
-UnlitMaterial::UnlitMaterial(glm::vec4 color, const char* imagePath) {
+UnlitMaterial::UnlitMaterial(glm::vec3 color, const char* imagePath) {
     this->color = color;
 
     if(imagePath == nullptr) {
@@ -26,7 +26,7 @@ UnlitMaterial::~UnlitMaterial() {
 void UnlitMaterial::Queue() {
     shader->Use();
 
-    shader->SetVec4("color", color);
+    shader->SetVec3("color", color);
 
     if(texture != nullptr) {
         texture->Bind(0);

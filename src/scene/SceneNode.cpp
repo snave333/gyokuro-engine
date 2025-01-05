@@ -10,6 +10,14 @@ const glm::mat4& SceneNode::GetTransform() {
     return transform;
 }
 
+const glm::mat4& SceneNode::GetNormalMatrix() {
+    if(isDirty) {
+        UpdateMatrices();
+    }
+
+    return normalMatrix;
+}
+
 void SceneNode::UpdateMatrices() {
     glm::mat4 t = glm::mat4(1.0f);
     t = glm::translate(t, position);
@@ -20,6 +28,8 @@ void SceneNode::UpdateMatrices() {
     s = glm::scale(s, scale);
 
     transform = t * r * s;
+    normalMatrix = glm::transpose(glm::inverse(t * r));
+    
     isDirty = false;
 }
 

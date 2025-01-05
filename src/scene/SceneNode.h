@@ -25,6 +25,8 @@ public:
     void SetScale(const glm::vec3 &scale);
 
     const glm::mat4& GetTransform();
+    const glm::mat4& GetNormalMatrix();
+
     glm::vec3 GetForward();
     glm::vec3 GetRight();
     glm::vec3 GetUp();
@@ -45,6 +47,7 @@ protected:
     glm::vec3 scale = glm::vec3(1);
     
     glm::mat4 transform = glm::mat4(1.0f);
+    glm::mat4 normalMatrix = glm::mat4(1.0f);
 
     bool isDirty = true;
 

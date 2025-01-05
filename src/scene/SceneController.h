@@ -27,6 +27,8 @@ private:
 
     FlyCamera* camera = nullptr;
 
+    const glm::vec3 ambientLight = { 0.1f, 0.1f, 0.1f };
+
     std::vector<Model*> models = {};
 
     float lastMouseX;

@@ -22,7 +22,7 @@ private:
     GLFWwindow* window = nullptr;
     glm::vec2 size;
 
-    const glm::vec3 clearColor = { 0.39f, 0.58f, 0.93f };
+    const glm::vec3 clearColor = { 0.2f, 0.2f, 0.2f };
 
     // frame buffer
     ScreenQuad* screenQuad = nullptr;

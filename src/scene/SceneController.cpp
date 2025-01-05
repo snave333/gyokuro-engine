@@ -4,9 +4,10 @@
 #include <scene/SceneController.h>
 #include <renderer/Renderer.h>
 #include <shading/UnlitMaterial.h>
+#include <shading/PhongMaterial.h>
 #include <shading/Shader.h>
 #include <shading/Texture2D.h>
-#include <mesh/Quad.h>
+#include <mesh/Sphere.h>
 #include <mesh/Cube.h>
 #include <mesh/Torus.h>
 #include <mesh/Model.h>
@@ -46,14 +47,25 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     }
     */
     
-    Model* model = new Model(new Mesh(new Torus(), new UnlitMaterial(glm::vec4(1, 0, 0, 1), "wall.jpg")));
-    models.push_back(model);
+    Model* m1 = new Model(new Mesh(new Sphere(), new UnlitMaterial(glm::vec3(1, 0.5, 0))));
+    m1->Translate(-4, -1, 0);
 
-    model->Translate(0, -1, 0);
-    model->Rotate(90, 0, 0);
-    // model->Scale(2);
-    // glm::vec3 dir = model->GetRight();
-    // std::cout << dir.x << ", " << dir.y << ", " << dir.z << std::endl;
+    Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(glm::vec3(0, 0.5, 1), "wall.jpg")));
+    m2->Translate(-2, -1, 0);
+
+    Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial()));
+    m3->Translate(0, -1, 0);
+    m3->Rotate(90, 0, 0);
+
+    models.push_back(m1);
+    models.push_back(m2);
+    models.push_back(m3);
+
+    for(const auto& m : models) {
+        const Shader& shader = m->GetShader();
+        shader.Use();
+        shader.SetMat4("projection", camera->GetProjection());
+    }
 }
 
 SceneController::~SceneController() {
@@ -147,9 +159,9 @@ void SceneController::RenderScene() {
             const Shader& shader = model->GetShader();
 
             // set any shader uniforms
-            shader.SetMat4("model", model->GetTransform());
             shader.SetMat4("view", camera->GetView());
-            shader.SetMat4("projection", camera->GetProjection());
+            shader.SetMat4("model", model->GetTransform());
+            shader.SetMat4("normalMatrix", model->GetNormalMatrix());
 
             // TODO set uniform data for any scene direct lights, if applicable
 
