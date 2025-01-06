@@ -28,7 +28,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     // setup our default camera
     camera = new FlyCamera(Camera::PerspectiveCamera(60, width / height));
     // camera = new FlyCamera(Camera::OrthographicCamera(3, width / height));
-    camera->Translate(0, 0, 3);
+    camera->Translate(0, 0, -3);
 
     // spawn an array of models for frustum culling testing
     /*
@@ -59,10 +59,10 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     floor->Scale(10);
 
     Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial(glm::vec3(1, 0.5, 0))));
-    m1->Translate(-4, -1, 0);
+    m1->Translate(4, -1, 0);
 
     Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(glm::vec3(0, 0.5, 1), "wall.jpg")));
-    m2->Translate(-2, -1, 0);
+    m2->Translate(2, -1, 0);
 
     Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial(glm::vec3(0.5, 0, 1), glm::vec3(0.5, 0, 1))));
     m3->Translate(0, -1, 0);
@@ -76,7 +76,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     // our test direct lighting
 
     dirLight = new LightNode(new DirectionalLight(glm::vec3(1)));
-    dirLight->Rotate(45, -60, 0);
+    dirLight->Rotate(45, 60, 0);
 
     // set the uniform block binding points
     for(const auto& m : models) {
@@ -222,10 +222,10 @@ void SceneController::OnKeyPressed(int key, float dt) {
             velocity -= camera->GetForward();
             break;
         case GLFW_KEY_A:
-            velocity -= camera->GetRight();
+            velocity += camera->GetRight();
             break;
         case GLFW_KEY_D:
-            velocity += camera->GetRight();
+            velocity -= camera->GetRight();
             break;
     }
 
@@ -243,7 +243,7 @@ void SceneController::OnMouseMove(float x, float y) {
 
     // calculate our mouse delta
 
-    float xOffset = x - lastMouseX;
+    float xOffset = lastMouseX - x;
     float yOffset = y - lastMouseY;
     lastMouseX = x;
     lastMouseY = y;

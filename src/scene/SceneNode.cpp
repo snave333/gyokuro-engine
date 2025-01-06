@@ -34,15 +34,15 @@ void SceneNode::UpdateMatrices() {
 }
 
 glm::vec3 SceneNode::GetForward() {
-    return glm::normalize(glm::vec3(0, 0, -1) * rotation);
+    return glm::normalize(glm::mat3_cast(rotation) * glm::vec3(0, 0, 1));
 }
 
 glm::vec3 SceneNode::GetRight() {
-    return glm::normalize(glm::vec3(1, 0, 0) * rotation);
+    return glm::normalize(glm::mat3_cast(rotation) * glm::vec3(1, 0, 0));
 }
 
 glm::vec3 SceneNode::GetUp() {
-    return glm::normalize(glm::vec3(0, 1, 0) * rotation);
+    return glm::normalize(glm::mat3_cast(rotation) * glm::vec3(0, 1, 0));
 }
 
 void SceneNode::SetPosition(float x, float y, float z) {
