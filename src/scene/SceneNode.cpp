@@ -34,15 +34,15 @@ void SceneNode::UpdateMatrices() {
 }
 
 glm::vec3 SceneNode::GetForward() {
-    return glm::normalize(glm::mat3_cast(rotation) * glm::vec3(0, 0, 1));
+    return glm::rotate(rotation, glm::vec3(0, 0, 1));
 }
 
 glm::vec3 SceneNode::GetRight() {
-    return glm::normalize(glm::mat3_cast(rotation) * glm::vec3(1, 0, 0));
+    return glm::rotate(rotation, glm::vec3(1, 0, 0));
 }
 
 glm::vec3 SceneNode::GetUp() {
-    return glm::normalize(glm::mat3_cast(rotation) * glm::vec3(0, 1, 0));
+    return glm::rotate(rotation, glm::vec3(0, 1, 0));
 }
 
 void SceneNode::SetPosition(float x, float y, float z) {
@@ -56,12 +56,13 @@ void SceneNode::SetPosition(const glm::vec3 &position) {
 }
 
 void SceneNode::SetRotation(float pitchDeg, float yawDeg, float rollDeg) {
-    rotation = glm::normalize(glm::quat(glm::radians(glm::vec3(pitchDeg, yawDeg, rollDeg))));
+    glm::vec3 angles = glm::radians(glm::vec3(pitchDeg, yawDeg, rollDeg));
+    rotation = glm::quat(angles);
     isDirty = true;
 }
 
 void SceneNode::SetRotation(float angleDeg, const glm::vec3 &axis) {
-    rotation = glm::normalize(glm::angleAxis(glm::radians(angleDeg), axis));
+    rotation = glm::angleAxis(glm::radians(angleDeg), axis);
     isDirty = true;
 }
 
@@ -96,13 +97,19 @@ void SceneNode::Translate(const glm::vec3 &translation) {
 }
 
 void SceneNode::Rotate(float pitchDeg, float yawDeg, float rollDeg) {
-    rotation = glm::normalize(rotation * glm::quat(glm::radians(glm::vec3(pitchDeg, yawDeg, rollDeg))));
-    isDirty = true;
+    glm::vec3 angles = glm::radians(glm::vec3(pitchDeg, yawDeg, rollDeg));
+    if(glm::length2(angles) > 0.0f) {
+        rotation = rotation * glm::quat(angles);
+        isDirty = true;
+    }
 }
 
 void SceneNode::Rotate(float angleDeg, const glm::vec3 &axis) {
-    rotation = glm::normalize(rotation * glm::angleAxis(glm::radians(angleDeg), axis));
-    isDirty = true;
+    float angleRad = glm::radians(angleDeg);
+    if(angleRad != 0.0f) {
+        rotation = rotation * glm::angleAxis(angleRad, axis);
+        isDirty = true;
+    }
 }
 
 void SceneNode::Scale(float scale) {
