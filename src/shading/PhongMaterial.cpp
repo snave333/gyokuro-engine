@@ -10,6 +10,8 @@ PhongMaterial::PhongMaterial(
     this->specular = specular;
     this->shininess = shininess;
 
+    usesDirectLighting = true;
+
     shader = new Shader("default.vert", "phong.frag");
 }
 

@@ -12,7 +12,7 @@ public:
     PhongMaterial(
         glm::vec3 diffuse = glm::vec3(0.5f),
         glm::vec3 specular = glm::vec3(1),
-        float shininess = 32);
+        float shininess = 128);
     ~PhongMaterial() override;
 
     void Queue() override;

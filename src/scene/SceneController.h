@@ -8,6 +8,7 @@ class Shader;
 class Texture2D;
 class Model;
 class FlyCamera;
+struct LightNode;
 
 class SceneController {
 public:
@@ -28,6 +29,7 @@ private:
     FlyCamera* camera = nullptr;
 
     const glm::vec3 ambientLight = { 0.1f, 0.1f, 0.1f };
+    LightNode* dirLight;
 
     std::vector<Model*> models = {};
 

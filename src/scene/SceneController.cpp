@@ -7,11 +7,14 @@
 #include <shading/PhongMaterial.h>
 #include <shading/Shader.h>
 #include <shading/Texture2D.h>
+#include <lighting/DirectionalLight.h>
+#include <mesh/Quad.h>
 #include <mesh/Sphere.h>
 #include <mesh/Cube.h>
 #include <mesh/Torus.h>
 #include <mesh/Model.h>
 #include <camera/FlyCamera.h>
+#include <lighting/LightNode.h>
 #include <utilities/Clock.h>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -48,19 +51,32 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     }
     */
     
+   // our test models
+
+    Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial()));
+    floor->Translate(0, -2, 0);
+    floor->Rotate(-90, 0, 0);
+    floor->Scale(10);
+
     Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial(glm::vec3(1, 0.5, 0))));
     m1->Translate(-4, -1, 0);
 
     Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(glm::vec3(0, 0.5, 1), "wall.jpg")));
     m2->Translate(-2, -1, 0);
 
-    Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial()));
+    Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial(glm::vec3(0.5, 0, 1), glm::vec3(0.5, 0, 1))));
     m3->Translate(0, -1, 0);
     m3->Rotate(90, 0, 0);
 
+    models.push_back(floor);
     models.push_back(m1);
     models.push_back(m2);
     models.push_back(m3);
+
+    // our test direct lighting
+
+    dirLight = new LightNode(new DirectionalLight(glm::vec3(1)));
+    dirLight->Rotate(45, -60, 0);
 
     // set the uniform block binding points
     for(const auto& m : models) {
@@ -69,8 +85,12 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
         shader.Use();
         shader.SetUniformBlockBinding("Camera", 0);
+
         if(material.usesDirectLighting) {
             // shader.SetUniformBlockBinding("Lights", 1);
+
+            shader.SetVec3("dirLight.direction", dirLight->GetForward());
+            shader.SetVec3("dirLight.color", dirLight->GetLight().color);
         }
     }
 }
@@ -85,6 +105,9 @@ SceneController::~SceneController() {
         delete model;
     }
     models.clear();
+
+    delete dirLight;
+    dirLight = nullptr;
 }
 
 void SceneController::Update(float dt) {
@@ -177,8 +200,6 @@ void SceneController::RenderScene() {
             // set any shader uniforms
             shader.SetMat4("model", model->GetTransform());
             shader.SetMat4("normalMatrix", model->GetNormalMatrix());
-
-            // TODO set uniform data for any scene direct lights, if applicable
 
             model->Draw();
         }

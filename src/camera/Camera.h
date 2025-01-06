@@ -16,7 +16,7 @@ public:
 
     const glm::mat4& GetProjection() { return projection; };
     
-    void UpdateViewMatrixUniform(const glm::mat4& view);
+    void UpdateViewMatrixUniform(const glm::mat4& view, const glm::vec3& viewPos);
 
 protected:
     glm::mat4 projection;
