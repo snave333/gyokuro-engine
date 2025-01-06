@@ -1,17 +1,15 @@
 
 #include <shading/Texture2D.h>
-#include <FileUtils.h>
+#include <resources/Resources.h>
 
 #include <glad/glad.h>
 #include <stb_image.h>
 
 #include <iostream>
 
-Texture2D::Texture2D(const char* imagePath, bool transparency) {
-    // construct our full paths to the shader files
-    std::string cwd = FileUtils::GetCurrentWorkingDirectory();
-    std::string shaderDir = FileUtils::CombinePath(cwd, FileUtils::CombinePath("resources", "textures"));
-    std::string fullImagePath = FileUtils::CombinePath(shaderDir, std::string(imagePath));
+Texture2D::Texture2D(const char* imageFileName, bool transparency) {
+    // get our full path to the texture file
+    std::string fullImagePath = Resources::GetTexturePath(imageFileName);
 
     // create and bind the texture object
     glGenTextures(1, &ID);

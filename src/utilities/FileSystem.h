@@ -9,7 +9,7 @@
 #include <windows.h>
 #endif
 
-class FileUtils {
+class FileSystem {
 private:
 
 #ifdef __APPLE__

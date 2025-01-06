@@ -2,14 +2,14 @@
 
 out vec4 FragColor;
   
-in vec2 TexCoord;
+in vec2 texCoord;
 
 uniform sampler2D screenTexture;
 uniform bool applyGammaCorrection;
 
 void main()
 {
-    vec4 color = texture(screenTexture, TexCoord);
+    vec4 color = texture(screenTexture, texCoord);
 
     if(applyGammaCorrection) {
         float gamma = 2.2;

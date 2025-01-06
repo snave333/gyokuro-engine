@@ -61,7 +61,9 @@
 			"iomanip": "cpp",
 			"filesystem": "cpp",
 			"charconv": "cpp",
-			"forward_list": "cpp"
+			"forward_list": "cpp",
+			"__tree": "cpp",
+			"map": "cpp"
 		}
 	}
 }

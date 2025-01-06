@@ -45,7 +45,8 @@ add_executable(Gyokuro
     src/camera/CameraNode.cpp
     src/camera/FlyCamera.cpp
     src/scene/SceneNode.cpp
-    src/scene/SceneController.cpp)
+    src/scene/SceneController.cpp
+    src/resources/Resources.cpp)
 
 # include any headers
 include_directories(src)

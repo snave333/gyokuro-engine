@@ -1,6 +1,6 @@
 
 #include <shading/Shader.h>
-#include <FileUtils.h>
+#include <resources/Resources.h>
 
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -9,7 +9,7 @@
 #include <sstream>
 #include <iostream>
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath) {
+Shader::Shader(const char* vertexFileName, const char* fragmentFileName) {
     // retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
@@ -21,11 +21,9 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     try {
-        // construct our full paths to the shader files
-        std::string cwd = FileUtils::GetCurrentWorkingDirectory();
-        std::string shaderDir = FileUtils::CombinePath(cwd, FileUtils::CombinePath("resources", "shaders"));
-        std::string fullVertexPath = FileUtils::CombinePath(shaderDir, std::string(vertexPath));
-        std::string fullFragmentPath = FileUtils::CombinePath(shaderDir, std::string(fragmentPath));
+        // get our full paths to the shader files
+        std::string fullVertexPath = Resources::GetShaderPath(vertexFileName);
+        std::string fullFragmentPath = Resources::GetShaderPath(fragmentFileName);
 
         // open files
         vShaderFile.open(fullVertexPath.c_str());
@@ -65,7 +63,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
     if(!success) {
         glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED " << vertexPath << "\n" << infoLog << std::endl;
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED " << vertexFileName << "\n" << infoLog << std::endl;
     };
     
     // similiar for Fragment Shader
@@ -77,7 +75,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
     if(!success) {
         glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED " << fragmentPath << "\n" << infoLog << std::endl;
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED " << fragmentFileName << "\n" << infoLog << std::endl;
     };
     
     // shader Program
