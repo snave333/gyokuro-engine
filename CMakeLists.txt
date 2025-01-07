@@ -42,6 +42,7 @@ add_executable(Gyokuro
     src/shading/Texture2D.cpp
     src/mesh/Mesh.cpp
     src/mesh/Model.cpp
+    src/mesh/AABBWireframe.cpp
     src/camera/Camera.cpp
     src/camera/CameraNode.cpp
     src/camera/FlyCamera.cpp

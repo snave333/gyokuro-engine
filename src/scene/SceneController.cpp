@@ -69,7 +69,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     m3->Translate(0, -1, 0);
     m3->Rotate(90, 0, 0);
 
-    models.push_back(floor);
+    // models.push_back(floor);
     models.push_back(m1);
     models.push_back(m2);
     models.push_back(m3);
@@ -119,6 +119,9 @@ SceneController::~SceneController() {
 }
 
 void SceneController::Update(float dt) {
+    for(const auto& m : models) {
+        m->Rotate(dt * 30, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
+    }
     // model->Translate(dt / 2, 0, 0);
     // model->Translate(glm::vec3(dt / 2, 0, 0));
     // model->Rotate(dt * 30, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
@@ -158,6 +161,8 @@ void SceneController::RenderScene() {
      */
 
     std::vector<Model*> visibleModels = {};
+
+    // frustum culling
     {
         // CLOCK(frustum_culling);
 
@@ -197,6 +202,7 @@ void SceneController::RenderScene() {
         }
     }
 
+    // opaque pass
     {
         // CLOCK(render_opaque);
 

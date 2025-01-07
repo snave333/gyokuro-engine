@@ -1,17 +1,31 @@
 
 #include <mesh/Model.h>
-
+#include <mesh/AABBWireframe.h>
 #include <math/AABB.h>
 
-Model::Model(Mesh* mesh) : SceneNode() {
+Model::Model(Mesh* mesh, bool renderBounds) : SceneNode() {
     this->mesh = mesh;
     
+    if(renderBounds) {
+        boundsRenderer = new AABBWireframe(bounds);
+    }
     UpdateBounds();
 };
 
 Model::~Model() {
     delete mesh;
     mesh = nullptr;
+
+    delete boundsRenderer;
+    boundsRenderer = nullptr;
+}
+
+void Model::Draw() {
+    mesh->Draw();
+
+    if(boundsRenderer != nullptr) {
+        boundsRenderer->Draw();
+    }
 }
 
 const AABB& Model::GetBounds() {
@@ -53,4 +67,8 @@ void Model::UpdateBounds() {
     }
 
     bounds = { newMin, newMax };
+
+    if(boundsRenderer != nullptr) {
+        boundsRenderer->Update(bounds);
+    }
 }

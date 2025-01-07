@@ -15,8 +15,8 @@ public:
     void RenderText(std::string text, unsigned int x, unsigned int y, float scale, glm::vec3 color);
 
 private:
-    Font* font;
-    Shader* shader;
+    Font* font = nullptr;
+    Shader* shader = nullptr;
 
     unsigned int VAO;
     unsigned int VBO;
