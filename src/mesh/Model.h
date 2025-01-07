@@ -14,7 +14,7 @@ enum RenderType;
 
 class Model : public SceneNode {
 public:
-    Model(Mesh* mesh, bool renderBounds = true);
+    Model(Mesh* mesh, bool renderBounds = false);
     ~Model();
 
     // TODO make mesh a list of meshes
@@ -38,6 +38,7 @@ private:
     AABBWireframe* boundsRenderer = nullptr;
 
     void UpdateBounds();
+    void UpdateBoundsLUT();
 };
 
 #endif // MODEL_NODE_H

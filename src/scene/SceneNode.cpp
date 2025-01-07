@@ -19,16 +19,13 @@ const glm::mat4& SceneNode::GetNormalMatrix() {
 }
 
 void SceneNode::UpdateMatrices() {
-    glm::mat4 t = glm::mat4(1.0f);
-    t = glm::translate(t, position);
+    transform = glm::mat4(1.0f);
     
-    glm::mat4 r = glm::toMat4(rotation);
+    transform = glm::translate(transform, position);
+    transform *= glm::toMat4(rotation);
+    transform = glm::scale(transform, scale);
 
-    glm::mat4 s = glm::mat4(1.0f);
-    s = glm::scale(s, scale);
-
-    transform = t * r * s;
-    normalMatrix = glm::transpose(glm::inverse(t * r));
+    normalMatrix = glm::transpose(glm::inverse(transform));
     
     isDirty = false;
 }

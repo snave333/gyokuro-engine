@@ -33,7 +33,7 @@ Frustum CameraNode::GetFrustum() {
         { clipMatrix[0][3] + clipMatrix[0][0], 
           clipMatrix[1][3] + clipMatrix[1][0], 
           clipMatrix[2][3] + clipMatrix[2][0] },
-        clipMatrix[3][3] + clipMatrix[3][0]
+          clipMatrix[3][3] + clipMatrix[3][0]
     };
 
     // right
@@ -41,7 +41,7 @@ Frustum CameraNode::GetFrustum() {
         { clipMatrix[0][3] - clipMatrix[0][0], 
           clipMatrix[1][3] - clipMatrix[1][0], 
           clipMatrix[2][3] - clipMatrix[2][0] },
-        clipMatrix[3][3] - clipMatrix[3][0]
+          clipMatrix[3][3] - clipMatrix[3][0]
     };
 
     // bottom
@@ -49,7 +49,7 @@ Frustum CameraNode::GetFrustum() {
         { clipMatrix[0][3] + clipMatrix[0][1], 
           clipMatrix[1][3] + clipMatrix[1][1], 
           clipMatrix[2][3] + clipMatrix[2][1] },
-        clipMatrix[3][3] + clipMatrix[3][1]
+          clipMatrix[3][3] + clipMatrix[3][1]
     };
 
     // top
@@ -57,7 +57,7 @@ Frustum CameraNode::GetFrustum() {
         { clipMatrix[0][3] - clipMatrix[0][1], 
           clipMatrix[1][3] - clipMatrix[1][1], 
           clipMatrix[2][3] - clipMatrix[2][1] },
-        clipMatrix[3][3] - clipMatrix[3][1]
+          clipMatrix[3][3] - clipMatrix[3][1]
     };
 
     // near
@@ -65,7 +65,7 @@ Frustum CameraNode::GetFrustum() {
         { clipMatrix[0][3] + clipMatrix[0][2], 
           clipMatrix[1][3] + clipMatrix[1][2], 
           clipMatrix[2][3] + clipMatrix[2][2] },
-        clipMatrix[3][3] + clipMatrix[3][2]
+          clipMatrix[3][3] + clipMatrix[3][2]
     };
 
     // far
@@ -73,7 +73,7 @@ Frustum CameraNode::GetFrustum() {
         { clipMatrix[0][3] - clipMatrix[0][2], 
           clipMatrix[1][3] - clipMatrix[1][2], 
           clipMatrix[2][3] - clipMatrix[2][2] },
-        clipMatrix[3][3] - clipMatrix[3][2]
+          clipMatrix[3][3] - clipMatrix[3][2]
     };
 
     return frustum;

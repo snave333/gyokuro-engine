@@ -119,9 +119,10 @@ SceneController::~SceneController() {
 }
 
 void SceneController::Update(float dt) {
-    for(const auto& m : models) {
-        m->Rotate(dt * 30, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
-    }
+    // for(const auto& m : models) {
+    //     m->Rotate(dt * 30, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
+    // }
+
     // model->Translate(dt / 2, 0, 0);
     // model->Translate(glm::vec3(dt / 2, 0, 0));
     // model->Rotate(dt * 30, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
