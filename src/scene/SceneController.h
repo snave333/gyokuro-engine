@@ -8,6 +8,7 @@ class Shader;
 class Texture2D;
 class Model;
 class FlyCamera;
+class Text;
 struct LightNode;
 
 class SceneController {
@@ -24,7 +25,7 @@ public:
 
 private:
     Renderer* renderer = nullptr;
-    glm::vec2 size;
+    glm::ivec2 size;
 
     FlyCamera* camera = nullptr;
 
@@ -32,6 +33,8 @@ private:
     LightNode* dirLight;
 
     std::vector<Model*> models = {};
+
+    Text* textRenderer;
 
     float lastMouseX;
     float lastMouseY;

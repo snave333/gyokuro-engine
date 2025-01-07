@@ -20,7 +20,7 @@ public:
 
 private:
     GLFWwindow* window = nullptr;
-    glm::vec2 size;
+    glm::ivec2 size;
 
     const glm::vec3 clearColor = { 0.2f, 0.2f, 0.2f };
 

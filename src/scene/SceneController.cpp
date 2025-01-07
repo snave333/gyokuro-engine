@@ -15,6 +15,7 @@
 #include <mesh/Model.h>
 #include <camera/FlyCamera.h>
 #include <lighting/LightNode.h>
+#include <ui/Text.h>
 #include <utilities/Clock.h>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -23,7 +24,7 @@
 
 SceneController::SceneController(Renderer* r, const int& width, const int& height) {
     renderer = r;
-    size = glm::vec2(width, height);
+    size = glm::ivec2(width, height);
 
     // setup our default camera
     camera = new FlyCamera(Camera::PerspectiveCamera(60, width / height));
@@ -93,6 +94,10 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
             shader.SetVec3("dirLight.color", dirLight->GetLight().color);
         }
     }
+
+    // our ui layer
+    
+    textRenderer = new Text("SourceCodePro-Regular.ttf", size, 14);
 }
 
 SceneController::~SceneController() {
@@ -108,6 +113,9 @@ SceneController::~SceneController() {
 
     delete dirLight;
     dirLight = nullptr;
+
+    delete textRenderer;
+    textRenderer = nullptr;
 }
 
 void SceneController::Update(float dt) {
@@ -203,6 +211,18 @@ void SceneController::RenderScene() {
 
             model->Draw();
         }
+    }
+
+    {
+        // TODO this should come AFTER the transparency pass and any image effects
+        // CLOCK(render_ui);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        textRenderer->RenderText("foo", 10, 10, 1.0f, glm::vec3(1));
+
+        glDisable(GL_BLEND);
     }
 
     // int totalCount = models.size();

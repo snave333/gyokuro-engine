@@ -9,7 +9,7 @@
 
 Renderer::Renderer(GLFWwindow* window, const int& width, const int& height) {
     this->window = window;
-    size = glm::vec2(width, height);
+    size = glm::ivec2(width, height);
 
     CreateFrameBuffer();
 

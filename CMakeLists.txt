@@ -16,8 +16,9 @@ set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
 # set( BUILD_SHARED_LIBS ON CACHE BOOL  "GLFW dynamic lib" )
 add_subdirectory( deps/glfw )
 
-# add glm
+# add glm and freetype
 add_subdirectory( deps/glm )
+add_subdirectory( deps/freetype )
 
 # add the glad lib from https://glad.dav1d.de/
 add_library(glad STATIC deps/glad/src/glad.c)
@@ -46,7 +47,9 @@ add_executable(Gyokuro
     src/camera/FlyCamera.cpp
     src/scene/SceneNode.cpp
     src/scene/SceneController.cpp
-    src/resources/Resources.cpp)
+    src/resources/Resources.cpp
+    src/ui/Font.cpp
+    src/ui/Text.cpp)
 
 # include any headers
 include_directories(src)
@@ -56,7 +59,8 @@ target_link_libraries(Gyokuro
     glad
     glfw
     stb_image
-    glm)
+    glm
+    freetype)
 
 # copy resources using a custom command to execute during the build process
 set(SHADER_SOURCE_DIR "${CMAKE_SOURCE_DIR}/resources")
