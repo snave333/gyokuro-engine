@@ -31,6 +31,8 @@ private:
 
     const glm::vec3 ambientLight = { 0.1f, 0.1f, 0.1f };
     LightNode* dirLight;
+    LightNode* pointLight1;
+    LightNode* pointLight2;
 
     std::vector<Model*> models = {};
 

@@ -8,6 +8,7 @@
 #include <shading/Shader.h>
 #include <shading/Texture2D.h>
 #include <lighting/DirectionalLight.h>
+#include <lighting/PointLight.h>
 #include <mesh/Quad.h>
 #include <mesh/Sphere.h>
 #include <mesh/Cube.h>
@@ -54,7 +55,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     
    // our test models
 
-    Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial()));
+    Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial(glm::vec3(0.2f, 0.2f, 0.2f))));
     floor->Translate(0, -2, 0);
     floor->Rotate(-90, 0, 0);
     floor->Scale(10);
@@ -69,7 +70,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     m3->Translate(0, -1, 0);
     m3->Rotate(90, 0, 0);
 
-    // models.push_back(floor);
+    models.push_back(floor);
     models.push_back(m1);
     models.push_back(m2);
     models.push_back(m3);
@@ -78,6 +79,12 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
     dirLight = new LightNode(new DirectionalLight(glm::vec3(1)));
     dirLight->Rotate(45, 60, 0);
+
+    pointLight1 = new LightNode(new PointLight { glm::vec3(1), 1, 0.14f, 0.07f }); // 32
+    pointLight1->Translate(2, -1, 3);
+
+    pointLight2 = new LightNode(new PointLight { glm::vec3(1), 1, 0.045f, 0.0075f }); // 100
+    pointLight2->Translate(2, -1, -3);
 
     // set the uniform block binding points
     for(const auto& m : models) {
@@ -91,7 +98,21 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
             // shader.SetUniformBlockBinding("Lights", 1);
 
             shader.SetVec3("dirLight.direction", dirLight->GetForward());
-            shader.SetVec3("dirLight.color", dirLight->GetLight().color);
+            shader.SetVec3("dirLight.color", dirLight->GetLight().color * 0.5f);
+
+            const PointLight& pointLight1Light = static_cast<const PointLight&>(pointLight1->GetLight());
+            shader.SetVec3("pointLight[0].position", pointLight1->GetPosition());
+            shader.SetVec3("pointLight[0].color", pointLight1Light.color);
+            shader.SetFloat("pointLight[0].constant", pointLight1Light.constant);
+            shader.SetFloat("pointLight[0].linear", pointLight1Light.linear);
+            shader.SetFloat("pointLight[0].quadratic", pointLight1Light.quadratic);
+
+            const PointLight& pointLight2Light = static_cast<const PointLight&>(pointLight2->GetLight());
+            shader.SetVec3("pointLight[1].position", pointLight2->GetPosition());
+            shader.SetVec3("pointLight[1].color", pointLight2Light.color);
+            shader.SetFloat("pointLight[1].constant", pointLight2Light.constant);
+            shader.SetFloat("pointLight[1].linear", pointLight2Light.linear);
+            shader.SetFloat("pointLight[1].quadratic", pointLight2Light.quadratic);
         }
     }
 

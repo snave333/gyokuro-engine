@@ -80,6 +80,7 @@ layout (std140) uniform Camera {
 // uniform Light lights[MAX_NUM_LIGHTS];
 // layout (std140) uniform Lights {};
 uniform DirectionalLight dirLight;
+uniform PointLight pointLight[2];
 
 uniform Material material;
 
@@ -87,11 +88,19 @@ void main()
 {
     vec3 V = normalize(viewPos.xyz - fs_in.fragPos);
     vec3 N = normalize(fs_in.normal);
-    LightingResult lighting = calcDirectionalLight(dirLight, V, N);
+    vec3 P = fs_in.fragPos;
 
-    vec3 ambient = vec3(0.1);
-    vec3 diffuse = lighting.diffuse * material.diffuse;
-    vec3 specular = lighting.specular * material.specular;
+    LightingResult totalLighting;
+    LightingResult dLighting = calcDirectionalLight(dirLight, V, N);
+    LightingResult p1Lighting = calcPointLight(pointLight[0], V, P, N);
+    LightingResult p2Lighting = calcPointLight(pointLight[1], V, P, N);
+
+    totalLighting.diffuse = dLighting.diffuse + p1Lighting.diffuse + p2Lighting.diffuse;
+    totalLighting.specular = dLighting.specular + p1Lighting.specular + p2Lighting.specular;
+
+    vec3 ambient = vec3(0.05);
+    vec3 diffuse = totalLighting.diffuse * material.diffuse;
+    vec3 specular = totalLighting.specular * material.specular;
     vec3 result = ambient + diffuse + specular;
 
     FragColor = vec4(result, 1.0);
