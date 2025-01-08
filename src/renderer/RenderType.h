@@ -2,9 +2,9 @@
 #define RENDER_TYPE_H
 
 enum RenderType {
-    Opaque,
-    Transparent,
-    Additive
+    OPAQUE,
+    TRANSPARENT,
+    ADDITIVE
 };
 
 #endif // RENDER_TYPE_H

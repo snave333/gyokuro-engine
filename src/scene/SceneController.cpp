@@ -200,7 +200,7 @@ void SceneController::RenderScene() {
             // FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds);
             FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT);
 
-            if(result != Outside) {
+            if(result != OUTSIDE) {
                 visibleModels.push_back(model);
             }
         }
@@ -218,7 +218,7 @@ void SceneController::RenderScene() {
     std::vector<Model*> opaqueModels = {};
     std::vector<Model*> transparentModels = {};
     for(const auto& model : visibleModels) {
-        if(model->GetRenderType() == Opaque) {
+        if(model->GetRenderType() == OPAQUE) {
             opaqueModels.push_back(model);
         }
         else {

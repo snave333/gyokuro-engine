@@ -9,9 +9,9 @@
 #include <math/Plane.h>
 
 enum FrustumTestResult {
-    Outside,
-    Inside,
-    Intersecting
+    OUTSIDE,
+    INSIDE,
+    INTERSECTING
 };
 
 struct Frustum {
@@ -56,7 +56,7 @@ public:
             float a = glm::dot(plane.normal, vn) + plane.distance;
             if (a < 0) {
                 // if the n-vertex is outside, the box is outside
-                return Outside;
+                return OUTSIDE;
             }
 
             // determine the p-vertex relative to the plane normal
@@ -74,7 +74,7 @@ public:
             }
         }
 
-        return intersects ? Intersecting : Inside;
+        return intersects ? INTERSECTING : INSIDE;
     }
 
     /**
@@ -97,7 +97,7 @@ public:
             float a = glm::dot(plane.normal, vn) + plane.distance;
             if (a < 0) {
                 // if the n-vertex is outside, the box is outside
-                return Outside;
+                return OUTSIDE;
             }
 
             // determine the p-vertex relative to the plane normal
@@ -111,7 +111,7 @@ public:
             }
         }
 
-        return intersects ? Intersecting : Inside;
+        return intersects ? INTERSECTING : INSIDE;
     }
 };
 
