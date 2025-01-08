@@ -49,6 +49,9 @@ add_executable(Gyokuro
     src/scene/SceneNode.cpp
     src/scene/SceneController.cpp
     src/resources/Resources.cpp
+    src/resources/ShaderLoader.cpp
+    src/resources/TextureLoader.cpp
+    src/resources/FontLoader.cpp
     src/ui/Font.cpp
     src/ui/Text.cpp)
 

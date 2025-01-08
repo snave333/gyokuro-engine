@@ -1,6 +1,7 @@
 
 #include <renderer/ScreenQuad.h>
 #include <shading/Shader.h>
+#include <resources/Resources.h>
 
 #include <glad/glad.h>
 
@@ -39,7 +40,7 @@ ScreenQuad::ScreenQuad() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     // now create and configure our shader
-    shader = new Shader("screen.vert", "screen.frag");
+    shader = Resources::GetShader("screen.vert", "screen.frag");
     shader->Use();
     shader->SetInt("screenTexture", 0);
 }
@@ -48,7 +49,6 @@ ScreenQuad::~ScreenQuad() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
-    delete shader;
     shader = nullptr;
 }
 

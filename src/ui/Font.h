@@ -13,8 +13,9 @@ struct Character {
 
 class Font {
 public:
-    Font(const char* fontFileName, unsigned int fontSize = 16);
-    ~Font();
+    Font() {}
+    Font(std::map<char, Character> characters) : characters(characters) {}
+    void Dispose();
 
     const Character& GetCharacter(char c) { return characters[c]; }
 

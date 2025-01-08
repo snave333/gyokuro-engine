@@ -9,7 +9,6 @@
 class Material {
 public:
     virtual ~Material() {
-        delete shader;
         shader = nullptr;
     }
 

@@ -1,7 +1,9 @@
 
-#include "mesh/AABBWireframe.h"
-#include "math/AABB.h"
+#include <mesh/AABBWireframe.h>
+#include <math/AABB.h>
 #include <shading/Shader.h>
+#include <resources/Resources.h>
+
 #include <glad/glad.h>
 
 AABBWireframe::AABBWireframe(const AABB& aabb, glm::vec3 color) {
@@ -37,19 +39,18 @@ AABBWireframe::AABBWireframe(const AABB& aabb, glm::vec3 color) {
     glBindVertexArray(0);
 
     // create shader
-    shader = new Shader("wireframe.vert", "unlitColor.frag");
+    shader = Resources::GetShader("wireframe.vert", "unlitColor.frag");
     shader->Use();
     shader->SetVec3("color", color);
     shader->SetUniformBlockBinding("Camera", 0);
 }
 
 AABBWireframe::~AABBWireframe() {
-    delete shader;
-    shader = nullptr;
-
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
+
+    shader = nullptr;
 }
 
 std::vector<glm::vec3> AABBWireframe::GetVertices(const glm::vec3& min, const glm::vec3& max) {

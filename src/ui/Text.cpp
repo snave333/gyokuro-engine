@@ -3,13 +3,14 @@
 
 #include <ui/Font.h>
 #include <shading/Shader.h>
+#include <resources/Resources.h>
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 Text::Text(const char* fontName, const glm::ivec2& viewportSize, unsigned int fontSize) {
-    font = new Font(fontName, fontSize);
-    shader = new Shader("glyph.vert", "glyph.frag");
+    font = Resources::GetFont(fontName, fontSize);
+    shader = Resources::GetShader("glyph.vert", "glyph.frag");
 
     // generate our vertex array and buffer
     glGenVertexArrays(1, &VAO);
@@ -42,10 +43,7 @@ Text::~Text() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
-    delete font;
     font = nullptr;
-
-    delete shader;
     shader = nullptr;
 }
 

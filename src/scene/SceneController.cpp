@@ -55,7 +55,9 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     
    // our test models
 
-    Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial(glm::vec3(0.2f, 0.2f, 0.2f))));
+    Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial(
+        glm::vec3(0.5f),
+        glm::vec3(0.9f))));
     floor->Translate(0, -2, 0);
     floor->Rotate(-90, 0, 0);
     floor->Scale(10);
@@ -63,7 +65,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial(glm::vec3(1, 0.5, 0))));
     m1->Translate(4, -1, 0);
 
-    Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(glm::vec3(0, 0.5, 1), "wall.jpg")));
+    Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(glm::vec3(0, 0.5, 1), "awesomeface.png")));
     m2->Translate(2, -1, 0);
 
     Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial(glm::vec3(0.5, 0, 1), glm::vec3(0.5, 0, 1))));
@@ -81,10 +83,10 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     dirLight->Rotate(45, 60, 0);
 
     pointLight1 = new LightNode(new PointLight { glm::vec3(1), 1, 0.14f, 0.07f }); // 32
-    pointLight1->Translate(2, -1, 3);
+    pointLight1->Translate(2, -1.9f, 3);
 
     pointLight2 = new LightNode(new PointLight { glm::vec3(1), 1, 0.045f, 0.0075f }); // 100
-    pointLight2->Translate(2, -1, -3);
+    pointLight2->Translate(2, -1.9f, -3);
 
     // set the uniform block binding points
     for(const auto& m : models) {
@@ -118,7 +120,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
     // our ui layer
     
-    textRenderer = new Text("SourceCodePro-Regular.ttf", size, 14);
+    textRenderer = new Text("SourceCodePro-Regular.ttf", size);
 }
 
 SceneController::~SceneController() {

@@ -4,8 +4,10 @@
 class Texture2D {
 public:
     // constructor reads the image data and creates the gl texture
-    Texture2D(const char* imageFileName, bool transparency = false);
-    ~Texture2D();
+    Texture2D() {}
+    Texture2D(const unsigned int& textureId) : ID(textureId) {}
+    
+    void Dispose();
 
     void Bind(unsigned int textureUnit = 0);
 

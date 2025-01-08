@@ -120,7 +120,7 @@ float calcSpecular(vec3 V, vec3 L, vec3 N, float a) {
     vec3 H = normalize(L + V);
     float NdotH = max(dot(N, H), 0.0);
 
-    return pow(RdotV, a);
+    return pow(NdotH, a);
 }
 
 float calcAttenuation(float kc, float kl, float kq, float d) {

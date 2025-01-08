@@ -12,6 +12,7 @@
 
 #include <renderer/Renderer.h>
 #include <scene/SceneController.h>
+#include <resources/Resources.h>
 
 void error_callback(int error, const char* description);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -72,6 +73,8 @@ int main(int argc, const char * argv[]) {
     renderer = new Renderer(window, width, height);
     sceneController = new SceneController(renderer, width, height);
 
+    Resources::Initialize();
+
     // timing
     float currentTime;
     float lastUpdateTime = glfwGetTime();
@@ -98,6 +101,8 @@ int main(int argc, const char * argv[]) {
         // check and call events and swap the buffers
         glfwPollEvents();
     }
+
+    Resources::Dispose();
 
     // clean up
     delete sceneController;

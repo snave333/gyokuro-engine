@@ -5,9 +5,10 @@
 
 class Shader {
 public:
-    // constructor reads and builds the shader
-    Shader(const char* vertexFileName, const char* fragmentFileName);
-    ~Shader();
+    Shader() {}
+    Shader(const unsigned int& shaderProgramId) : ID(shaderProgramId) {}
+    
+    void Dispose();
 
     // use/activate the shader
     void Use() const;

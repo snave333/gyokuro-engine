@@ -1,5 +1,6 @@
 
 #include <shading/PhongMaterial.h>
+#include <resources/Resources.h>
 
 PhongMaterial::PhongMaterial(
     glm::vec3 diffuse,
@@ -12,7 +13,7 @@ PhongMaterial::PhongMaterial(
 
     usesDirectLighting = true;
 
-    shader = new Shader("default.vert", "phong.frag");
+    shader = Resources::GetShader("default.vert", "phong.frag");
 }
 
 PhongMaterial::~PhongMaterial() {
