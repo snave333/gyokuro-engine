@@ -42,7 +42,7 @@ int main(int argc, const char * argv[]) {
 #endif
 
     // create the window object, and make the window context the main context
-    GLFWwindow* window = glfwCreateWindow(512, 512, "Gyokuro", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "Gyokuro", NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();

@@ -30,8 +30,8 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     size = glm::ivec2(width, height);
 
     // setup our default camera
-    camera = new FlyCamera(Camera::PerspectiveCamera(60, width / height));
-    // camera = new FlyCamera(Camera::OrthographicCamera(3, width / height));
+    camera = new FlyCamera(Camera::PerspectiveCamera(60, (float)width / height));
+    // camera = new FlyCamera(Camera::OrthographicCamera(5, (float)width / height));
     camera->Translate(0, 0, -3);
 
     // spawn an array of models for frustum culling testing
@@ -62,7 +62,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     floor->Rotate(-90, 0, 0);
     floor->Scale(10);
 
-    Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial(glm::vec3(1, 0.5, 0))));
+    Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial(glm::vec3(1, 0.5, 0))), true);
     m1->Translate(4, -1, 0);
 
     Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(glm::vec3(0, 0.5, 1), "awesomeface.png")));
@@ -86,15 +86,15 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     pointLight1 = new LightNode(new PointLight { pointLight1Color, 1, 0.14f, 0.07f }); // 32
     Model* pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(pointLight1Color)));
 
-    pointLight1->Translate(2, -1, 3);
-    pointLight1Model->Translate(2, -1, 3);
+    pointLight1->Translate(4, -1, 4);
+    pointLight1Model->Translate(4, -1, 4);
 
     glm::vec3 pointLight2Color = glm::vec3(1, 0.8f, 0.6f);
     pointLight2 = new LightNode(new PointLight { pointLight2Color, 1, 0.045f, 0.0075f }); // 100
     Model* pointLight2Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(pointLight2Color)));
     
-    pointLight2->Translate(-2, -1, 3);
-    pointLight2Model->Translate(-2, -1, 3);
+    pointLight2->Translate(-4, -1, 4);
+    pointLight2Model->Translate(-4, -1, 4);
 
     models.push_back(pointLight1Model);
     models.push_back(pointLight2Model);
@@ -110,8 +110,8 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
         if(material.usesDirectLighting) {
             // shader.SetUniformBlockBinding("Lights", 1);
 
-            shader.SetVec3("dirLight.direction", dirLight->GetForward());
-            shader.SetVec3("dirLight.color", dirLight->GetLight().color * 0.5f);
+            // shader.SetVec3("dirLight.direction", dirLight->GetForward());
+            // shader.SetVec3("dirLight.color", dirLight->GetLight().color * 0.5f);
 
             const PointLight& pointLight1Light = static_cast<const PointLight&>(pointLight1->GetLight());
             shader.SetVec3("pointLight[0].position", pointLight1->GetPosition());
