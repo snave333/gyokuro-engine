@@ -22,7 +22,7 @@ public:
     static void Dispose();
 
     static Shader* GetShader(const char* vertexFileName, const char* fragmentFileName);
-    static Texture2D* GetTexture(const char* imageFileName);
+    static Texture2D* GetTexture(const char* imageFileName, bool srgb);
     static Font* GetFont(const char* fontFileName, unsigned int fontSize);
 
 private:

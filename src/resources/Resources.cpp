@@ -46,7 +46,6 @@ Shader* Resources::GetShader(const char* vertexFileName, const char* fragmentFil
     unsigned int id = HASH(hashKey);
 
     if(Resources::shaders.find(id) != Resources::shaders.end()) {
-        std::cout << "Loading shaders " << hashKey << " from cache" << std::endl;
         return &Resources::shaders[id];
     }
 
@@ -60,17 +59,16 @@ Shader* Resources::GetShader(const char* vertexFileName, const char* fragmentFil
     return &Resources::shaders[id];
 }
 
-Texture2D* Resources::GetTexture(const char* imageFileName) {
+Texture2D* Resources::GetTexture(const char* imageFileName, bool srgb) {
     unsigned int id = HASH(imageFileName);
 
     if (Resources::textures.find(id) != Resources::textures.end()) {
-        std::cout << "Loading texture " << imageFileName << " from cache" << std::endl;
         return &Resources::textures[id];
     }
 
     std::string fullImagePath = Resources::GetTexturePath(imageFileName);
 
-    Texture2D texture = TextureLoader::LoadTexture(fullImagePath);
+    Texture2D texture = TextureLoader::LoadTexture(fullImagePath, srgb);
 
     Resources::textures[id] = texture;
 
@@ -81,7 +79,6 @@ Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {
     unsigned int id = HASH(fontFileName);
 
     if(Resources::fonts.find(id) != Resources::fonts.end()) {
-        std::cout << "Loading font " << fontFileName << " from cache" << std::endl;
         return &Resources::fonts[id];
     }
 

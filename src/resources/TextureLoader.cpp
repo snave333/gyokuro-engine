@@ -6,7 +6,7 @@
 #include <glad/glad.h>
 #include <stb_image.h>
 
-Texture2D TextureLoader::LoadTexture(std::string imageFilePath) {
+Texture2D TextureLoader::LoadTexture(std::string imageFilePath, bool srgb) {
     // create and bind the texture object
     unsigned int id;
     glGenTextures(1, &id);
@@ -26,17 +26,21 @@ Texture2D TextureLoader::LoadTexture(std::string imageFilePath) {
     unsigned char *data = stbi_load(imageFilePath.c_str(), &width, &height, &numChannels, 0);
     if (data) {
         unsigned int format;
+        unsigned int internalFormat;
         if(numChannels == 1) {
             format = GL_RED;
+            internalFormat = GL_RED;
         }
         else if (numChannels == 3) {
             format = GL_RGB;
+            internalFormat = srgb ? GL_SRGB : GL_RGB;
         }
         else if (numChannels == 4) {
             format = GL_RGBA;
+            internalFormat = srgb ? GL_SRGB_ALPHA : GL_RGBA;
         }
         
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else {

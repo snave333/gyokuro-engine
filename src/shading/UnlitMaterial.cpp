@@ -4,14 +4,14 @@
 #include <shading/Texture2D.h>
 #include <resources/Resources.h>
 
-UnlitMaterial::UnlitMaterial(glm::vec3 color, const char* imagePath) {
+UnlitMaterial::UnlitMaterial(glm::vec3 color, Texture2D* texture) {
     this->color = color;
+    this->texture = texture;
 
-    if(imagePath == nullptr) {
+    if(texture == nullptr) {
         shader = Resources::GetShader("default.vert", "unlitColor.frag");
     }
     else {
-        texture = Resources::GetTexture(imagePath);
         shader = Resources::GetShader("default.vert", "unlitColorTexture.frag");
 
         shader->Use();

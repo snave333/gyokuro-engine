@@ -35,7 +35,7 @@ private:
 
     FlyCamera* camera = nullptr;
 
-    const glm::vec3 ambientLight = { 0.1f, 0.1f, 0.1f };
+    const glm::vec3 ambientLight = { 0.001f, 0.001f, 0.0005f };
     LightNode* dirLight;
     LightNode* pointLight1;
     Model* pointLight1Model;

@@ -65,7 +65,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial(glm::vec3(1, 0.5, 0))), true);
     m1->Translate(4, -1, 0);
 
-    Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(glm::vec3(0, 0.5, 1), "awesomeface.png")));
+    Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(glm::vec3(0, 0.5, 1), Resources::GetTexture("awesomeface.png", true))));
     m2->Translate(2, -1, 0);
 
     Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial(glm::vec3(0.5, 0, 1), glm::vec3(0.5, 0, 1))));
