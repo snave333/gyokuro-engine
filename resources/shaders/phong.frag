@@ -79,6 +79,7 @@ layout (std140) uniform Camera {
 
 // uniform Light lights[MAX_NUM_LIGHTS];
 // layout (std140) uniform Lights {};
+uniform vec3 globalAmbient;
 uniform DirectionalLight dirLight;
 uniform PointLight pointLight[2];
 
@@ -98,7 +99,7 @@ void main()
     totalLighting.diffuse = dLighting.diffuse + p1Lighting.diffuse + p2Lighting.diffuse;
     totalLighting.specular = dLighting.specular + p1Lighting.specular + p2Lighting.specular;
 
-    vec3 ambient = vec3(0.05);
+    vec3 ambient = globalAmbient;
     vec3 diffuse = totalLighting.diffuse * material.diffuse;
     vec3 specular = totalLighting.specular * material.specular;
     vec3 result = ambient + diffuse + specular;

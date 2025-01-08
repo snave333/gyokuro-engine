@@ -60,7 +60,5 @@ void ScreenQuad::Draw(unsigned int textureColorbuffer) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
 
-    shader->SetBool("applyGammaCorrection", false);
-
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }

@@ -5,17 +5,16 @@ out vec4 FragColor;
 in vec2 texCoord;
 
 uniform sampler2D screenTexture;
-uniform bool applyGammaCorrection;
 
 void main()
 {
-    vec4 color = texture(screenTexture, texCoord);
+    float gamma = 2.2;
+    vec3 hdrColor = texture(screenTexture, texCoord).rgb;
 
-    if(applyGammaCorrection) {
-        float gamma = 2.2;
-        FragColor = vec4(pow(color.rgb, vec3(1.0 / gamma)), color.a);
-    }
-    else {
-        FragColor = color;
-    }
+    // reinhard tone mapping
+    vec3 mapped = hdrColor / (hdrColor + vec3(1.0));
+    // gamma correction
+    mapped = pow(mapped, vec3(1.0 / gamma));
+
+    FragColor = vec4(mapped, 1.0);
 }

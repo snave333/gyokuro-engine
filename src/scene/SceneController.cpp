@@ -5,6 +5,7 @@
 
 #include <scene/SceneController.h>
 #include <renderer/Renderer.h>
+#include <resources/Resources.h>
 #include <shading/UnlitMaterial.h>
 #include <shading/PhongMaterial.h>
 #include <shading/Shader.h>
@@ -109,6 +110,8 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
         if(material.usesDirectLighting) {
             // shader.SetUniformBlockBinding("Lights", 1);
+
+            shader.SetVec3("globalAmbient", ambientLight);
 
             // shader.SetVec3("dirLight.direction", dirLight->GetForward());
             // shader.SetVec3("dirLight.color", dirLight->GetLight().color * 0.5f);
