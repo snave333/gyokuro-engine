@@ -17,6 +17,7 @@
 #include <mesh/Cube.h>
 #include <mesh/Torus.h>
 #include <mesh/Model.h>
+#include <mesh/AABBWireframe.h>
 #include <camera/FlyCamera.h>
 #include <lighting/LightNode.h>
 #include <ui/Text.h>
@@ -63,7 +64,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     floor->Rotate(-90, 0, 0);
     floor->Scale(10);
 
-    Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial(glm::vec3(1, 0.5, 0))), true);
+    Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial(glm::vec3(1, 0.5, 0))));
     m1->Translate(4, -1, 0);
 
     Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(glm::vec3(0, 0.5, 1), Resources::GetTexture("awesomeface.png", true))));
@@ -78,22 +79,22 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     models.push_back(m2);
     models.push_back(m3);
 
+    boundsRenderer = new AABBWireframe(m1->GetBounds());
+
     // our test direct lighting
 
     dirLight = new LightNode(new DirectionalLight(glm::vec3(1)));
     dirLight->Rotate(45, 60, 0);
 
     glm::vec3 pointLight1Color = glm::vec3(0.6f, 0.8f, 1);
-    pointLight1 = new LightNode(new PointLight { pointLight1Color, 1, 0.14f, 0.07f }); // 32
+    pointLight1 = new LightNode(new PointLight { pointLight1Color });
     Model* pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(pointLight1Color)));
-
     pointLight1->Translate(4, -1, 4);
     pointLight1Model->Translate(4, -1, 4);
 
-    glm::vec3 pointLight2Color = glm::vec3(1, 0.8f, 0.6f);
-    pointLight2 = new LightNode(new PointLight { pointLight2Color, 1, 0.045f, 0.0075f }); // 100
+    glm::vec3 pointLight2Color = glm::vec3(1, 0.8f, 0.6f) * 10.0f;
+    pointLight2 = new LightNode(new PointLight { pointLight2Color });
     Model* pointLight2Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(pointLight2Color)));
-    
     pointLight2->Translate(-4, -1, 4);
     pointLight2Model->Translate(-4, -1, 4);
 
@@ -148,6 +149,9 @@ SceneController::~SceneController() {
     }
     models.clear();
 
+    delete boundsRenderer;
+    boundsRenderer = nullptr;
+
     delete dirLight;
     dirLight = nullptr;
 
@@ -170,6 +174,8 @@ void SceneController::Update(float dt) {
     // model->SetPosition(glm::sin(glfwGetTime()), 0, 0);
     // model->SetRotation(glm::sin(glfwGetTime()) * 30, 0, 0);
     // model->SetScale(glm::sin(glfwGetTime()) / 2 + 1);
+
+    boundsRenderer->Update(models[1]->GetBounds());
 }
 
 void SceneController::Render() {
@@ -253,6 +259,8 @@ void SceneController::RenderScene() {
             model->Draw();
             ++stats.drawCalls;
         }
+
+        boundsRenderer->Draw();
     }
 
     {

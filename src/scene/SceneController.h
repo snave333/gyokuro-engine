@@ -13,6 +13,7 @@ class Renderer;
 class Shader;
 class Texture2D;
 class Model;
+class AABBWireframe;
 class FlyCamera;
 class Text;
 struct LightNode;
@@ -43,6 +44,8 @@ private:
     Model* pointLight2Model;
 
     std::vector<Model*> models = {};
+
+    AABBWireframe* boundsRenderer = nullptr;
 
     Text* textRenderer;
 

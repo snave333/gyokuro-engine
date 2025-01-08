@@ -9,7 +9,11 @@ struct PointLight : public Light {
     float linear;
     float quadratic;
 
-    PointLight(glm::vec3 color, float constant, float linear, float quadratic) : Light(color),
+    /**
+     * See here for more attenuation values:
+     * https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
+     */
+    PointLight(glm::vec3 color, float constant = 1.0f, float linear = 0.7f, float quadratic = 1.8f) : Light(color),
         constant(constant),
         linear(linear),
         quadratic(quadratic) {}

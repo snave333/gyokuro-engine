@@ -89,6 +89,7 @@ void Text::RenderText(std::string text, unsigned int x, unsigned int y, float sc
         };
 
         // render glyph texture over quad
+        // glBindTexture(GL_TEXTURE_2D, *c == 32 ? 0 : ch.textureID); // space
         glBindTexture(GL_TEXTURE_2D, ch.textureID);
 
         // update content of VBO memory

@@ -8,13 +8,12 @@
 
 class Shader;
 class Material;
-class AABBWireframe;
 struct AABB;
 enum RenderType;
 
 class Model : public SceneNode {
 public:
-    Model(Mesh* mesh, bool renderBounds = false);
+    Model(Mesh* mesh);
     ~Model();
 
     // TODO make mesh a list of meshes
@@ -35,7 +34,6 @@ protected:
 private:
     AABB bounds;
     std::array<glm::vec3, 8> boundsLUT = {};
-    AABBWireframe* boundsRenderer = nullptr;
 
     void UpdateBounds();
     void UpdateBoundsLUT();
