@@ -82,6 +82,7 @@ layout (std140) uniform Camera {
 uniform vec3 globalAmbient;
 uniform DirectionalLight dirLight;
 uniform PointLight pointLight[2];
+uniform SpotLight spotLight[2];
 
 uniform Material material;
 
@@ -95,9 +96,11 @@ void main()
     LightingResult dLighting = calcDirectionalLight(dirLight, V, N);
     LightingResult p1Lighting = calcPointLight(pointLight[0], V, P, N);
     LightingResult p2Lighting = calcPointLight(pointLight[1], V, P, N);
+    LightingResult s1Lighting = calcSpotLight(spotLight[0], V, P, N);
+    LightingResult s2Lighting = calcSpotLight(spotLight[1], V, P, N);
 
-    totalLighting.diffuse = dLighting.diffuse + p1Lighting.diffuse + p2Lighting.diffuse;
-    totalLighting.specular = dLighting.specular + p1Lighting.specular + p2Lighting.specular;
+    totalLighting.diffuse = dLighting.diffuse + p1Lighting.diffuse + p2Lighting.diffuse + s1Lighting.diffuse + s2Lighting.diffuse;
+    totalLighting.specular = dLighting.specular + p1Lighting.specular + p2Lighting.specular + s1Lighting.specular + s2Lighting.specular;
 
     vec3 ambient = globalAmbient;
     vec3 diffuse = totalLighting.diffuse * material.diffuse;
@@ -145,10 +148,11 @@ LightingResult calcDirectionalLight(DirectionalLight light, vec3 V, vec3 N) {
 LightingResult calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N) {
     LightingResult result;
     
-    vec3 L = normalize(light.position - P);
+    vec3 L = light.position - P;
+    float distance = length(L);
+    L = L / distance; // normalize
 
     // attenuation
-    float distance = length(light.position - P);
     float attenuation = calcAttenuation(light.constant, light.linear, light.quadratic, distance);
 
     result.diffuse = light.color * calcDiffuse(L, N) * attenuation;
@@ -162,21 +166,23 @@ LightingResult calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N) {
     
     vec3 L = light.position - P;
     float distance = length(L);
-    L = L / distance;
+    L = L / distance; // normalize
 
     // spotlight angles
     float theta = dot(L, normalize(-light.direction));
-    float epsilon = (light.cutOff - light.outerCutOff);
+    float epsilon = light.cutOff - light.outerCutOff;
 
-    if(theta > light.outerCutOff) {
+    // spotlight soft edges
+    float spotlightFactor = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    if(spotlightFactor == 0.0) {
+        // early exit if we're beyond the outer angle
+        result.diffuse = vec3(0);
+        result.specular = vec3(0);
         return result;
     }
 
     // attenuation
     float attenuation = calcAttenuation(light.constant, light.linear, light.quadratic, distance);
-
-    // spotlight soft edges
-    float spotlightFactor = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
     result.diffuse = light.color * calcDiffuse(L, N) * attenuation * spotlightFactor;
     result.specular = light.color * calcSpecular(V, L, N, material.shininess) * attenuation * spotlightFactor;

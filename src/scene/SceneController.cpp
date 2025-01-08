@@ -12,10 +12,12 @@
 #include <shading/Texture2D.h>
 #include <lighting/DirectionalLight.h>
 #include <lighting/PointLight.h>
+#include <lighting/SpotLight.h>
 #include <mesh/Quad.h>
 #include <mesh/Sphere.h>
 #include <mesh/Cube.h>
 #include <mesh/Torus.h>
+#include <mesh/Pyramid.h>
 #include <mesh/Model.h>
 #include <mesh/AABBWireframe.h>
 #include <camera/FlyCamera.h>
@@ -83,23 +85,42 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
     // our test direct lighting
 
-    dirLight = new LightNode(new DirectionalLight(glm::vec3(1)));
+    dirLight = new LightNode(new DirectionalLight(glm::vec3(1, 1, 0.8f) * 0.0f)); // disabled for now
     dirLight->Rotate(45, 60, 0);
 
     glm::vec3 pointLight1Color = glm::vec3(0.6f, 0.8f, 1);
     pointLight1 = new LightNode(new PointLight { pointLight1Color });
-    Model* pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(pointLight1Color)));
+    pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(pointLight1Color)));
     pointLight1->Translate(4, -1, 4);
     pointLight1Model->Translate(4, -1, 4);
+    models.push_back(pointLight1Model);
 
     glm::vec3 pointLight2Color = glm::vec3(1, 0.8f, 0.6f) * 10.0f;
     pointLight2 = new LightNode(new PointLight { pointLight2Color });
-    Model* pointLight2Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(pointLight2Color)));
+    pointLight2Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(pointLight2Color)));
     pointLight2->Translate(-4, -1, 4);
     pointLight2Model->Translate(-4, -1, 4);
-
-    models.push_back(pointLight1Model);
     models.push_back(pointLight2Model);
+
+    glm::vec3 spotLight1Color = glm::vec3(0.8f, 0.4f, 1.0f) * 6.0f;
+    spotLight1 = new LightNode(new SpotLight { spotLight1Color, glm::cos(glm::radians(15.0f)), glm::cos(glm::radians(30.0f)) });
+    spotLight1Model = new Model(new Mesh(new Pyramid(), new UnlitMaterial(spotLight1Color)));
+    spotLight1->Translate(4, -1, -4);
+    spotLight1Model->Translate(4, -1, -4);
+    spotLight1->Rotate(45, 0, 0);
+    spotLight1Model->Rotate(-45, 0, 0);
+    spotLight1Model->Scale(0.2f);
+    models.push_back(spotLight1Model);
+    
+    glm::vec3 spotLight2Color = glm::vec3(0.8f, 0.4f, 1.0f) * 6.0f;
+    spotLight2 = new LightNode(new SpotLight { spotLight2Color, glm::cos(glm::radians(15.0f)), glm::cos(glm::radians(30.0f)) });
+    spotLight2Model = new Model(new Mesh(new Pyramid(), new UnlitMaterial(spotLight2Color)));
+    spotLight2->Translate(2, -1, -4);
+    spotLight2Model->Translate(2, -1, -4);
+    spotLight2->Rotate(45, 0, 0);
+    spotLight2Model->Rotate(-45, 0, 0);
+    spotLight2Model->Scale(0.2f);
+    models.push_back(spotLight2Model);
 
     // set the uniform block binding points
     for(const auto& m : models) {
@@ -114,8 +135,8 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
             shader.SetVec3("globalAmbient", ambientLight);
 
-            // shader.SetVec3("dirLight.direction", dirLight->GetForward());
-            // shader.SetVec3("dirLight.color", dirLight->GetLight().color * 0.5f);
+            shader.SetVec3("dirLight.direction", dirLight->GetForward());
+            shader.SetVec3("dirLight.color", dirLight->GetLight().color);
 
             const PointLight& pointLight1Light = static_cast<const PointLight&>(pointLight1->GetLight());
             shader.SetVec3("pointLight[0].position", pointLight1->GetPosition());
@@ -130,6 +151,26 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
             shader.SetFloat("pointLight[1].constant", pointLight2Light.constant);
             shader.SetFloat("pointLight[1].linear", pointLight2Light.linear);
             shader.SetFloat("pointLight[1].quadratic", pointLight2Light.quadratic);
+
+            const SpotLight& spotLight1Light = static_cast<const SpotLight&>(spotLight1->GetLight());
+            shader.SetVec3("spotLight[0].position", spotLight1->GetPosition());
+            shader.SetVec3("spotLight[0].direction", spotLight1->GetForward());
+            shader.SetVec3("spotLight[0].color", spotLight1Light.color);
+            shader.SetFloat("spotLight[0].cutOff", spotLight1Light.spotAngle);
+            shader.SetFloat("spotLight[0].outerCutOff", spotLight1Light.spotOuterAngle);
+            shader.SetFloat("spotLight[0].constant", spotLight1Light.constant);
+            shader.SetFloat("spotLight[0].linear", spotLight1Light.linear);
+            shader.SetFloat("spotLight[0].quadratic", spotLight1Light.quadratic);
+
+            const SpotLight& spotLight2Light = static_cast<const SpotLight&>(spotLight2->GetLight());
+            shader.SetVec3("spotLight[1].position", spotLight2->GetPosition());
+            shader.SetVec3("spotLight[1].direction", spotLight2->GetForward());
+            shader.SetVec3("spotLight[1].color", spotLight2Light.color);
+            shader.SetFloat("spotLight[1].cutOff", spotLight2Light.spotAngle);
+            shader.SetFloat("spotLight[1].outerCutOff", spotLight2Light.spotOuterAngle);
+            shader.SetFloat("spotLight[1].constant", spotLight2Light.constant);
+            shader.SetFloat("spotLight[1].linear", spotLight2Light.linear);
+            shader.SetFloat("spotLight[1].quadratic", spotLight2Light.quadratic);
         }
     }
 
@@ -154,6 +195,14 @@ SceneController::~SceneController() {
 
     delete dirLight;
     dirLight = nullptr;
+    delete pointLight1;
+    pointLight1 = nullptr;
+    delete pointLight2;
+    pointLight2 = nullptr;
+    delete spotLight1;
+    spotLight1 = nullptr;
+    delete spotLight2;
+    spotLight2 = nullptr;
 
     delete textRenderer;
     textRenderer = nullptr;

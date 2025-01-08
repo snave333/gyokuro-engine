@@ -42,6 +42,10 @@ private:
     Model* pointLight1Model;
     LightNode* pointLight2;
     Model* pointLight2Model;
+    LightNode* spotLight1;
+    Model* spotLight1Model;
+    LightNode* spotLight2;
+    Model* spotLight2Model;
 
     std::vector<Model*> models = {};
 

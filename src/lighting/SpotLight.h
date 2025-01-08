@@ -11,7 +11,7 @@ struct SpotLight : public Light {
     float linear;
     float quadratic;
 
-    SpotLight(glm::vec3 color, float innerAngle, float outerAngle, float constant, float linear, float quadratic) : Light(color),
+    SpotLight(glm::vec3 color, float innerAngle, float outerAngle, float constant = 1.0f, float linear = 0.7f, float quadratic = 1.8f) : Light(color),
         spotAngle(innerAngle),
         spotOuterAngle(outerAngle),
         constant(constant),
