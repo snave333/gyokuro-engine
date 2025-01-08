@@ -3,6 +3,12 @@
 
 #include <glm/glm.hpp>
 
+struct FrameStats {
+    float vfcMs = 0;
+    float opaqueMs = 0;
+    unsigned int drawCalls = 0;
+};
+
 class Renderer;
 class Shader;
 class Texture2D;
@@ -32,7 +38,9 @@ private:
     const glm::vec3 ambientLight = { 0.1f, 0.1f, 0.1f };
     LightNode* dirLight;
     LightNode* pointLight1;
+    Model* pointLight1Model;
     LightNode* pointLight2;
+    Model* pointLight2Model;
 
     std::vector<Model*> models = {};
 

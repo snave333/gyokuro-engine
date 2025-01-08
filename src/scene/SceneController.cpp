@@ -1,5 +1,7 @@
 
 #include <iostream>
+#include <string>
+#include <sstream>
 
 #include <scene/SceneController.h>
 #include <renderer/Renderer.h>
@@ -55,9 +57,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     
    // our test models
 
-    Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial(
-        glm::vec3(0.5f),
-        glm::vec3(0.9f))));
+    Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial()));
     floor->Translate(0, -2, 0);
     floor->Rotate(-90, 0, 0);
     floor->Scale(10);
@@ -70,7 +70,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
     Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial(glm::vec3(0.5, 0, 1), glm::vec3(0.5, 0, 1))));
     m3->Translate(0, -1, 0);
-    m3->Rotate(90, 0, 0);
+    // m3->Rotate(90, 0, 0);
 
     models.push_back(floor);
     models.push_back(m1);
@@ -82,11 +82,22 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     dirLight = new LightNode(new DirectionalLight(glm::vec3(1)));
     dirLight->Rotate(45, 60, 0);
 
-    pointLight1 = new LightNode(new PointLight { glm::vec3(1), 1, 0.14f, 0.07f }); // 32
-    pointLight1->Translate(2, -1.9f, 3);
+    glm::vec3 pointLight1Color = glm::vec3(0.6f, 0.8f, 1);
+    pointLight1 = new LightNode(new PointLight { pointLight1Color, 1, 0.14f, 0.07f }); // 32
+    Model* pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(pointLight1Color)));
 
-    pointLight2 = new LightNode(new PointLight { glm::vec3(1), 1, 0.045f, 0.0075f }); // 100
-    pointLight2->Translate(2, -1.9f, -3);
+    pointLight1->Translate(2, -1, 3);
+    pointLight1Model->Translate(2, -1, 3);
+
+    glm::vec3 pointLight2Color = glm::vec3(1, 0.8f, 0.6f);
+    pointLight2 = new LightNode(new PointLight { pointLight2Color, 1, 0.045f, 0.0075f }); // 100
+    Model* pointLight2Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(pointLight2Color)));
+    
+    pointLight2->Translate(-2, -1, 3);
+    pointLight2Model->Translate(-2, -1, 3);
+
+    models.push_back(pointLight1Model);
+    models.push_back(pointLight2Model);
 
     // set the uniform block binding points
     for(const auto& m : models) {
@@ -120,7 +131,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
     // our ui layer
     
-    textRenderer = new Text("SourceCodePro-Regular.ttf", size);
+    textRenderer = new Text("SourceCodePro-Regular.ttf", size, 14);
 }
 
 SceneController::~SceneController() {
@@ -148,8 +159,9 @@ void SceneController::Update(float dt) {
 
     // model->Translate(dt / 2, 0, 0);
     // model->Translate(glm::vec3(dt / 2, 0, 0));
-    // model->Rotate(dt * 30, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
-    // model->Rotate(0, dt * 60, 0);
+    models[1]->Rotate(dt * 45, glm::normalize(glm::vec3(0.5f, 1.0, 0.0)));
+    models[2]->Rotate(dt * 60, glm::normalize(glm::vec3(0, 1.0, 0.0)));
+    models[3]->Rotate(0, dt * 15, 0);
     // model->SetScale(glm::sin(glfwGetTime()) + 1);
 
     // model->SetPosition(glm::sin(glfwGetTime()), 0, 0);
@@ -170,6 +182,7 @@ void SceneController::Render() {
 }
 
 void SceneController::RenderScene() {
+    FrameStats stats;
     /**
      * vector<Mesh*> visible
      * vector<Mesh*> opaque
@@ -188,7 +201,7 @@ void SceneController::RenderScene() {
 
     // frustum culling
     {
-        // CLOCK(frustum_culling);
+        CLOCKT(frustum_culling, &stats.vfcMs);
 
         const Frustum& cameraFrustum = camera->GetFrustum();
         std::array<std::pair<int, int>, 6> frustumLUT = cameraFrustum.ComputeAABBTestLUT();
@@ -204,11 +217,6 @@ void SceneController::RenderScene() {
                 visibleModels.push_back(model);
             }
         }
-    }
-
-    // early exit if nothing is visible
-    if(visibleModels.empty()) {
-        return;
     }
 
     // update the camera view matrix for our shaders
@@ -228,7 +236,7 @@ void SceneController::RenderScene() {
 
     // opaque pass
     {
-        // CLOCK(render_opaque);
+        CLOCKT(render_opaque, &stats.opaqueMs);
 
         for(const auto& model : opaqueModels) {
             model->Queue();
@@ -240,6 +248,7 @@ void SceneController::RenderScene() {
             shader.SetMat4("normalMatrix", model->GetNormalMatrix());
 
             model->Draw();
+            ++stats.drawCalls;
         }
     }
 
@@ -250,14 +259,30 @@ void SceneController::RenderScene() {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        textRenderer->RenderText("foo", 10, 10, 1.0f, glm::vec3(1));
+        // number of draw calls
+
+        textRenderer->RenderText(std::string("draw calls: ") + std::to_string(stats.drawCalls), 10, 50, 1.0f, glm::vec3(1));
+
+        // view frustum culling
+
+        std::ostringstream stream;
+        stream.precision(2);
+        stream << std::fixed << stats.vfcMs;
+
+        std::string vfcMs = stream.str();
+        textRenderer->RenderText(std::string("vfc: ") + vfcMs + std::string(" ms"), 10, 30, 1.0f, glm::vec3(1));
+
+        // opaque pass
+
+        stream.str("");
+        stream.clear();
+        stream << std::fixed << stats.opaqueMs;
+
+        std::string opaqueMs = stream.str();
+        textRenderer->RenderText(std::string("opaque pass: ") + opaqueMs + std::string(" ms"), 10, 10, 1.0f, glm::vec3(1));
 
         glDisable(GL_BLEND);
     }
-
-    // int totalCount = models.size();
-    // int drawCount = visibleModels.size();
-    // std::cout << "Culled " << (totalCount - drawCount) << " meshes" << std::endl;
 }
 
 void SceneController::OnKeyPressed(int key, float dt) {
