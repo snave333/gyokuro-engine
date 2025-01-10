@@ -37,15 +37,7 @@ private:
     FlyCamera* camera = nullptr;
 
     const glm::vec3 ambientLight = { 0.001f, 0.001f, 0.0005f };
-    LightNode* dirLight;
-    LightNode* pointLight1;
-    Model* pointLight1Model;
-    LightNode* pointLight2;
-    Model* pointLight2Model;
-    LightNode* spotLight1;
-    Model* spotLight1Model;
-    LightNode* spotLight2;
-    Model* spotLight2Model;
+    std::vector<LightNode*> lights = {};
 
     std::vector<Model*> models = {};
 

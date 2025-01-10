@@ -30,8 +30,7 @@ struct SpotLight {
     vec3 direction;
     vec3 color;
     // spotlight
-    float cutOff;
-    float outerCutOff;
+    float cosAngle;
     // attenuation
     float constant;
     float linear;
@@ -54,10 +53,11 @@ struct LightingResult {
 float calcDiffuse(vec3 L, vec3 N);
 float calcSpecular(vec3 V, vec3 L, vec3 N, float a);
 float calcAttenuation(float kc, float kl, float kq, float d);
-float calcSpotCone();
+float calcSpotCone(SpotLight light, vec3 L);
 LightingResult calcDirectionalLight(DirectionalLight light, vec3 V, vec3 N);
 LightingResult calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N);
 LightingResult calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N);
+LightingResult calcTotalLighting(vec3 V, vec3 P, vec3 N);
 
 struct Material {
     vec3 diffuse;
@@ -81,8 +81,8 @@ layout (std140) uniform Camera {
 // layout (std140) uniform Lights {};
 uniform vec3 globalAmbient;
 uniform DirectionalLight dirLight;
-uniform PointLight pointLight[2];
-uniform SpotLight spotLight[2];
+uniform PointLight pointLights[2];
+uniform SpotLight spotLights[2];
 
 uniform Material material;
 
@@ -92,15 +92,7 @@ void main()
     vec3 N = normalize(fs_in.normal);
     vec3 P = fs_in.fragPos;
 
-    LightingResult totalLighting;
-    LightingResult dLighting = calcDirectionalLight(dirLight, V, N);
-    LightingResult p1Lighting = calcPointLight(pointLight[0], V, P, N);
-    LightingResult p2Lighting = calcPointLight(pointLight[1], V, P, N);
-    LightingResult s1Lighting = calcSpotLight(spotLight[0], V, P, N);
-    LightingResult s2Lighting = calcSpotLight(spotLight[1], V, P, N);
-
-    totalLighting.diffuse = dLighting.diffuse + p1Lighting.diffuse + p2Lighting.diffuse + s1Lighting.diffuse + s2Lighting.diffuse;
-    totalLighting.specular = dLighting.specular + p1Lighting.specular + p2Lighting.specular + s1Lighting.specular + s2Lighting.specular;
+    LightingResult totalLighting = calcTotalLighting(V, P, N);
 
     vec3 ambient = globalAmbient;
     vec3 diffuse = totalLighting.diffuse * material.diffuse;
@@ -134,8 +126,17 @@ float calcAttenuation(float kc, float kl, float kq, float d) {
         kq * (d * d));
 }
 
+// technique taken from https://www.3dgep.com/texturing-lighting-directx-11/#Spotlight_Cone
+float calcSpotCone(SpotLight light, vec3 L) {
+    float minCos = light.cosAngle;
+    float maxCos = (minCos + 1.0f) / 2.0f;
+    float cosAngle = dot(light.direction, -L );
+
+    return smoothstep( minCos, maxCos, cosAngle ); 
+}
+
 LightingResult calcDirectionalLight(DirectionalLight light, vec3 V, vec3 N) {
-    LightingResult result;
+    LightingResult result = LightingResult(vec3(0.0), vec3(0.0));
 
     vec3 L = normalize(-light.direction);
 
@@ -146,7 +147,7 @@ LightingResult calcDirectionalLight(DirectionalLight light, vec3 V, vec3 N) {
 }
 
 LightingResult calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N) {
-    LightingResult result;
+    LightingResult result = LightingResult(vec3(0.0), vec3(0.0));
     
     vec3 L = light.position - P;
     float distance = length(L);
@@ -162,22 +163,16 @@ LightingResult calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N) {
 }
 
 LightingResult calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N) {
-    LightingResult result;
+    LightingResult result = LightingResult(vec3(0.0), vec3(0.0));
     
     vec3 L = light.position - P;
     float distance = length(L);
     L = L / distance; // normalize
 
-    // spotlight angles
-    float theta = dot(L, normalize(-light.direction));
-    float epsilon = light.cutOff - light.outerCutOff;
-
     // spotlight soft edges
-    float spotlightFactor = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    float spotlightFactor = calcSpotCone(light, L);
     if(spotlightFactor == 0.0) {
         // early exit if we're beyond the outer angle
-        result.diffuse = vec3(0);
-        result.specular = vec3(0);
         return result;
     }
 
@@ -186,6 +181,28 @@ LightingResult calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N) {
 
     result.diffuse = light.color * calcDiffuse(L, N) * attenuation * spotlightFactor;
     result.specular = light.color * calcSpecular(V, L, N, material.shininess) * attenuation * spotlightFactor;
+
+    return result;
+}
+
+LightingResult calcTotalLighting(vec3 V, vec3 P, vec3 N) {
+    LightingResult result = LightingResult(vec3(0.0), vec3(0.0));
+
+    LightingResult directional = calcDirectionalLight(dirLight, V, N);
+    result.diffuse += directional.diffuse;
+    result.specular += directional.specular;
+
+    for(int i = 0; i < pointLights.length(); i++) {
+        LightingResult point = calcPointLight(pointLights[i], V, P, N);
+        result.diffuse += point.diffuse;
+        result.specular += point.specular;
+    }
+
+    for(int i = 0; i < spotLights.length(); i++) {
+        LightingResult spot = calcSpotLight(spotLights[i], V, P, N);
+        result.diffuse += spot.diffuse;
+        result.specular += spot.specular;
+    }
 
     return result;
 }

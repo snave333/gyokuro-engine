@@ -12,7 +12,7 @@ public:
         light = nullptr;
     }
 
-    const Light& GetLight() { return *light; }
+    const Light* GetLight() { return light; }
 
 private:
     Light* light;
