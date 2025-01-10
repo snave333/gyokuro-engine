@@ -61,7 +61,9 @@ LightingResult calcTotalLighting(vec3 V, vec3 P, vec3 N);
 
 struct Material {
     vec3 diffuse;
+    sampler2D diffuseMap;
     vec3 specular;
+    sampler2D specularMap;
     float shininess;
 };
 
@@ -95,8 +97,8 @@ void main()
     LightingResult totalLighting = calcTotalLighting(V, P, N);
 
     vec3 ambient = globalAmbient;
-    vec3 diffuse = totalLighting.diffuse * material.diffuse;
-    vec3 specular = totalLighting.specular * material.specular;
+    vec3 diffuse = totalLighting.diffuse * material.diffuse * texture(material.diffuseMap, fs_in.texCoord).xyz;
+    vec3 specular = totalLighting.specular * material.specular * texture(material.specularMap, fs_in.texCoord).xyz;
     vec3 result = ambient + diffuse + specular;
 
     FragColor = vec4(result, 1.0);

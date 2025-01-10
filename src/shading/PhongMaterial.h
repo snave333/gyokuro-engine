@@ -12,7 +12,9 @@ public:
     PhongMaterial(
         glm::vec3 diffuse = glm::vec3(0.5f),
         glm::vec3 specular = glm::vec3(1),
-        float shininess = 128);
+        float shininess = 128,
+        Texture2D* diffuseMap = nullptr,
+        Texture2D* specularMap = nullptr);
     ~PhongMaterial() override;
 
     void Queue() override;
@@ -21,6 +23,8 @@ private:
     glm::vec3 diffuse;;
     glm::vec3 specular;
     float shininess;
+    Texture2D* diffuseMap = nullptr;
+    Texture2D* specularMap = nullptr;
 };
 
 #endif // PHONG_MATERIAL_H

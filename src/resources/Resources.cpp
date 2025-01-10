@@ -21,6 +21,30 @@ std::map<unsigned int, Texture2D> Resources::textures = {};
 std::map<unsigned int, Font> Resources::fonts = {};
 
 void Resources::Initialize() {
+    // generate default textures
+
+    unsigned int id;
+    glm::vec4 color;
+
+    // a 1 pixel white texture
+    id = HASH("BUILTIN_white");
+    color = { 1, 1, 1, 1 };
+    Resources::textures[id] = Resources::GenerateBuiltInTexture(color);
+
+    // default normal texture
+    id = HASH("BUILTIN_normal");
+    color = { 0, 0, 1, 1 };
+    Resources::textures[id] = Resources::GenerateBuiltInTexture(color);
+}
+
+Texture2D Resources::GenerateBuiltInTexture(glm::vec4 color) {
+    unsigned char pixels[4] = {
+        static_cast<unsigned char>(color.r * 255.0f),
+        static_cast<unsigned char>(color.g * 255.0f),
+        static_cast<unsigned char>(color.b * 255.0f),
+        static_cast<unsigned char>(color.a * 255.0f),
+    };
+    return TextureLoader::GenerateTexture2D(1, 1, GL_RGBA, pixels);
 }
 
 void Resources::Dispose() {

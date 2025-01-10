@@ -6,6 +6,8 @@
 #include <shading/Texture2D.h>
 #include <ui/Font.h>
 
+#include <glm/glm.hpp>
+
 class Shader;
 class Texture2D;
 class Font;
@@ -32,6 +34,8 @@ private:
     static std::map<unsigned int, Font> fonts;
 
     static std::map<ResourceType, std::string> resourceTypeDirMap;
+
+    static Texture2D GenerateBuiltInTexture(glm::vec4 color);
 
     static std::string GetShaderPath(const char* fileName);
     static std::string GetTexturePath(const char* fileName);

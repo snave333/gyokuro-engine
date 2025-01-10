@@ -69,11 +69,11 @@ int main(int argc, const char * argv[]) {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, onMouseInput);
 
+    Resources::Initialize();
+
     // our rendering managers
     renderer = new Renderer(window, width, height);
     sceneController = new SceneController(renderer, width, height);
-
-    Resources::Initialize();
 
     // timing
     float currentTime;

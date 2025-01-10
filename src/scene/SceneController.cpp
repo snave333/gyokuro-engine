@@ -61,7 +61,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     
     // our test models
     {
-        Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial()));
+        Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial({ 1, 1, 1 }, { 1, 1, 1 }, 64, Resources::GetTexture("wood.jpg", true))));
         floor->Translate(0, -2, 0);
         floor->Rotate(-90, 0, 0);
         floor->Scale(10);
@@ -76,10 +76,20 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
         m3->Translate(0, -1, 0);
         // m3->Rotate(90, 0, 0);
 
+        Model* m4 = new Model(new Mesh(new Cube(),
+            new PhongMaterial(
+                { 1, 1, 1 },
+                { 1, 1, 1 },
+                128,
+                Resources::GetTexture("crate_DIFF.png", true),
+                Resources::GetTexture("crate_SPEC.png", false))));
+        m4->Translate(0, -1, 4);
+
         models.push_back(floor);
         models.push_back(m1);
         models.push_back(m2);
         models.push_back(m3);
+        models.push_back(m4);
 
         boundsRenderer = new AABBWireframe(m1->GetBounds());
     }
@@ -90,19 +100,19 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
         dirLight->Rotate(45, 60, 0);
 
         glm::vec3 pointLight1Color = glm::vec3(0.6f, 0.8f, 1);
-        LightNode* pointLight1 = new LightNode(new PointLight { pointLight1Color });
+        LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color));
         Model* pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(pointLight1Color)));
-        pointLight1->Translate(4, -1, 4);
-        pointLight1Model->Translate(4, -1, 4);
+        pointLight1->Translate(3, -1, 4);
+        pointLight1Model->Translate(3, -1, 4);
 
         glm::vec3 pointLight2Color = glm::vec3(1, 0.8f, 0.6f) * 10.0f;
-        LightNode* pointLight2 = new LightNode(new PointLight { pointLight2Color });
+        LightNode* pointLight2 = new LightNode(new PointLight(pointLight2Color));
         Model* pointLight2Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(pointLight2Color)));
-        pointLight2->Translate(-4, -1, 4);
-        pointLight2Model->Translate(-4, -1, 4);
+        pointLight2->Translate(-3, -1, 4);
+        pointLight2Model->Translate(-3, -1, 4);
 
         glm::vec3 spotLight1Color = glm::vec3(0.8f, 0.4f, 1.0f) * 6.0f;
-        LightNode* spotLight1 = new LightNode(new SpotLight { spotLight1Color, 20.0f });
+        LightNode* spotLight1 = new LightNode(new SpotLight(spotLight1Color, 20.0f));
         Model* spotLight1Model = new Model(new Mesh(new Pyramid(0.1f, 0.2f), new UnlitMaterial(spotLight1Color)));
         spotLight1->Translate(4, 1, -5);
         spotLight1Model->Translate(4, 1, -5);
@@ -110,7 +120,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
         spotLight1Model->Rotate(-45, 0, 0);
 
         glm::vec3 spotLight2Color = glm::vec3(0.8f, 0.4f, 1.0f) * 6.0f;
-        LightNode* spotLight2 = new LightNode(new SpotLight { spotLight2Color, 40.0f });
+        LightNode* spotLight2 = new LightNode(new SpotLight(spotLight2Color, 40.0f));
         Model* spotLight2Model = new Model(new Mesh(new Pyramid(0.15f, 0.2f), new UnlitMaterial(spotLight2Color)));
         spotLight2->Translate(2, 1, -5);
         spotLight2Model->Translate(2, 1, -5);
@@ -221,6 +231,7 @@ void SceneController::Update(float dt) {
     models[1]->Rotate(dt * 45, glm::normalize(glm::vec3(0.5f, 1.0, 0.0)));
     models[2]->Rotate(dt * 60, glm::normalize(glm::vec3(0, 1.0, 0.0)));
     models[3]->Rotate(0, dt * 15, 0);
+    models[4]->Rotate(dt * -60, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
     // model->SetScale(glm::sin(glfwGetTime()) + 1);
 
     // model->SetPosition(glm::sin(glfwGetTime()), 0, 0);
@@ -312,7 +323,10 @@ void SceneController::RenderScene() {
             ++stats.drawCalls;
         }
 
-        boundsRenderer->Draw();
+        // NOTE this should be optimized to only draw if the associated model is visible
+        if(!opaqueModels.empty()) {
+            boundsRenderer->Draw();
+        }
     }
 
     {
