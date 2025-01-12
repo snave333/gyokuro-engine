@@ -61,7 +61,11 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     
     // our test models
     {
-        Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial({ 1, 1, 1 }, { 1, 1, 1 }, 64, Resources::GetTexture("wood.jpg", true))));
+        Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial(
+            { 1, 1, 1 }, { 1, 1, 1 }, 64,
+            Resources::GetTexture("brick_DIFF.jpg", true),
+            nullptr,
+            Resources::GetTexture("brick_NRM.jpg", false))));
         floor->Translate(0, -2, 0);
         floor->Rotate(-90, 0, 0);
         floor->Scale(10);

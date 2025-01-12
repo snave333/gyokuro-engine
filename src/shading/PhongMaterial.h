@@ -14,7 +14,8 @@ public:
         glm::vec3 specular = glm::vec3(1),
         float shininess = 128,
         Texture2D* diffuseMap = nullptr,
-        Texture2D* specularMap = nullptr);
+        Texture2D* specularMap = nullptr,
+        Texture2D* normalMap = nullptr);
     ~PhongMaterial() override;
 
     void Queue() override;
@@ -25,6 +26,7 @@ private:
     float shininess;
     Texture2D* diffuseMap = nullptr;
     Texture2D* specularMap = nullptr;
+    Texture2D* normalMap = nullptr;
 };
 
 #endif // PHONG_MATERIAL_H

@@ -8,13 +8,15 @@ PhongMaterial::PhongMaterial(
     glm::vec3 specular,
     float shininess,
     Texture2D* diffuseMap,
-    Texture2D* specularMap
+    Texture2D* specularMap,
+    Texture2D* normalMap
 ) {
     this->diffuse = diffuse;
     this->specular = specular;
     this->shininess = shininess;
     this->diffuseMap = diffuseMap;
     this->specularMap = specularMap;
+    this->normalMap = normalMap;
 
     usesDirectLighting = true;
 
@@ -25,12 +27,16 @@ PhongMaterial::PhongMaterial(
         this->diffuseMap = Resources::GetTexture("BUILTIN_white", true);
     }
     if(specularMap == nullptr) {
-        this->specularMap = Resources::GetTexture("BUILTIN_white", true);
+        this->specularMap = Resources::GetTexture("BUILTIN_white", false);
+    }
+    if(normalMap == nullptr) {
+        this->normalMap = Resources::GetTexture("BUILTIN_normal", false);
     }
 
     shader->Use();
     shader->SetInt("material.diffuseMap", 0);
     shader->SetInt("material.specularMap", 1);
+    shader->SetInt("material.normalMap", 2);
 }
 
 PhongMaterial::~PhongMaterial() {
@@ -41,6 +47,7 @@ void PhongMaterial::Queue() {
 
     diffuseMap->Bind(0);
     specularMap->Bind(1);
+    normalMap->Bind(2);
 
     shader->SetVec3("material.diffuse", diffuse);
     shader->SetVec3("material.specular", specular);

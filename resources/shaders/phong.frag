@@ -50,6 +50,7 @@ struct LightingResult {
   L - the normalized direction from P to the light source
   V - the normalized direction from P to the eye (camera position)
 */
+vec3 calcNormal(vec3 wsNormal, vec3 wsTangent, sampler2D texNormal, vec2 texCoord);
 float calcDiffuse(vec3 L, vec3 N);
 float calcSpecular(vec3 V, vec3 L, vec3 N, float a);
 float calcAttenuation(float kc, float kl, float kq, float d);
@@ -65,12 +66,14 @@ struct Material {
     vec3 specular;
     sampler2D specularMap;
     float shininess;
+    sampler2D normalMap;
 };
 
 in VS_OUT {
     vec3 fragPos;
     vec3 normal;
     vec2 texCoord;
+    vec3 tangent;
 } fs_in;
 
 layout (std140) uniform Camera {
@@ -91,7 +94,7 @@ uniform Material material;
 void main()
 {
     vec3 V = normalize(viewPos.xyz - fs_in.fragPos);
-    vec3 N = normalize(fs_in.normal);
+    vec3 N = calcNormal(fs_in.normal, fs_in.tangent, material.normalMap, fs_in.texCoord);
     vec3 P = fs_in.fragPos;
 
     LightingResult totalLighting = calcTotalLighting(V, P, N);
@@ -102,6 +105,29 @@ void main()
     vec3 result = ambient + diffuse + specular;
 
     FragColor = vec4(result, 1.0);
+}
+
+vec3 calcNormal(vec3 wsNormal, vec3 wsTangent, sampler2D texNormal, vec2 texCoord) {
+    vec3 normal = normalize(wsNormal);
+    vec3 tangent = normalize(wsTangent);
+
+    // re-orthogonalize the tangent because averaging the results could have
+    // ended up slightly non-perpindicular
+    tangent = normalize(tangent - dot(tangent, normal) * normal);
+
+    // compute the bitangent and matrix for tangent-space transformation
+    vec3 bitangent = cross(tangent, normal);
+    mat3 tbn = mat3(tangent, bitangent, normal);
+
+    // obtain normal from normal map in range [0,1]
+    vec3 retrievedNormal = texture(texNormal, texCoord).rgb;
+    // transform normal vector to range [-1,1]
+    retrievedNormal = retrievedNormal * 2.0 - 1.0;
+
+    // transform our tangent-space sampled normal vector into world-space
+    vec3 newNormal = tbn * retrievedNormal;
+    newNormal = normalize(newNormal);
+    return newNormal;
 }
 
 float calcDiffuse(vec3 L, vec3 N) {
