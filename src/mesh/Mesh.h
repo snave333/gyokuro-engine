@@ -32,7 +32,6 @@ protected:
 
     AABB bounds;
 
-    void CalculateTangents();
     void Initialize();
     void ComputeBounds();
 

@@ -14,6 +14,7 @@ class Shader;
 class Texture2D;
 class Model;
 class AABBWireframe;
+class TangentsRenderer;
 class FlyCamera;
 class Text;
 struct LightNode;
@@ -42,6 +43,7 @@ private:
     std::vector<Model*> models = {};
 
     AABBWireframe* boundsRenderer = nullptr;
+    TangentsRenderer* tangentsRenderer = nullptr;
 
     Text* textRenderer;
 

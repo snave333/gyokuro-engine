@@ -68,15 +68,14 @@ void AABBWireframe::Update(const AABB& aabb) {
 
     // update content of VBO memory
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(glm::vec3), &vertices[0]); 
+    glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(glm::vec3), &vertices[0]);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void AABBWireframe::Draw() {
     shader->Use();
-    // shader->SetMat4("model", model);
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, 0); // 24 edges
+    glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, 0); // 12 lines
     glBindVertexArray(0);
 }

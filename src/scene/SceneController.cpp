@@ -20,6 +20,7 @@
 #include <mesh/Pyramid.h>
 #include <mesh/Model.h>
 #include <mesh/AABBWireframe.h>
+#include <mesh/TangentsRenderer.h>
 #include <camera/FlyCamera.h>
 #include <lighting/LightNode.h>
 #include <ui/Text.h>
@@ -96,6 +97,9 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
         models.push_back(m4);
 
         boundsRenderer = new AABBWireframe(m1->GetBounds());
+ 
+        Geometry geo = Cube();
+        tangentsRenderer = new TangentsRenderer(geo, 0.1f);
     }
 
     // our test direct lighting
@@ -215,6 +219,8 @@ SceneController::~SceneController() {
 
     delete boundsRenderer;
     boundsRenderer = nullptr;
+    delete tangentsRenderer;
+    tangentsRenderer = nullptr;
 
     for(const auto& light : lights) {
         delete light;
@@ -243,6 +249,7 @@ void SceneController::Update(float dt) {
     // model->SetScale(glm::sin(glfwGetTime()) / 2 + 1);
 
     boundsRenderer->Update(models[1]->GetBounds());
+    tangentsRenderer->Update(models[1]->GetTransform(), models[1]->GetNormalMatrix());
 }
 
 void SceneController::Render() {
@@ -330,6 +337,7 @@ void SceneController::RenderScene() {
         // NOTE this should be optimized to only draw if the associated model is visible
         if(!opaqueModels.empty()) {
             boundsRenderer->Draw();
+            tangentsRenderer->Draw();
         }
     }
 
