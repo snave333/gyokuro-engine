@@ -66,7 +66,8 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
             { 1, 1, 1 }, { 1, 1, 1 }, 64,
             Resources::GetTexture("brick_DIFF.jpg", true),
             nullptr,
-            Resources::GetTexture("brick_NRM.jpg", false))));
+            Resources::GetTexture("brick_NRM.jpg", false),
+            glm::vec2(4))));
         floor->Translate(0, -2, 0);
         floor->Rotate(-90, 0, 0);
         floor->Scale(10);
@@ -74,7 +75,10 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
         Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0 })));
         m1->Translate(4, -1, 0);
 
-        Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial({ 0, 0.5, 1 }, Resources::GetTexture("awesomeface.png", true))));
+        Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(
+            { 0, 0.5, 1 },
+            Resources::GetTexture("awesomeface.png", true),
+            glm::vec2(2, 1))));
         m2->Translate(2, -1, 0);
 
         Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial({ 0.5, 0, 1 }, { 0.5, 0, 1 })));
@@ -107,28 +111,28 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
         LightNode* dirLight = new LightNode(new DirectionalLight(glm::vec3(1, 1, 0.8f) * 0.0f)); // disabled for now
         dirLight->Rotate(45, 60, 0);
 
-        glm::vec3 pointLight1Color = glm::vec3(0.6f, 0.8f, 1);
+        glm::vec3 pointLight1Color = glm::vec3(0.2f, 0.6f, 1);
         LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color, 10));
         Model* pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(pointLight1Color)));
         pointLight1->Translate(3, -1, 4);
         pointLight1Model->Translate(3, -1, 4);
 
-        glm::vec3 pointLight2Color = glm::vec3(1, 0.8f, 0.6f) * 10.0f;
-        LightNode* pointLight2 = new LightNode(new PointLight(pointLight2Color, 10));
+        glm::vec3 pointLight2Color = glm::vec3(1, 0.6f, 0.2f);
+        LightNode* pointLight2 = new LightNode(new PointLight(pointLight2Color * 10.0f, 10));
         Model* pointLight2Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(pointLight2Color)));
         pointLight2->Translate(-3, -1, 4);
         pointLight2Model->Translate(-3, -1, 4);
 
-        glm::vec3 spotLight1Color = glm::vec3(0.8f, 0.4f, 1.0f) * 6.0f;
-        LightNode* spotLight1 = new LightNode(new SpotLight(spotLight1Color, 20.0f, 10));
+        glm::vec3 spotLight1Color = glm::vec3(0.6f, 0.2f, 1.0f);
+        LightNode* spotLight1 = new LightNode(new SpotLight(spotLight1Color * 6.0f, 20.0f, 10));
         Model* spotLight1Model = new Model(new Mesh(new Pyramid(0.1f, 0.2f), new UnlitMaterial(spotLight1Color)));
         spotLight1->Translate(4, 1, -5);
         spotLight1Model->Translate(4, 1, -5);
         spotLight1->Rotate(45, 0, 0);
         spotLight1Model->Rotate(-45, 0, 0);
 
-        glm::vec3 spotLight2Color = glm::vec3(1.0f, 0.4f, 0.4f) * 6.0f;
-        LightNode* spotLight2 = new LightNode(new SpotLight(spotLight2Color, 40.0f, 10));
+        glm::vec3 spotLight2Color = glm::vec3(1.0f, 0.2f, 0.2f);
+        LightNode* spotLight2 = new LightNode(new SpotLight(spotLight2Color * 6.0f, 40.0f, 10));
         Model* spotLight2Model = new Model(new Mesh(new Pyramid(0.15f, 0.2f), new UnlitMaterial(spotLight2Color)));
         spotLight2->Translate(2, 1, -5);
         spotLight2Model->Translate(2, 1, -5);

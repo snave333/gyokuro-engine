@@ -10,8 +10,11 @@ in VS_OUT {
 
 uniform vec3 color;
 uniform sampler2D tex;
+uniform vec2 uvTiling;
+uniform vec2 uvOffset;
 
 void main()
 {
-    FragColor = vec4(texture(tex, fs_in.texCoord).xyz * color, 1);
+    vec2 mappedTexCoord = fs_in.texCoord * uvTiling + uvOffset;
+    FragColor = vec4(texture(tex, mappedTexCoord).xyz * color, 1);
 }

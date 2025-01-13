@@ -15,7 +15,10 @@ public:
         float shininess = 128,
         Texture2D* diffuseMap = nullptr,
         Texture2D* specularMap = nullptr,
-        Texture2D* normalMap = nullptr);
+        Texture2D* normalMap = nullptr,
+        glm::vec2 uvTiling = glm::vec2(1),
+        glm::vec2 uvOffset = glm::vec2(0)
+    );
     ~PhongMaterial() override;
 
     void Queue() override;
@@ -27,6 +30,8 @@ private:
     Texture2D* diffuseMap = nullptr;
     Texture2D* specularMap = nullptr;
     Texture2D* normalMap = nullptr;
+    glm::vec2 uvTiling;
+    glm::vec2 uvOffset;
 };
 
 #endif // PHONG_MATERIAL_H

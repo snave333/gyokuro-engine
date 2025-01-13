@@ -9,7 +9,9 @@ PhongMaterial::PhongMaterial(
     float shininess,
     Texture2D* diffuseMap,
     Texture2D* specularMap,
-    Texture2D* normalMap
+    Texture2D* normalMap,
+    glm::vec2 uvTiling,
+    glm::vec2 uvOffset
 ) {
     this->diffuse = diffuse;
     this->specular = specular;
@@ -17,6 +19,8 @@ PhongMaterial::PhongMaterial(
     this->diffuseMap = diffuseMap;
     this->specularMap = specularMap;
     this->normalMap = normalMap;
+    this->uvTiling = uvTiling;
+    this->uvOffset = uvOffset;
 
     usesDirectLighting = true;
 
@@ -52,4 +56,6 @@ void PhongMaterial::Queue() {
     shader->SetVec3("material.diffuse", diffuse);
     shader->SetVec3("material.specular", specular);
     shader->SetFloat("material.shininess", shininess);
+    shader->SetVec2("material.uvTiling", this->uvTiling);
+    shader->SetVec2("material.uvOffset", this->uvOffset);
 }

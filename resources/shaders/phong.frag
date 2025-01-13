@@ -62,11 +62,13 @@ LightingResult calcTotalLighting(vec3 V, vec3 P, vec3 N);
 
 struct Material {
     vec3 diffuse;
-    sampler2D diffuseMap;
     vec3 specular;
-    sampler2D specularMap;
     float shininess;
+    sampler2D diffuseMap;
+    sampler2D specularMap;
     sampler2D normalMap;
+    vec2 uvTiling;
+    vec2 uvOffset;
 };
 
 in VS_OUT {
@@ -93,15 +95,17 @@ uniform Material material;
 
 void main()
 {
+    vec2 mappedTexCoord = fs_in.texCoord * material.uvTiling + material.uvOffset;
+
     vec3 V = normalize(viewPos.xyz - fs_in.fragPos);
-    vec3 N = calcNormal(fs_in.normal, fs_in.tangent, material.normalMap, fs_in.texCoord);
+    vec3 N = calcNormal(fs_in.normal, fs_in.tangent, material.normalMap, mappedTexCoord);
     vec3 P = fs_in.fragPos;
 
     LightingResult totalLighting = calcTotalLighting(V, P, N);
 
     vec3 ambient = globalAmbient;
-    vec3 diffuse = totalLighting.diffuse * material.diffuse * texture(material.diffuseMap, fs_in.texCoord).xyz;
-    vec3 specular = totalLighting.specular * material.specular * texture(material.specularMap, fs_in.texCoord).xyz;
+    vec3 diffuse = totalLighting.diffuse * material.diffuse * texture(material.diffuseMap, mappedTexCoord).xyz;
+    vec3 specular = totalLighting.specular * material.specular * texture(material.specularMap, mappedTexCoord).xyz;
     vec3 result = ambient + diffuse + specular;
 
     FragColor = vec4(result, 1.0);
