@@ -33,7 +33,7 @@ void Resources::Initialize() {
 
     // default normal texture
     id = HASH("BUILTIN_normal");
-    color = { 0, 0, 1, 1 };
+    color = { 0.5f, 0.5f, 1, 1 };
     Resources::textures[id] = Resources::GenerateBuiltInTexture(color);
 }
 

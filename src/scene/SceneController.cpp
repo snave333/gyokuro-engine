@@ -127,13 +127,13 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
         spotLight1->Rotate(45, 0, 0);
         spotLight1Model->Rotate(-45, 0, 0);
 
-        glm::vec3 spotLight2Color = glm::vec3(0.8f, 0.4f, 1.0f) * 6.0f;
+        glm::vec3 spotLight2Color = glm::vec3(1.0f, 0.4f, 0.4f) * 6.0f;
         LightNode* spotLight2 = new LightNode(new SpotLight(spotLight2Color, 40.0f, 10));
         Model* spotLight2Model = new Model(new Mesh(new Pyramid(0.15f, 0.2f), new UnlitMaterial(spotLight2Color)));
         spotLight2->Translate(2, 1, -5);
         spotLight2Model->Translate(2, 1, -5);
-        spotLight2->Rotate(45, 0, 0);
-        spotLight2Model->Rotate(-45, 0, 0);
+        spotLight2->Rotate(45, -15, 0);
+        spotLight2Model->Rotate(-45, -15, 0);
 
         lights.push_back(dirLight);
         lights.push_back(pointLight1);
