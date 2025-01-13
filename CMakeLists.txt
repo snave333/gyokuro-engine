@@ -67,11 +67,16 @@ target_link_libraries(Gyokuro
     glm
     freetype)
 
-# copy resources using a custom command to execute during the build process
+# set shader source and build directories
 set(SHADER_SOURCE_DIR "${CMAKE_SOURCE_DIR}/resources")
 set(SHADER_BUILD_DIR "${CMAKE_BINARY_DIR}/resources")
-add_custom_command(
-    TARGET Gyokuro POST_BUILD
+
+# add a custom target to copy resources
+add_custom_target(copy_resources ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${SHADER_SOURCE_DIR} ${SHADER_BUILD_DIR}
+    COMMENT "Copying resources to build directory"
 )
+
+# ensure Gyokuro depends on the copy_resources target
+add_dependencies(Gyokuro copy_resources)
