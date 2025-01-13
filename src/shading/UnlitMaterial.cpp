@@ -9,7 +9,7 @@ UnlitMaterial::UnlitMaterial(glm::vec3 color, Texture2D* texture) {
     this->texture = texture;
 
     if(texture == nullptr) {
-        shader = Resources::GetShader("default.vert", "unlitColor.frag");
+        shader = Resources::GetShader("default.vert", "solidColor.frag");
     }
     else {
         shader = Resources::GetShader("default.vert", "unlitColorTexture.frag");

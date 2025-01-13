@@ -51,7 +51,7 @@ TangentsRenderer::TangentsRenderer(Geometry& geometry, float lineLength) : lineL
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     // create shader
-    shader = Resources::GetShader("tangents.vert", "tangents.frag");
+    shader = Resources::GetShader("tangents.vert", "vertexColor.frag");
     shader->Use();
     shader->SetUniformBlockBinding("Camera", 0);
     shader->SetFloat("lineLength", this->lineLength);

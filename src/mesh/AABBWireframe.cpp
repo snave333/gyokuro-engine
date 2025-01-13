@@ -39,7 +39,7 @@ AABBWireframe::AABBWireframe(const AABB& aabb, glm::vec3 color) {
     glBindVertexArray(0);
 
     // create shader
-    shader = Resources::GetShader("wireframe.vert", "unlitColor.frag");
+    shader = Resources::GetShader("wireframe.vert", "solidColor.frag");
     shader->Use();
     shader->SetVec3("color", color);
     shader->SetUniformBlockBinding("Camera", 0);
