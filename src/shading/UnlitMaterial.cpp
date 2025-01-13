@@ -34,10 +34,11 @@ void UnlitMaterial::Queue() {
     shader->Use();
 
     shader->SetVec3("color", color);
-    shader->SetVec2("uvTiling", this->uvTiling);
-    shader->SetVec2("uvOffset", this->uvOffset);
 
     if(texture != nullptr) {
         texture->Bind(0);
+
+        shader->SetVec2("uvTiling", this->uvTiling);
+        shader->SetVec2("uvOffset", this->uvOffset);
     }
 }

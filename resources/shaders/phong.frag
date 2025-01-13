@@ -105,7 +105,7 @@ void main()
 
     vec3 ambient = globalAmbient;
     vec3 diffuse = totalLighting.diffuse * material.diffuse * texture(material.diffuseMap, mappedTexCoord).xyz;
-    vec3 specular = totalLighting.specular * material.specular * texture(material.specularMap, mappedTexCoord).xyz;
+    vec3 specular = totalLighting.specular * material.specular * texture(material.specularMap, mappedTexCoord).r;
     vec3 result = ambient + diffuse + specular;
 
     FragColor = vec4(result, 1.0);
