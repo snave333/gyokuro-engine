@@ -13,6 +13,7 @@
 #include <renderer/Renderer.h>
 #include <scene/SceneController.h>
 #include <resources/Resources.h>
+#include <scene_loader.h>
 
 void error_callback(int error, const char* description);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -74,6 +75,8 @@ int main(int argc, const char * argv[]) {
     // our rendering managers
     renderer = new Renderer(window, width, height);
     sceneController = new SceneController(renderer, width, height);
+
+    SceneLoader::LoadScene2(sceneController);
 
     // timing
     float currentTime;

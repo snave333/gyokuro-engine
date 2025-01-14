@@ -9,7 +9,8 @@
 
 class SceneNode {
 public:
-    SceneNode() {};
+    SceneNode() {}
+    virtual ~SceneNode() {}
 
     const glm::vec3& GetPosition() { return position; }
     const glm::fquat& GetRotation() { return rotation; }

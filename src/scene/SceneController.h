@@ -10,8 +10,7 @@ struct FrameStats {
 };
 
 class Renderer;
-class Shader;
-class Texture2D;
+class SceneNode;
 class Model;
 class AABBWireframe;
 class TangentsRenderer;
@@ -27,6 +26,8 @@ public:
     void Update(float dt);
     void Render();
 
+    void AddNode(SceneNode* node);
+
     void OnKeyPressed(int key, float dt);
     // void OnKeyReleased(int key, float dt);
     void OnMouseMove(float x, float y);
@@ -41,9 +42,6 @@ private:
     std::vector<LightNode*> lights = {};
 
     std::vector<Model*> models = {};
-
-    AABBWireframe* boundsRenderer = nullptr;
-    TangentsRenderer* tangentsRenderer = nullptr;
 
     Text* textRenderer;
 
