@@ -7,6 +7,12 @@ struct FrameStats {
     float vfcMs = 0;
     float opaqueMs = 0;
     unsigned int drawCalls = 0;
+
+    void Reset() {
+        vfcMs = 0;
+        opaqueMs = 0;
+        drawCalls = 0;
+    }
 };
 
 class Renderer;
@@ -47,6 +53,12 @@ private:
 
     float lastMouseX;
     float lastMouseY;
+
+    // per-frame
+    FrameStats stats;
+    std::vector<Model*> visibleModels = {};
+    std::vector<Model*> opaqueModels = {};
+    std::vector<Model*> transparentModels = {};
 
     void RenderScene();
 };

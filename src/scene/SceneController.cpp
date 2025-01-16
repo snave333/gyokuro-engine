@@ -156,7 +156,6 @@ void SceneController::Render() {
 }
 
 void SceneController::RenderScene() {
-    FrameStats stats;
     /**
      * vector<Mesh*> visible
      * vector<Mesh*> opaque
@@ -171,7 +170,10 @@ void SceneController::RenderScene() {
      * - render transparent :: renderer->RenderOpaque(opaque)
      */
 
-    std::vector<Model*> visibleModels = {};
+    stats.Reset();
+    visibleModels.clear();
+    opaqueModels.clear();
+    transparentModels.clear();
 
     // frustum culling
     {
@@ -180,6 +182,9 @@ void SceneController::RenderScene() {
         const Frustum& cameraFrustum = camera->GetFrustum();
         std::array<std::pair<int, int>, 6> frustumLUT = cameraFrustum.ComputeAABBTestLUT();
 
+        // FIXME: this is a niave approach where all models in the scene are
+        // iterated through. Look into using a BVH to quickly cull large 
+        // swathes of scene models.
         for(const auto& model : models) {
             const AABB& bounds = model->GetBounds();
             const std::array<glm::vec3, 8>& boundsLUT = model->GetLUT();
@@ -197,8 +202,6 @@ void SceneController::RenderScene() {
     camera->UpdateViewMatrixUniform();
 
     // FIXME this should be done as models are added to the scene
-    std::vector<Model*> opaqueModels = {};
-    std::vector<Model*> transparentModels = {};
     for(const auto& model : visibleModels) {
         if(model->GetRenderType() == OPAQUE) {
             opaqueModels.push_back(model);
@@ -275,6 +278,12 @@ void SceneController::OnKeyPressed(int key, float dt) {
             break;
         case GLFW_KEY_D:
             velocity -= camera->GetRight();
+            break;
+        case GLFW_KEY_Q:
+            velocity += camera->GetUp();
+            break;
+        case GLFW_KEY_E:
+            velocity -= camera->GetUp();
             break;
     }
 

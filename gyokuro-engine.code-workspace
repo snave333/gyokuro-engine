@@ -63,7 +63,8 @@
 			"charconv": "cpp",
 			"forward_list": "cpp",
 			"__tree": "cpp",
-			"map": "cpp"
+			"map": "cpp",
+			"__config": "cpp"
 		}
 	}
 }

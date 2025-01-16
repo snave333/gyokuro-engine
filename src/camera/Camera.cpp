@@ -1,6 +1,7 @@
 
 #include <camera/Camera.h>
 
+#include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
