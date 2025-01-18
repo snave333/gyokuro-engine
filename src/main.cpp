@@ -150,11 +150,11 @@ void processInput(GLFWwindow *window, float dt)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         sceneController->OnKeyPressed(GLFW_KEY_D, dt);
     }
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-        sceneController->OnKeyPressed(GLFW_KEY_Q, dt);
-    }
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
         sceneController->OnKeyPressed(GLFW_KEY_E, dt);
+    }
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        sceneController->OnKeyPressed(GLFW_KEY_Q, dt);
     }
 }
 

@@ -11,15 +11,13 @@
 
 #define HASH(string) simple_hash(string)
 
+// djb2 hashing algorithm
 inline unsigned int simple_hash(const std::string& str) {
-    unsigned int hash = 0;
+    unsigned long hash = 5381;
+    for(char c : str) {
+        hash = ((hash << 5) + hash) + c;
+    }
 
-	for (auto& it : str) {
-		// be sure to use prime numbers
-		hash = 37 * hash + 17 * static_cast<char>(it);
-	}
-
-    // hash value will automatically wrap around 
     return hash;
 }
 

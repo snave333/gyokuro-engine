@@ -279,11 +279,11 @@ void SceneController::OnKeyPressed(int key, float dt) {
         case GLFW_KEY_D:
             velocity -= camera->GetRight();
             break;
-        case GLFW_KEY_Q:
-            velocity += camera->GetUp();
-            break;
         case GLFW_KEY_E:
-            velocity -= camera->GetUp();
+            velocity += glm::vec3(0, 1, 0);
+            break;
+        case GLFW_KEY_Q:
+            velocity -= glm::vec3(0, 1, 0);
             break;
     }
 

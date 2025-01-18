@@ -12,7 +12,8 @@ public:
     ~Text();
 
     void UpdateViewportSize(const glm::ivec2& size);
-    void RenderText(std::string text, unsigned int x, unsigned int y, float scale, glm::vec3 color);
+    void RenderText(std::string text, unsigned int x, unsigned int y,
+        float scale = 1.0f, glm::vec3 color = glm::vec3(1));
 
 private:
     Font* font = nullptr;

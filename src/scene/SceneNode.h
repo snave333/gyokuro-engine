@@ -12,9 +12,9 @@ public:
     SceneNode() {}
     virtual ~SceneNode() {}
 
-    const glm::vec3& GetPosition() { return position; }
-    const glm::fquat& GetRotation() { return rotation; }
-    const glm::vec3& GetScale() { return scale; }
+    const glm::vec3& GetPosition() const { return position; }
+    const glm::fquat& GetRotation() const { return rotation; }
+    const glm::vec3& GetScale() const { return scale; }
     
     void SetPosition(float x, float y, float z);
     void SetPosition(const glm::vec3 &position);

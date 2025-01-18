@@ -15,7 +15,6 @@ enum FrustumTestResult {
 };
 
 struct Frustum {
-public:
     std::array<Plane, 6> planes;
 
     /**

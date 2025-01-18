@@ -29,9 +29,9 @@ public:
 
 private:
     // our cached resources
-    static std::map<unsigned int, Shader> shaders;
-    static std::map<unsigned int, Texture2D> textures;
-    static std::map<unsigned int, Font> fonts;
+    static std::map<long, Shader> shaders;
+    static std::map<long, Texture2D> textures;
+    static std::map<long, Font> fonts;
 
     static std::map<ResourceType, std::string> resourceTypeDirMap;
 

@@ -16,14 +16,14 @@ std::map<ResourceType, std::string> Resources::resourceTypeDirMap = {
     { FONT, "fonts" },
 };
 
-std::map<unsigned int, Shader> Resources::shaders = {};
-std::map<unsigned int, Texture2D> Resources::textures = {};
-std::map<unsigned int, Font> Resources::fonts = {};
+std::map<long, Shader> Resources::shaders = {};
+std::map<long, Texture2D> Resources::textures = {};
+std::map<long, Font> Resources::fonts = {};
 
 void Resources::Initialize() {
     // generate default textures
 
-    unsigned int id;
+    long id;
     glm::vec4 color;
 
     // a 1 pixel white texture
@@ -67,7 +67,7 @@ void Resources::Dispose() {
 Shader* Resources::GetShader(const char* vertexFileName, const char* fragmentFileName) {
     std::string hashKey = std::string(vertexFileName) + "|" + std::string(fragmentFileName);
 
-    unsigned int id = HASH(hashKey);
+    long id = HASH(hashKey);
 
     if(Resources::shaders.find(id) != Resources::shaders.end()) {
         return &Resources::shaders[id];
@@ -84,7 +84,7 @@ Shader* Resources::GetShader(const char* vertexFileName, const char* fragmentFil
 }
 
 Texture2D* Resources::GetTexture(const char* imageFileName, bool srgb) {
-    unsigned int id = HASH(imageFileName);
+    long id = HASH(imageFileName);
 
     if (Resources::textures.find(id) != Resources::textures.end()) {
         return &Resources::textures[id];
@@ -100,7 +100,7 @@ Texture2D* Resources::GetTexture(const char* imageFileName, bool srgb) {
 }
 
 Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {
-    unsigned int id = HASH(fontFileName);
+    long id = HASH(fontFileName);
 
     if(Resources::fonts.find(id) != Resources::fonts.end()) {
         return &Resources::fonts[id];
