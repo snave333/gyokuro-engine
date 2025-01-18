@@ -1,6 +1,7 @@
 #ifndef SCENE_CONTROLLER_H
 #define SCENE_CONTROLLER_H
 
+#include <functional>
 #include <glm/glm.hpp>
 
 struct FrameStats {
@@ -39,6 +40,7 @@ public:
     void Render();
 
     void AddNode(SceneNode* node);
+    void AddUpdateFunction(std::function<void(float)> f) { updateFunctions.push_back(f); }
 
     void OnKeyPressed(int key, float dt);
     // void OnKeyReleased(int key, float dt);
@@ -47,6 +49,8 @@ public:
 private:
     Renderer* renderer = nullptr;
     glm::ivec2 size;
+
+    std::vector<std::function<void(float)>> updateFunctions;
 
     FlyCamera* camera = nullptr;
 

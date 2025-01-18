@@ -125,6 +125,13 @@ struct SceneLoader {
         sc->AddNode(m2);
         sc->AddNode(m3);
         sc->AddNode(m4);
+
+        sc->AddUpdateFunction([m1, m2, m3, m4](float dt) {
+            m1->Rotate(dt * 45, glm::normalize(glm::vec3(0.5f, 1.0, 0.0)));
+            m2->Rotate(dt * 60, glm::normalize(glm::vec3(0, 1.0, 0.0)));
+            m3->Rotate(0, dt * -15, 0);
+            m4->Rotate(dt * -60, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
+        });
     }
 };
 

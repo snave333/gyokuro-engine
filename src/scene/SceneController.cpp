@@ -143,6 +143,10 @@ void SceneController::Update(float dt) {
     // model->SetRotation(glm::sin(glfwGetTime()) * 30, 0, 0);
     // model->SetScale(glm::sin(glfwGetTime()) / 2 + 1);
     */
+
+    for (const auto& func : updateFunctions) {
+        func(dt);
+    }
 }
 
 void SceneController::Render() {
@@ -172,20 +176,6 @@ void SceneController::Render() {
 void SceneController::RenderScene() {
     CLOCKT(geometry_pass, &stats.geometryMs);
     
-    /**
-     * vector<Mesh*> visible
-     * vector<Mesh*> opaque
-     * vector<Mesh*> transparent
-     * 
-     * - update view matrix uniform block
-     * - frustum culling
-     * - separate opaque/transparent
-     * - render opaque :: renderer->RenderOpaque(opaque)
-     * - skybox pass
-     * - sort transparent back to front
-     * - render transparent :: renderer->RenderOpaque(opaque)
-     */
-
     // view frustum culling
     {
         CLOCKT(frustum_culling, &stats.vfcMs);
@@ -213,6 +203,8 @@ void SceneController::RenderScene() {
 
         renderer->RenderOpaque(opaqueDrawCalls);
     }
+
+    // TODO skybox pass
 
     // transparency pass
     {
