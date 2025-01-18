@@ -2,9 +2,11 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 #include <scene/SceneController.h>
 #include <renderer/Renderer.h>
+#include <renderer/DrawCall.h>
 #include <scene/SceneNode.h>
 #include <shading/Shader.h>
 #include <lighting/DirectionalLight.h>
@@ -63,15 +65,15 @@ void SceneController::AddNode(SceneNode* node) {
     if(model) {
         models.push_back(model);
 
-        const Material& material = model->GetMaterial();
-        const Shader& shader = material.GetShader();
+        const Material* material = model->GetMaterial();
+        const Shader& shader = material->GetShader();
 
         // bind the Camera uniform block
         shader.Use();
         shader.SetUniformBlockBinding("Camera", 0);
 
         // if the model uses lighting, set the lighting uniforms
-        if(material.usesDirectLighting) {
+        if(material->usesDirectLighting) {
             // shader.SetUniformBlockBinding("Lights", 1);
 
             shader.SetVec3("globalAmbient", ambientLight);
@@ -147,15 +149,29 @@ void SceneController::Render() {
     if(renderer == nullptr) {
         return;
     }
-    
-    renderer->BeginFrame(); // set frame buffer, clear
 
-    RenderScene();
+    renderer->BeginFrame(); // set frame buffer, clear
     
-    renderer->EndFrame(); // swap buffers
+    RenderScene(); // opaque and transparent geometry passes
+    
+    renderer->EndGeometryPass(); // render our full screen quad
+
+    // renderer->RenderImageEffects();
+
+    // renderer->RenderUI();
+    RenderStats();
+
+    renderer->EndFrame(); // final tonemapping / gamma correction, swap buffers
+
+    stats.Reset();
+    visibleModels.clear();
+    opaqueDrawCalls.clear();
+    alphaDrawCalls.clear();
 }
 
 void SceneController::RenderScene() {
+    CLOCKT(geometry_pass, &stats.geometryMs);
+    
     /**
      * vector<Mesh*> visible
      * vector<Mesh*> opaque
@@ -170,96 +186,124 @@ void SceneController::RenderScene() {
      * - render transparent :: renderer->RenderOpaque(opaque)
      */
 
-    stats.Reset();
-    visibleModels.clear();
-    opaqueModels.clear();
-    transparentModels.clear();
-
-    // frustum culling
+    // view frustum culling
     {
         CLOCKT(frustum_culling, &stats.vfcMs);
 
-        const Frustum& cameraFrustum = camera->GetFrustum();
-        std::array<std::pair<int, int>, 6> frustumLUT = cameraFrustum.ComputeAABBTestLUT();
-
-        // FIXME: this is a niave approach where all models in the scene are
-        // iterated through. Look into using a BVH to quickly cull large 
-        // swathes of scene models.
-        for(const auto& model : models) {
-            const AABB& bounds = model->GetBounds();
-            const std::array<glm::vec3, 8>& boundsLUT = model->GetLUT();
-
-            // FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds);
-            FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT);
-
-            if(result != OUTSIDE) {
-                visibleModels.push_back(model);
-            }
-        }
+        FrustumCull(camera->GetFrustum(), models, visibleModels);
     }
 
     // update the camera view matrix for our shaders
     camera->UpdateViewMatrixUniform();
 
-    // FIXME this should be done as models are added to the scene
+    // separate our visible objects into two vectors - opaque and blended
     for(const auto& model : visibleModels) {
         if(model->GetRenderType() == OPAQUE) {
-            opaqueModels.push_back(model);
+            opaqueDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix() });
         }
         else {
-            transparentModels.push_back(model);
+            alphaDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix() });
         }
+        stats.drawCalls++;
     }
 
     // opaque pass
     {
         CLOCKT(render_opaque, &stats.opaqueMs);
 
-        for(const auto& model : opaqueModels) {
-            model->Queue();
-            const Material& material = model->GetMaterial();
-            const Shader& shader = material.GetShader();
+        renderer->RenderOpaque(opaqueDrawCalls);
+    }
 
-            // set any shader uniforms
-            shader.SetMat4("model", model->GetTransform());
-            shader.SetMat4("normalMatrix", model->GetNormalMatrix());
+    // transparency pass
+    {
+        CLOCKT(render_alpha, &stats.alphaMs);
 
-            model->Draw();
-            ++stats.drawCalls;
+        // sort furthest to closest length squared from camera position
+        // NOTE this doesn't take rotation or scale into account
+
+        const glm::vec3& camPosition = camera->GetPosition();
+        std::sort(alphaDrawCalls.begin(), alphaDrawCalls.end(), [camPosition](const DrawCall a, const DrawCall b) {
+            const glm::vec3& aPos = glm::vec3(a.transform[3][0], a.transform[3][1], a.transform[3][2]);
+            const glm::vec3& bPos = glm::vec3(b.transform[3][0], b.transform[3][1], b.transform[3][2]);;
+
+            return glm::length2(aPos - camPosition) - glm::length2(bPos - camPosition);
+        });
+
+        renderer->RenderTransparent(alphaDrawCalls);
+    }
+}
+
+void SceneController::FrustumCull(
+    const Frustum& cameraFrustum,
+    const std::vector<Model*>& sceneModels,
+    std::vector<Model*>& visibleSceneModels
+) {
+    std::array<std::pair<int, int>, 6> frustumLUT = cameraFrustum.ComputeAABBTestLUT();
+
+    // FIXME: this is a niave approach where all models in the scene are
+    // iterated through.
+    // TODO Look into using a BVH to quickly cull large swathes of scene models.
+    for(const auto& model : sceneModels) {
+        const AABB& bounds = model->GetBounds();
+        const std::array<glm::vec3, 8>& boundsLUT = model->GetLUT();
+
+        // FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds);
+        // FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT);
+        FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT, &model->boundsLastFailedFrustumPlane);
+
+        if(result != OUTSIDE) {
+            visibleSceneModels.push_back(model);
         }
     }
+}
 
-    {
-        // TODO this should come AFTER the transparency pass and any image effects
-        // CLOCK(render_ui);
+void SceneController::RenderStats() {
+    // CLOCK(render_ui);
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // number of draw calls
+    // number of draw calls
 
-        textRenderer->RenderText(std::string("draw calls: ") + std::to_string(stats.drawCalls), 10, 50, 1.0f, glm::vec3(1));
+    textRenderer->RenderText(std::string("draw calls: ") + std::to_string(stats.drawCalls), 10, 90);
 
-        // view frustum culling
+    // view frustum culling
 
-        std::ostringstream stream;
-        stream.precision(2);
-        stream << std::fixed << stats.vfcMs;
+    std::ostringstream stream;
+    stream.precision(2);
+    stream << std::fixed << stats.vfcMs;
 
-        std::string vfcMs = stream.str();
-        textRenderer->RenderText(std::string("vfc: ") + vfcMs + std::string(" ms"), 10, 30, 1.0f, glm::vec3(1));
+    std::string vfcMs = stream.str();
+    textRenderer->RenderText(std::string("vfc: ") + vfcMs + std::string(" ms"), 10, 70);
 
-        // opaque pass
+    // opaque pass
 
-        stream.str("");
-        stream.clear();
-        stream << std::fixed << stats.opaqueMs;
+    stream.str("");
+    stream.clear();
+    stream << std::fixed << stats.opaqueMs;
 
-        std::string opaqueMs = stream.str();
-        textRenderer->RenderText(std::string("opaque pass: ") + opaqueMs + std::string(" ms"), 10, 10, 1.0f, glm::vec3(1));
+    std::string opaqueMs = stream.str();
+    textRenderer->RenderText(std::string("opaque pass: ") + opaqueMs + std::string(" ms"), 10, 50);
 
-        glDisable(GL_BLEND);
-    }
+    // alpha pass
+
+    stream.str("");
+    stream.clear();
+    stream << std::fixed << stats.alphaMs;
+
+    std::string alphaMs = stream.str();
+    textRenderer->RenderText(std::string("alpha pass: ") + opaqueMs + std::string(" ms"), 10, 30);
+
+    // total geometry pass
+
+    stream.str("");
+    stream.clear();
+    stream << std::fixed << stats.geometryMs;
+
+    std::string geometryMs = stream.str();
+    textRenderer->RenderText(std::string("total: ") + geometryMs + std::string(" ms"), 10, 10);
+
+    glDisable(GL_BLEND);
 }
 
 void SceneController::OnKeyPressed(int key, float dt) {

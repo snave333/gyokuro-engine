@@ -13,10 +13,6 @@ Model::~Model() {
     mesh = nullptr;
 }
 
-void Model::Draw() {
-    mesh->Draw();
-}
-
 const AABB& Model::GetBounds() {
     if(isDirty) {
         UpdateBounds();

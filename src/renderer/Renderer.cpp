@@ -3,6 +3,8 @@
 
 #include <renderer/Renderer.h>
 #include <renderer/ScreenQuad.h>
+#include <renderer/DrawCall.h>
+#include <mesh/Mesh.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -11,13 +13,14 @@ Renderer::Renderer(GLFWwindow* window, const int& width, const int& height) {
     this->window = window;
     size = glm::ivec2(width, height);
 
+    state = RenderState();
+    state.SetFaceCullingEnabled(true);
+    state.SetDepthTestingEnabled(true);
+    state.SetBlendingEnabled(false);
+
     CreateFrameBuffer();
 
     PrintGLInfo();
-
-    // enable backface fulling
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
 
     glPolygonMode(GL_FRONT, GL_FILL);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // uncomment to draw in wireframe
@@ -43,7 +46,7 @@ void Renderer::CreateFrameBuffer() {
     glGenTextures(1, &textureColorbuffer);
     glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -156,22 +159,65 @@ void Renderer::BeginFrame() {
     // bind and clear our frame buffer
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    glEnable(GL_DEPTH_TEST);
-
     glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::EndFrame() {
+void Renderer::RenderOpaque(std::vector<DrawCall> drawCalls) {
+    state.SetDepthTestingEnabled(true);
+    state.SetBlendingEnabled(false);
+
+    for(const DrawCall& dc : drawCalls) {
+        dc.material->Queue();
+        const Shader& shader = dc.material->GetShader();
+
+        // set any shader uniforms
+        shader.SetMat4("model", dc.transform);
+        shader.SetMat4("normalMatrix", dc.normalMatrix);
+
+        dc.mesh->Draw();
+    }
+}
+
+void Renderer::RenderTransparent(std::vector<DrawCall> drawCalls) {
+    state.SetDepthTestingEnabled(true);
+    state.SetBlendingEnabled(true);
+
+    for(const DrawCall& dc : drawCalls) {
+        dc.material->Queue();
+        const Shader& shader = dc.material->GetShader();
+
+        // set any shader uniforms
+        shader.SetMat4("model", dc.transform);
+        shader.SetMat4("normalMatrix", dc.normalMatrix);
+
+        // set the proper gl blend mode
+        if(dc.material->renderType == TRANSPARENT) {
+            state.SetBlendingEnabled(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+        else if(dc.material->renderType == ADDITIVE) {
+            state.SetBlendingEnabled(true, GL_SRC_ALPHA, GL_ONE);
+        }
+
+        dc.mesh->Draw();
+    }
+}
+
+void Renderer::EndGeometryPass() {
+    state.SetDepthTestingEnabled(false);
+    state.SetBlendingEnabled(false);
+
     // unbind our framebuffer, and render the full screen quad
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
-    glDisable(GL_DEPTH_TEST);
-
     glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     screenQuad->Draw(textureColorbuffer);
+}
+
+void Renderer::EndFrame() {
+    // TODO do final tonemapping and gamma correction pass here?
 
     glfwSwapBuffers(window);
 }

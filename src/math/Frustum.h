@@ -112,6 +112,50 @@ struct Frustum {
 
         return intersects ? INTERSECTING : INSIDE;
     }
+
+    /**
+     * Same as above, except optimized with plane-coherency
+     */
+    FrustumTestResult TestAABBIntersection(
+        const AABB& bounds,
+        const std::array<glm::vec3, 8>& boundsLUT,
+        const std::array<std::pair<int, int>, 6>& frustumLUT,
+        int* planeFailIdx) const
+    {
+        bool intersects = false;
+
+        for(int d = 0; d < 6; d++) {
+            // start testing at the last frustum plane this AABB failed at
+            int i = (d + *planeFailIdx) % 6;
+            
+            const Plane& plane = planes[i];
+
+            // determine the n-vertex relative to the plane normal
+            const glm::vec3& vn = boundsLUT[frustumLUT[i].first];
+
+            // test the n-vertex
+            float a = glm::dot(plane.normal, vn) + plane.distance;
+            if (a < 0) {
+                // update our last failed frustum plane for faster rejection
+                *planeFailIdx = d;
+
+                // if the n-vertex is outside, the box is outside
+                return OUTSIDE;
+            }
+
+            // determine the p-vertex relative to the plane normal
+            const glm::vec3& vp = boundsLUT[frustumLUT[i].second];
+
+            // test the p-vertex
+            float b = glm::dot(plane.normal, vp) + plane.distance;
+            if (b < 0) {
+                // if p-vertex is inside, we might be intersecting
+                intersects = true;
+            }
+        }
+
+        return intersects ? INTERSECTING : INSIDE;
+    }
 };
 
 #endif // FRUSTUM_H

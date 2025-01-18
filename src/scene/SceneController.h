@@ -4,24 +4,30 @@
 #include <glm/glm.hpp>
 
 struct FrameStats {
+    float geometryMs = 0;
     float vfcMs = 0;
     float opaqueMs = 0;
+    float alphaMs = 0;
     unsigned int drawCalls = 0;
 
     void Reset() {
+        geometryMs = 0;
         vfcMs = 0;
         opaqueMs = 0;
+        alphaMs = 0;
         drawCalls = 0;
     }
 };
 
 class Renderer;
+class DrawCall;
 class SceneNode;
 class Model;
 class AABBWireframe;
 class TangentsRenderer;
 class FlyCamera;
 class Text;
+struct Frustum;
 struct LightNode;
 
 class SceneController {
@@ -57,10 +63,16 @@ private:
     // per-frame
     FrameStats stats;
     std::vector<Model*> visibleModels = {};
-    std::vector<Model*> opaqueModels = {};
-    std::vector<Model*> transparentModels = {};
+    std::vector<DrawCall> opaqueDrawCalls = {};
+    std::vector<DrawCall> alphaDrawCalls = {};
 
     void RenderScene();
+    void FrustumCull(
+        const Frustum& cameraFrustum,
+        const std::vector<Model*>& sceneModels,
+        std::vector<Model*>& visibleSceneModels
+    );
+    void RenderStats();
 };
 
 #endif // SCENE_CONTROLLER_H

@@ -18,10 +18,9 @@ public:
     Mesh(Geometry* geometry, Material* material);
     ~Mesh();
 
-    void Queue() { material->Queue(); }
     void Draw();
 
-    const Material& GetMaterial() { return *material; }
+    Material* GetMaterial() { return material; }
     const RenderType& GetRenderType() { return material->renderType; }
 
     const AABB& GetBounds() { return bounds; }

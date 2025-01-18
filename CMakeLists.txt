@@ -36,6 +36,7 @@ add_executable(Gyokuro
     src/main.cpp
     src/renderer/Renderer.cpp
     src/renderer/ScreenQuad.cpp
+    src/renderer/RenderState.cpp
     src/shading/UnlitMaterial.cpp
     src/shading/PhongMaterial.cpp
     src/shading/Shader.cpp

@@ -13,16 +13,16 @@ enum RenderType;
 
 class Model : public SceneNode {
 public:
+    int boundsLastFailedFrustumPlane = 0; // plane-coherency
+
     Model(Mesh* mesh);
     ~Model();
 
     // TODO make mesh a list of meshes
     // void AddMesh(const Mesh &mesh);
 
-    void Queue() const { mesh->Queue(); }
-    void Draw();
-
-    const Material& GetMaterial() { return mesh->GetMaterial(); }
+    Mesh* GetMesh() { return mesh; }
+    Material* GetMaterial() { return mesh->GetMaterial(); }
     const RenderType& GetRenderType() { return mesh->GetRenderType(); }
 
     const AABB& GetBounds();
