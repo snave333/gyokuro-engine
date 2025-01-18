@@ -9,6 +9,7 @@
 #include <glad/glad.h>
 
 #include <iostream>
+#include <algorithm>
 
 std::map<ResourceType, std::string> Resources::resourceTypeDirMap = {
     { SHADER, "shaders" },
@@ -18,6 +19,7 @@ std::map<ResourceType, std::string> Resources::resourceTypeDirMap = {
 
 std::map<long, Shader> Resources::shaders = {};
 std::map<long, Texture2D> Resources::textures = {};
+std::map<long, TextureCube> Resources::cubeMaps = {};
 std::map<long, Font> Resources::fonts = {};
 
 void Resources::Initialize() {
@@ -58,6 +60,11 @@ void Resources::Dispose() {
     }
     Resources::textures.clear();
 
+    for (auto& texture : Resources::cubeMaps) {
+        texture.second.Dispose();
+    }
+    Resources::cubeMaps.clear();
+
     for (auto& font : Resources::fonts) {
         font.second.Dispose();
     }
@@ -97,6 +104,29 @@ Texture2D* Resources::GetTexture(const char* imageFileName, bool srgb) {
     Resources::textures[id] = texture;
 
     return &Resources::textures[id];
+}
+
+TextureCube* Resources::GetTextureCube(std::vector<const char*> faceFileNames, bool srgb) {
+    if(faceFileNames.size() != 6) {
+        throw std::runtime_error("Cannot load cubmap without 6 faces");
+    }
+
+    long id = HASH(faceFileNames[0]);
+    
+    if (Resources::cubeMaps.find(id) != Resources::cubeMaps.end()) {
+        return &Resources::cubeMaps[id];
+    }
+
+    std::vector<std::string> fullFacePaths(6);
+    std::transform(faceFileNames.begin(), faceFileNames.end(), fullFacePaths.begin(), [](const char* fileName) {
+        return Resources::GetTexturePath(fileName);
+    });
+
+    TextureCube texture = TextureLoader::LoadTextureCube(fullFacePaths, srgb);
+
+    Resources::cubeMaps[id] = texture;
+
+    return &Resources::cubeMaps[id];
 }
 
 Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {

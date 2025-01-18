@@ -7,12 +7,14 @@
 #include <scene/SceneController.h>
 #include <renderer/Renderer.h>
 #include <renderer/DrawCall.h>
+#include <resources/Resources.h>
 #include <scene/SceneNode.h>
 #include <shading/Shader.h>
 #include <lighting/DirectionalLight.h>
 #include <lighting/PointLight.h>
 #include <lighting/SpotLight.h>
 #include <mesh/Model.h>
+#include <mesh/Skybox.h>
 // #include <mesh/AABBWireframe.h>
 // #include <mesh/TangentsRenderer.h>
 #include <camera/FlyCamera.h>
@@ -29,9 +31,22 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     size = glm::ivec2(width, height);
 
     // setup our default camera
+
     camera = new FlyCamera(Camera::PerspectiveCamera(60, (float)width / height));
     // camera = new FlyCamera(Camera::OrthographicCamera(5, (float)width / height));
     camera->Translate(0, 0, -3);
+
+    // skybox
+
+    std::vector<const char*> faces {
+        "skybox_px.jpg",
+        "skybox_nx.jpg",
+        "skybox_py.jpg",
+        "skybox_ny.jpg",
+        "skybox_nz.jpg",
+        "skybox_pz.jpg"
+    };
+    skybox = new Skybox(Resources::GetTextureCube(faces, true));
 
     // our ui layer
 
@@ -43,6 +58,8 @@ SceneController::~SceneController() {
 
     delete camera;
     camera = nullptr;
+
+    skybox = nullptr; // deletion handled in Resources
 
     for(const auto& model : models) {
         delete model;
@@ -126,24 +143,6 @@ void SceneController::AddNode(SceneNode* node) {
 }
 
 void SceneController::Update(float dt) {
-    /*
-    // for(const auto& m : models) {
-    //     m->Rotate(dt * 30, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
-    // }
-
-    // model->Translate(dt / 2, 0, 0);
-    // model->Translate(glm::vec3(dt / 2, 0, 0));
-    models[1]->Rotate(dt * 45, glm::normalize(glm::vec3(0.5f, 1.0, 0.0)));
-    models[2]->Rotate(dt * 60, glm::normalize(glm::vec3(0, 1.0, 0.0)));
-    models[3]->Rotate(0, dt * 15, 0);
-    models[4]->Rotate(dt * -60, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
-    // model->SetScale(glm::sin(glfwGetTime()) + 1);
-
-    // model->SetPosition(glm::sin(glfwGetTime()), 0, 0);
-    // model->SetRotation(glm::sin(glfwGetTime()) * 30, 0, 0);
-    // model->SetScale(glm::sin(glfwGetTime()) / 2 + 1);
-    */
-
     for (const auto& func : updateFunctions) {
         func(dt);
     }
@@ -204,7 +203,8 @@ void SceneController::RenderScene() {
         renderer->RenderOpaque(opaqueDrawCalls);
     }
 
-    // TODO skybox pass
+    skybox->Draw(camera->GetView(), camera->GetProjection());
+    stats.drawCalls++;
 
     // transparency pass
     {
@@ -258,6 +258,7 @@ void SceneController::RenderStats() {
     // number of draw calls
 
     textRenderer->RenderText(std::string("draw calls: ") + std::to_string(stats.drawCalls), 10, 90);
+    stats.drawCalls++;
 
     // view frustum culling
 
@@ -267,6 +268,7 @@ void SceneController::RenderStats() {
 
     std::string vfcMs = stream.str();
     textRenderer->RenderText(std::string("vfc: ") + vfcMs + std::string(" ms"), 10, 70);
+    stats.drawCalls++;
 
     // opaque pass
 
@@ -276,6 +278,7 @@ void SceneController::RenderStats() {
 
     std::string opaqueMs = stream.str();
     textRenderer->RenderText(std::string("opaque pass: ") + opaqueMs + std::string(" ms"), 10, 50);
+    stats.drawCalls++;
 
     // alpha pass
 
@@ -285,6 +288,7 @@ void SceneController::RenderStats() {
 
     std::string alphaMs = stream.str();
     textRenderer->RenderText(std::string("alpha pass: ") + opaqueMs + std::string(" ms"), 10, 30);
+    stats.drawCalls++;
 
     // total geometry pass
 
@@ -294,6 +298,7 @@ void SceneController::RenderStats() {
 
     std::string geometryMs = stream.str();
     textRenderer->RenderText(std::string("total: ") + geometryMs + std::string(" ms"), 10, 10);
+    stats.drawCalls++;
 
     glDisable(GL_BLEND);
 }

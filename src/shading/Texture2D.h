@@ -3,7 +3,6 @@
 
 class Texture2D {
 public:
-    // constructor reads the image data and creates the gl texture
     Texture2D() {}
     Texture2D(const unsigned int& textureId) : ID(textureId) {}
     

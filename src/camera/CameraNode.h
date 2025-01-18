@@ -13,15 +13,14 @@ public:
     ~CameraNode();
 
     void UpdateViewMatrixUniform() { camera->UpdateViewMatrixUniform(GetView(), GetPosition()); };
+    
     const glm::mat4& GetProjection() { return camera->GetProjection(); };
+    glm::mat4 GetView();
     
     Frustum GetFrustum();
 
 protected:
     Camera* camera = nullptr;
-
-private:
-    glm::mat4 GetView();
 };
 
 #endif // CAMERA_NODE_H

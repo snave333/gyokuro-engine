@@ -1,5 +1,5 @@
-#ifndef MODEL_NODE_H
-#define MODEL_NODE_H
+#ifndef MODEL_H
+#define MODEL_H
 
 #include <scene/SceneNode.h>
 #include <mesh/Mesh.h>
@@ -39,4 +39,4 @@ private:
     void UpdateBoundsLUT();
 };
 
-#endif // MODEL_NODE_H
+#endif // MODEL_H

@@ -25,7 +25,7 @@ ScreenQuad::ScreenQuad() {
 
     // copy our vertices array in a buffer
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
 
     // link the vertex attribute pointers
     // screen-space positions

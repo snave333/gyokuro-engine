@@ -27,6 +27,7 @@ class Model;
 class AABBWireframe;
 class TangentsRenderer;
 class FlyCamera;
+class Skybox;
 class Text;
 struct Frustum;
 struct LightNode;
@@ -53,6 +54,8 @@ private:
     std::vector<std::function<void(float)>> updateFunctions;
 
     FlyCamera* camera = nullptr;
+
+    Skybox* skybox = nullptr;
 
     const glm::vec3 ambientLight = { 0.001f, 0.001f, 0.0005f };
     std::vector<LightNode*> lights = {};

@@ -41,8 +41,10 @@ add_executable(Gyokuro
     src/shading/PhongMaterial.cpp
     src/shading/Shader.cpp
     src/shading/Texture2D.cpp
+    src/shading/TextureCube.cpp
     src/mesh/Mesh.cpp
     src/mesh/Model.cpp
+    src/mesh/Skybox.cpp
     src/mesh/AABBWireframe.cpp
     src/mesh/TangentsRenderer.cpp
     src/camera/Camera.cpp
