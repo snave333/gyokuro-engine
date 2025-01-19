@@ -4,11 +4,14 @@
 class Texture2D {
 public:
     Texture2D() {}
-    Texture2D(const unsigned int& textureId) : ID(textureId) {}
+    Texture2D(const unsigned int& textureId, bool hasAlpha)
+        : ID(textureId), hasAlpha(hasAlpha) {}
     
     void Dispose();
 
     void Bind(unsigned int textureUnit = 0);
+
+    bool hasAlpha = false;
 
 private:
     // the texture id

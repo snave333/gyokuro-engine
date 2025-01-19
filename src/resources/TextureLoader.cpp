@@ -42,7 +42,7 @@ Texture2D TextureLoader::LoadTexture(std::string imageFilePath, bool srgb) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    return Texture2D(id);
+    return Texture2D(id, numChannels == 4);
 }
 
 TextureCube TextureLoader::LoadTextureCube(std::vector<std::string> faceFilePaths, bool srgb) {
@@ -100,7 +100,9 @@ Texture2D TextureLoader::GenerateTexture2D(int width, int height, unsigned int f
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    return Texture2D(id);
+    bool hasAlpha = format == GL_RGBA || format == GL_SRGB_ALPHA;
+
+    return Texture2D(id, hasAlpha);
 }
 
 void TextureLoader::GetTextureFormat(const bool& srgb, const int& numChannels, unsigned int* format, unsigned int* internalFormat) {

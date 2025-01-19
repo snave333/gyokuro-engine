@@ -50,19 +50,19 @@ struct SceneLoader {
 
         glm::vec3 pointLight1Color = glm::vec3(0.2f, 0.6f, 1);
         LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color, 10));
-        Model* pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(pointLight1Color)));
+        Model* pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f))));
         pointLight1->Translate(3, -1, 4);
         pointLight1Model->Translate(3, -1, 4);
 
         glm::vec3 pointLight2Color = glm::vec3(1, 0.6f, 0.2f);
         LightNode* pointLight2 = new LightNode(new PointLight(pointLight2Color * 10.0f, 10));
-        Model* pointLight2Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(pointLight2Color)));
+        Model* pointLight2Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(glm::vec4(pointLight2Color, 1.0f))));
         pointLight2->Translate(-3, -1, 4);
         pointLight2Model->Translate(-3, -1, 4);
 
         glm::vec3 spotLight1Color = glm::vec3(0.6f, 0.2f, 1.0f);
         LightNode* spotLight1 = new LightNode(new SpotLight(spotLight1Color * 6.0f, 20.0f, 10));
-        Model* spotLight1Model = new Model(new Mesh(new Pyramid(0.1f, 0.2f), new UnlitMaterial(spotLight1Color)));
+        Model* spotLight1Model = new Model(new Mesh(new Pyramid(0.1f, 0.2f), new UnlitMaterial(glm::vec4(spotLight1Color, 1.0f))));
         spotLight1->Translate(4, 1, -5);
         spotLight1Model->Translate(4, 1, -5);
         spotLight1->Rotate(45, 0, 0);
@@ -70,7 +70,7 @@ struct SceneLoader {
 
         glm::vec3 spotLight2Color = glm::vec3(1.0f, 0.2f, 0.2f);
         LightNode* spotLight2 = new LightNode(new SpotLight(spotLight2Color * 6.0f, 40.0f, 10));
-        Model* spotLight2Model = new Model(new Mesh(new Pyramid(0.15f, 0.2f), new UnlitMaterial(spotLight2Color)));
+        Model* spotLight2Model = new Model(new Mesh(new Pyramid(0.15f, 0.2f), new UnlitMaterial(glm::vec4(spotLight2Color, 1.0f))));
         spotLight2->Translate(2, 1, -5);
         spotLight2Model->Translate(2, 1, -5);
         spotLight2->Rotate(45, -15, 0);
@@ -112,11 +112,11 @@ struct SceneLoader {
         floor->Rotate(-90, 0, 0);
         floor->Scale(10);
 
-        Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0 })));
+        Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 })));
         m1->Translate(4, -1, 0);
 
         Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(
-            { 0, 0.5, 1 },
+            { 0, 0.5, 1, 1 },
             Resources::GetTexture("awesomeface.png", true),
             glm::vec2(2, 1))));
         m2->Translate(2, -1, 0);
@@ -146,6 +146,38 @@ struct SceneLoader {
             m3->Rotate(0, dt * -15, 0);
             m4->Rotate(dt * -60, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
         });
+    }
+
+    static void LoadScene3(SceneController* sc) {
+        // skybox
+
+        std::vector<const char*> faces {
+            "skybox_px.jpg",
+            "skybox_nx.jpg",
+            "skybox_py.jpg",
+            "skybox_ny.jpg",
+            "skybox_nz.jpg",
+            "skybox_pz.jpg"
+        };
+        Skybox* skybox = new Skybox(Resources::GetTextureCube(faces, true));
+        sc->SetSkybox(skybox);
+
+        // transparent objects
+
+        Model* m1 = new Model(new Mesh(new Quad(), new UnlitMaterial(glm::vec4(1), Resources::GetTexture("window.png", true))));
+        m1->Rotate(180, 0, 0);
+
+        Model* m2 = new Model(new Mesh(new Quad(), new UnlitMaterial(glm::vec4(1), Resources::GetTexture("window.png", true))));
+        m2->Translate(0.75f, 0.25f, 2);
+        m2->Rotate(180, 0, 0);
+
+        Model* m3 = new Model(new Mesh(new Quad(), new UnlitMaterial(glm::vec4(0, 0.5f, 0.8f, 0.2f))));
+        m3->Translate(0, -0.25f, 3);
+        m3->Rotate(180, 0, 0);
+
+        sc->AddNode(m1);
+        sc->AddNode(m2);
+        sc->AddNode(m3);
     }
 };
 

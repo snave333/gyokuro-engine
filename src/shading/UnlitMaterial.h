@@ -10,7 +10,7 @@ class Texture2D;
 class UnlitMaterial : public Material {
 public:
     UnlitMaterial(
-        glm::vec3 color = glm::vec3(1),
+        glm::vec4 color = glm::vec4(1),
         Texture2D* texture = nullptr,
         glm::vec2 uvTiling = glm::vec2(1),
         glm::vec2 uvOffset = glm::vec2(0)
@@ -20,7 +20,7 @@ public:
     void Queue() override;
 
 private:
-    glm::vec3 color = glm::vec3(1);
+    glm::vec4 color = glm::vec4(1);
     Texture2D* texture = nullptr;
     glm::vec2 uvTiling;
     glm::vec2 uvOffset;

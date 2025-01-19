@@ -76,7 +76,7 @@ int main(int argc, const char * argv[]) {
     renderer = new Renderer(window, width, height);
     sceneController = new SceneController(renderer, width, height);
 
-    SceneLoader::LoadScene2(sceneController);
+    SceneLoader::LoadScene3(sceneController);
 
     // timing
     float currentTime;

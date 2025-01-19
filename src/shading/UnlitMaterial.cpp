@@ -5,7 +5,7 @@
 #include <resources/Resources.h>
 
 UnlitMaterial::UnlitMaterial(
-    glm::vec3 color,
+    glm::vec4 color,
     Texture2D* texture,
     glm::vec2 uvTiling,
     glm::vec2 uvOffset
@@ -15,6 +15,10 @@ UnlitMaterial::UnlitMaterial(
     this->uvTiling = uvTiling;
     this->uvOffset = uvOffset;
 
+    bool hasAlpha = false;
+    hasAlpha = hasAlpha || color.a < 1.0f;
+
+    // select our shader depending on whether or not a texture was passed
     if(texture == nullptr) {
         shader = Resources::GetShader("default.vert", "solidColor.frag");
     }
@@ -23,6 +27,12 @@ UnlitMaterial::UnlitMaterial(
 
         shader->Use();
         shader->SetInt("tex", 0);
+
+        hasAlpha = hasAlpha || texture->hasAlpha;
+    }
+
+    if(hasAlpha) {
+        renderType = TRANSPARENT;
     }
 }
 
@@ -33,7 +43,7 @@ UnlitMaterial::~UnlitMaterial() {
 void UnlitMaterial::Queue() {
     shader->Use();
 
-    shader->SetVec3("color", color);
+    shader->SetVec4("color", color);
 
     if(texture != nullptr) {
         texture->Bind(0);
