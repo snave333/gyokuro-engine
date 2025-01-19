@@ -48,7 +48,7 @@ void UnlitMaterial::Queue() {
     if(texture != nullptr) {
         texture->Bind(0);
 
-        shader->SetVec2("uvTiling", this->uvTiling);
-        shader->SetVec2("uvOffset", this->uvOffset);
+        shader->SetVec4("uvTilingOffset",
+            glm::vec4(uvTiling.x, uvTiling.y, uvOffset.x, uvOffset.y));
     }
 }

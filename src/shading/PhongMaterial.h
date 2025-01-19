@@ -10,7 +10,7 @@ class Texture2D;
 class PhongMaterial : public Material {
 public:
     PhongMaterial(
-        glm::vec3 diffuse = glm::vec3(0.5f),
+        glm::vec4 diffuse = glm::vec4(0.5f),
         glm::vec3 specular = glm::vec3(1),
         float shininess = 128,
         Texture2D* diffuseMap = nullptr,
@@ -24,7 +24,7 @@ public:
     void Queue() override;
 
 private:
-    glm::vec3 diffuse;;
+    glm::vec4 diffuse;;
     glm::vec3 specular;
     float shininess;
     Texture2D* diffuseMap = nullptr;

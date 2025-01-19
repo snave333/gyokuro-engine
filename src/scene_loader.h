@@ -103,7 +103,7 @@ struct SceneLoader {
         // next add the models
 
         Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial(
-            { 1, 1, 1 }, { 1, 1, 1 }, 64,
+            { 1, 1, 1, 1 }, { 1, 1, 1 }, 64,
             Resources::GetTexture("brick_DIFF.jpg", true),
             nullptr,
             Resources::GetTexture("brick_NRM.jpg", false),
@@ -121,13 +121,13 @@ struct SceneLoader {
             glm::vec2(2, 1))));
         m2->Translate(2, -1, 0);
 
-        Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial({ 0.5, 0, 1 }, { 0.5, 0, 1 })));
+        Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial({ 0.5, 0, 1, 1 }, { 0.5, 0, 1 })));
         m3->Translate(0, -1, 0);
         // m3->Rotate(90, 0, 0);
 
         Model* m4 = new Model(new Mesh(new Cube(),
             new PhongMaterial(
-                { 1, 1, 1 },
+                { 1, 1, 1, 1 },
                 { 1, 1, 1 },
                 128,
                 Resources::GetTexture("crate_DIFF.png", true),

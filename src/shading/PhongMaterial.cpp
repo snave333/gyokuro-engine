@@ -4,7 +4,7 @@
 #include <shading/Texture2D.h>
 
 PhongMaterial::PhongMaterial(
-    glm::vec3 diffuse,
+    glm::vec4 diffuse,
     glm::vec3 specular,
     float shininess,
     Texture2D* diffuseMap,
@@ -24,6 +24,9 @@ PhongMaterial::PhongMaterial(
 
     usesDirectLighting = true;
 
+    bool hasAlpha = false;
+    hasAlpha = hasAlpha || diffuse.a < 1.0f;
+
     shader = Resources::GetShader("default.vert", "phong.frag");
 
     // fallback to the built-in white textures from Resources
@@ -41,6 +44,11 @@ PhongMaterial::PhongMaterial(
     shader->SetInt("material.diffuseMap", 0);
     shader->SetInt("material.specularMap", 1);
     shader->SetInt("material.normalMap", 2);
+
+    hasAlpha = hasAlpha || this->diffuseMap->hasAlpha;
+    if(hasAlpha) {
+        renderType = TRANSPARENT;
+    }
 }
 
 PhongMaterial::~PhongMaterial() {
@@ -53,9 +61,9 @@ void PhongMaterial::Queue() {
     specularMap->Bind(1);
     normalMap->Bind(2);
 
-    shader->SetVec3("material.diffuse", diffuse);
+    shader->SetVec4("material.diffuse", diffuse);
     shader->SetVec3("material.specular", specular);
     shader->SetFloat("material.shininess", shininess);
-    shader->SetVec2("material.uvTiling", this->uvTiling);
-    shader->SetVec2("material.uvOffset", this->uvOffset);
+    shader->SetVec4("uvTilingOffset",
+        glm::vec4(uvTiling.x, uvTiling.y, uvOffset.x, uvOffset.y));
 }

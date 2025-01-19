@@ -20,12 +20,14 @@ out VS_OUT {
 
 uniform mat4 model;
 uniform mat4 normalMatrix;
+uniform vec4 uvTilingOffset;
 
 void main()
 {
     gl_Position = projection * view * model * vec4(aPos, 1.0);
 
-    vs_out.texCoord = aTexCoord;
+    vs_out.texCoord = aTexCoord * uvTilingOffset.xy + uvTilingOffset.zw;
+
     // transform our position and normal into world space
     vs_out.fragPos = vec3(model * vec4(aPos, 1.0));
     vs_out.normal = vec3(normalMatrix * vec4(aNormal, 1.0));

@@ -15,6 +15,5 @@ uniform vec2 uvOffset;
 
 void main()
 {
-    vec2 mappedTexCoord = fs_in.texCoord * uvTiling + uvOffset;
-    FragColor = texture(tex, mappedTexCoord) * color;
+    FragColor = texture(tex, fs_in.texCoord) * color;
 }
