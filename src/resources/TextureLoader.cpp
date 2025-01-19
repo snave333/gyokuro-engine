@@ -51,6 +51,10 @@ TextureCube TextureLoader::LoadTextureCube(std::vector<std::string> faceFilePath
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 
+    // flip vertically
+    stbi_set_flip_vertically_on_load(false);
+    
+    // load and generate the textures
     int width, height, numChannels;
     for(unsigned int i = 0; i < faceFilePaths.size(); i++) {
         unsigned char* data = stbi_load(faceFilePaths[i].c_str(), &width, &height, &numChannels, 0);

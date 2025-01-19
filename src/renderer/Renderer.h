@@ -8,6 +8,7 @@
 struct GLFWwindow;
 class ScreenQuad;
 class DrawCall;
+class Skybox;
 
 class Renderer {
 public:
@@ -18,6 +19,7 @@ public:
 
     void BeginFrame();
     void RenderOpaque(std::vector<DrawCall> drawCalls);
+    void RenderSkybox(Skybox* skybox, glm::mat4 cameraView, glm::mat4 cameraProjection);
     void RenderTransparent(std::vector<DrawCall> drawCalls);
     void EndGeometryPass();
     void RenderImageEffects();

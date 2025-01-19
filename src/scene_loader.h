@@ -12,6 +12,7 @@
 #include <mesh/Sphere.h>
 #include <mesh/Torus.h>
 #include <mesh/Pyramid.h>
+#include <mesh/Skybox.h>
 #include <shading/UnlitMaterial.h>
 #include <shading/PhongMaterial.h>
 #include <lighting/LightNode.h>
@@ -85,6 +86,19 @@ struct SceneLoader {
         sc->AddNode(pointLight2Model);
         sc->AddNode(spotLight1Model);
         sc->AddNode(spotLight2Model);
+
+        // skybox
+
+        std::vector<const char*> faces {
+            "skybox_px.jpg",
+            "skybox_nx.jpg",
+            "skybox_py.jpg",
+            "skybox_ny.jpg",
+            "skybox_nz.jpg",
+            "skybox_pz.jpg"
+        };
+        Skybox* skybox = new Skybox(Resources::GetTextureCube(faces, true));
+        sc->SetSkybox(skybox);
 
         // next add the models
 

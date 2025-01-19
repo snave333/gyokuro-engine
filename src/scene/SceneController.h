@@ -41,6 +41,7 @@ public:
     void Render();
 
     void AddNode(SceneNode* node);
+    void SetSkybox(Skybox* skybox = nullptr);
     void AddUpdateFunction(std::function<void(float)> f) { updateFunctions.push_back(f); }
 
     void OnKeyPressed(int key, float dt);

@@ -5,6 +5,7 @@
 #include <renderer/ScreenQuad.h>
 #include <renderer/DrawCall.h>
 #include <mesh/Mesh.h>
+#include <mesh/Skybox.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -177,6 +178,18 @@ void Renderer::RenderOpaque(std::vector<DrawCall> drawCalls) {
 
         dc.mesh->Draw();
     }
+}
+
+void Renderer::RenderSkybox(Skybox* skybox, glm::mat4 cameraView, glm::mat4 cameraProjection) {
+    // Change depth function so depth test passes when values are equal to
+    // depth buffer's content. Do this because we're setting the cubemap depth
+    // value to 1.0 in the shader.
+    state.SetDepthTestingEnabled(true, GL_LEQUAL);
+
+    skybox->Draw(cameraView, cameraProjection);
+
+    // set depth function back to default
+    state.SetDepthTestingEnabled(true, GL_LESS);
 }
 
 void Renderer::RenderTransparent(std::vector<DrawCall> drawCalls) {

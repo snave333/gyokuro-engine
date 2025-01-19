@@ -88,9 +88,6 @@ Skybox::~Skybox() {
 }
 
 void Skybox::Draw(glm::mat4 view, glm::mat4 projection) {
-    // change depth function so depth test passes when values are equal to depth buffer's content
-    glDepthFunc(GL_LEQUAL);
-
     // remove translation from the view matrix
     glm::mat4 viewNoTranslation = glm::mat4(glm::mat3(view));
 
@@ -101,7 +98,4 @@ void Skybox::Draw(glm::mat4 view, glm::mat4 projection) {
     glBindVertexArray(VAO);
     cubeMap->Bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    // set depth function back to default
-    glDepthFunc(GL_LESS);
 }

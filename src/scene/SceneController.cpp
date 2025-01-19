@@ -36,18 +36,6 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
     // camera = new FlyCamera(Camera::OrthographicCamera(5, (float)width / height));
     camera->Translate(0, 0, -3);
 
-    // skybox
-
-    std::vector<const char*> faces {
-        "skybox_px.jpg",
-        "skybox_nx.jpg",
-        "skybox_py.jpg",
-        "skybox_ny.jpg",
-        "skybox_nz.jpg",
-        "skybox_pz.jpg"
-    };
-    skybox = new Skybox(Resources::GetTextureCube(faces, true));
-
     // our ui layer
 
     textRenderer = new Text("SourceCodePro-Regular.ttf", size, 14);
@@ -59,7 +47,8 @@ SceneController::~SceneController() {
     delete camera;
     camera = nullptr;
 
-    skybox = nullptr; // deletion handled in Resources
+    delete skybox;
+    skybox = nullptr;
 
     for(const auto& model : models) {
         delete model;
@@ -142,6 +131,19 @@ void SceneController::AddNode(SceneNode* node) {
     }
 }
 
+void SceneController::SetSkybox(Skybox* skybox) {
+    // clear any existing skybox if we have one
+    if(this->skybox != nullptr) {
+        delete this->skybox;
+        this->skybox = nullptr;
+    }
+
+    // set the new skybox if it isn't null
+    if(skybox != nullptr) {
+        this->skybox = skybox;
+    }
+}
+
 void SceneController::Update(float dt) {
     for (const auto& func : updateFunctions) {
         func(dt);
@@ -155,7 +157,7 @@ void SceneController::Render() {
 
     renderer->BeginFrame(); // set frame buffer, clear
     
-    RenderScene(); // opaque and transparent geometry passes
+    RenderScene(); // opaque geometry, skybox, and transparent geometry passes
     
     renderer->EndGeometryPass(); // render our full screen quad
 
@@ -201,10 +203,12 @@ void SceneController::RenderScene() {
         CLOCKT(render_opaque, &stats.opaqueMs);
 
         renderer->RenderOpaque(opaqueDrawCalls);
-    }
 
-    skybox->Draw(camera->GetView(), camera->GetProjection());
-    stats.drawCalls++;
+        if(skybox != nullptr) {
+            renderer->RenderSkybox(skybox, camera->GetView(), camera->GetProjection());
+            stats.drawCalls++;
+        }
+    }
 
     // transparency pass
     {
