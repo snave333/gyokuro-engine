@@ -21,6 +21,7 @@ Shader ShaderLoader::LoadShader(const char* vertexFileName, const char* fragment
     // recursively resolve any #include instances, avoiding circular includes
     std::unordered_set<std::string> includedFiles;
     vShaderCodeStr = ResolveIncludes(vShaderCodeStr, includedFiles);
+    includedFiles.clear();
     fShaderCodeStr = ResolveIncludes(fShaderCodeStr, includedFiles);
 
     // c strings for glad shader compilation

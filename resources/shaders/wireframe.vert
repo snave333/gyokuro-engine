@@ -2,11 +2,7 @@
 
 layout (location = 0) in vec3 aPos;
 
-layout (std140) uniform Camera {
-    mat4 projection;
-    mat4 view;
-    vec4 viewPos; // .xyz: camera position in world space, .w = 0
-};
+#include "camera.glsl"
 
 void main()
 {
