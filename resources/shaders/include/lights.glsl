@@ -6,32 +6,32 @@
 // direct lighting types
 
 struct DirectionalLight {
-    vec3 direction;
-    vec3 color;
+    vec4 direction;                             // .xyz: normalized light direction, .w: 0 [unused]
+    vec4 color;                                 // .rgb: light color, .a: 0 [unused]
 }; // total size with std140 layout: 32 bytes
 
 struct PointLight {
-    vec3 position;
-    vec3 color;
-    vec3 attenuation;       // .r: constant, .g: linear, .b: quadratic, .a: 0
+    vec4 position;                              // .xyz: light world-space position, .w: 0 [unused]
+    vec4 color;                                 // .rgb: light color, .a: 0 [unused]
+    vec4 attenuation;                           // .r: constant, .g: linear, .b: quadratic, .a: 0 [unused]
 }; // total size with std140 layout: 48 bytes
 
 struct SpotLight {
-    vec3 position;
-    vec3 direction;
-    vec3 color;
-    vec3 attenuation;       // .r: constant, .g: linear, .b: quadratic, .a: 0
-    // spotlight
+    vec4 position;                              // .xyz: light world-space position, .w: 0 [unused]
+    vec4 direction;                             // .xyz: normalized light direction, .w: 0 [unused]
+    vec4 color;                                 // .rgb: light color, .a: 0 [unused]
+    vec4 attenuation;                           // .r: constant, .g: linear, .b: quadratic, .a: 0 [unused]
     float cosAngle;
 }; // total size with std140 layout: 80 bytes
 
 // our uniforms
 
-// layout (std140) uniform Lighting {
-// };
-uniform vec3 globalAmbient;
-uniform DirectionalLight dirLight;
-uniform PointLight pointLights[MAX_POINT_LIGHTS];
-uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
-uniform int numPointLights;
-uniform int numSpotLights;
+layout (std140) uniform Lights {
+    vec4 globalAmbient;                         // .rgb: ambient light color, .a: 0 [unused]
+    DirectionalLight dirLight;                  // 32 bytes
+    PointLight pointLights[MAX_POINT_LIGHTS];   // 192 bytes (48 * 4)
+    SpotLight spotLights[MAX_SPOT_LIGHTS];      // 320 bytes (80 * 4)
+    int numPointLights;                         // 4 bytes
+    int numSpotLights;                          // 4 bytes
+    // 8 bytes of padding
+}; // total size with std140 layout: 576 bytes

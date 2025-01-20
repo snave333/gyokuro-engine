@@ -11,8 +11,8 @@ in VS_OUT {
 
 vec3 calcNormal(vec3 wsNormal, vec3 wsTangent, sampler2D texNormal, vec2 texCoord);
 
-#include "lighting.glsl"
 #include "camera.glsl"
+#include "lighting.glsl"
 
 void main()
 {
@@ -24,7 +24,7 @@ void main()
 
     LightingResult totalLighting = calcTotalLighting(V, P, N);
 
-    vec3 ambient = globalAmbient;
+    vec3 ambient = globalAmbient.rgb;
     vec4 diffuse = vec4(totalLighting.diffuse, 1) * material.diffuse * texture(material.diffuseMap, mappedTexCoord);
     vec3 specular = totalLighting.specular * material.specular * texture(material.specularMap, mappedTexCoord).rgb;
     vec3 result = ambient + diffuse.rgb + specular;

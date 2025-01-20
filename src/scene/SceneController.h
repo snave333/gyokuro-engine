@@ -29,6 +29,7 @@ class TangentsRenderer;
 class FlyCamera;
 class Skybox;
 class Text;
+class LightsUBO;
 struct Frustum;
 struct LightNode;
 struct IDrawable;
@@ -66,6 +67,7 @@ private:
 
     const glm::vec3 ambientLight = { 0.001f, 0.001f, 0.0005f };
     std::vector<LightNode*> lights = {};
+    LightsUBO* lightsUBO = nullptr;
 
     std::vector<Model*> models = {};
     std::vector<IDrawable*> drawables = {};

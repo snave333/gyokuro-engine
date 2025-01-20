@@ -5,19 +5,17 @@
 #include <algorithm>
 
 #include <scene/SceneController.h>
+#include <scene/SceneNode.h>
 #include <renderer/Renderer.h>
 #include <renderer/DrawCall.h>
 #include <renderer/IDrawable.h>
 #include <resources/Resources.h>
-#include <scene/SceneNode.h>
 #include <shading/Shader.h>
-#include <lighting/DirectionalLight.h>
-#include <lighting/PointLight.h>
-#include <lighting/SpotLight.h>
+#include <lighting/LightNode.h>
+#include <lighting/LightsUBO.h>
 #include <mesh/Model.h>
 #include <mesh/Skybox.h>
 #include <camera/FlyCamera.h>
-#include <lighting/LightNode.h>
 #include <ui/Text.h>
 #include <utilities/Clock.h>
 
@@ -28,6 +26,9 @@
 SceneController::SceneController(Renderer* r, const int& width, const int& height) {
     renderer = r;
     size = glm::ivec2(width, height);
+
+    lightsUBO = new LightsUBO();
+    lightsUBO->UpdateValues(ambientLight, lights);
 
     // setup our default camera
 
@@ -45,6 +46,9 @@ SceneController::~SceneController() {
 
     delete camera;
     camera = nullptr;
+
+    delete lightsUBO;
+    lightsUBO = nullptr;
 
     delete skybox;
     skybox = nullptr;
@@ -84,67 +88,15 @@ void SceneController::AddNode(SceneNode* node) {
 
         // if the model uses lighting, set the lighting uniforms
         if(material->usesDirectLighting) {
-            // shader.SetUniformBlockBinding("Lights", 1);
-
-            shader.SetVec3("globalAmbient", ambientLight);
-
-            int numPointLights = 0;
-            int numSpotLights = 0;
-            for (size_t i = 0; i < lights.size(); ++i) {
-                const DirectionalLight* directionalLight = dynamic_cast<const DirectionalLight*>(lights[i]->GetLight());
-                const PointLight* pointLight = dynamic_cast<const PointLight*>(lights[i]->GetLight());
-                const SpotLight* spotLight = dynamic_cast<const SpotLight*>(lights[i]->GetLight());
-
-                if (pointLight) {
-                    if(numPointLights >= SceneController::MAX_POINT_LIGHTS) {
-                        std::cout << "WARNING::Scene has more point lights than maximum allowed ammout" << std::endl;
-                        continue;
-                    }
-
-                    std::string baseName = "pointLights[" + std::to_string(numPointLights) + "]";
-                    numPointLights++;
-
-                    shader.SetVec3((baseName + ".position").c_str(), lights[i]->GetPosition());
-                    shader.SetVec3((baseName + ".color").c_str(), pointLight->color);
-                    shader.SetVec3((baseName + ".attenuation").c_str(), glm::vec3(
-                        pointLight->constant,
-                        pointLight->linear,
-                        pointLight->quadratic
-                    ));
-                }
-                else if (spotLight) {
-                    if(numSpotLights >= SceneController::MAX_SPOT_LIGHTS) {
-                        std::cout << "WARNING::Scene has more spot lights than maximum allowed ammout" << std::endl;
-                        continue;
-                    }
-
-                    std::string baseName = "spotLights[" + std::to_string(numSpotLights) + "]";
-                    numSpotLights++;
-
-                    shader.SetVec3((baseName + ".position").c_str(), lights[i]->GetPosition());
-                    shader.SetVec3((baseName + ".direction").c_str(), lights[i]->GetForward());
-                    shader.SetVec3((baseName + ".color").c_str(), spotLight->color);
-                    shader.SetFloat((baseName + ".cosAngle").c_str(), spotLight->cosAngle);
-                    shader.SetVec3((baseName + ".attenuation").c_str(), glm::vec3(
-                        spotLight->constant,
-                        spotLight->linear,
-                        spotLight->quadratic
-                    ));
-                }
-                else {
-                    shader.SetVec3("dirLight.direction", lights[i]->GetForward());
-                    shader.SetVec3("dirLight.color", directionalLight->color);
-                }
-            }
-
-            shader.SetInt("numPointLights", numPointLights);
-            shader.SetInt("numSpotLights", numSpotLights);
+            shader.SetUniformBlockBinding("Lights", 1);
         }
     }
     else if(light) {
         lights.push_back(light);
 
-        // update the light uniform block, and any models in the scene using lighting
+        // update the light uniform block
+
+        lightsUBO->UpdateValues(ambientLight, lights);
     }
 }
 

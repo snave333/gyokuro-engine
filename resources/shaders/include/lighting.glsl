@@ -43,7 +43,7 @@ float calcAttenuation(float c, float l, float q, float distance) {
 float calcSpotCone(SpotLight light, vec3 L) {
     float minCos = light.cosAngle;
     float maxCos = (minCos + 1.0f) / 2.0f;
-    float cosAngle = dot(light.direction, -L );
+    float cosAngle = dot(light.direction.xyz, -L );
 
     return smoothstep( minCos, maxCos, cosAngle ); 
 }
@@ -51,10 +51,10 @@ float calcSpotCone(SpotLight light, vec3 L) {
 LightingResult calcDirectionalLight(DirectionalLight light, vec3 V, vec3 N) {
     LightingResult result = LightingResult(vec3(0.0), vec3(0.0));
 
-    vec3 L = normalize(-light.direction);
+    vec3 L = normalize(-light.direction.xyz);
 
-    result.diffuse = light.color * calcDiffuse(L, N);
-    result.specular = light.color * calcSpecular(V, L, N, material.shininess);
+    result.diffuse = light.color.rgb * calcDiffuse(L, N);
+    result.specular = light.color.rgb * calcSpecular(V, L, N, material.shininess);
 
     return result;
 }
@@ -62,7 +62,7 @@ LightingResult calcDirectionalLight(DirectionalLight light, vec3 V, vec3 N) {
 LightingResult calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N) {
     LightingResult result = LightingResult(vec3(0.0), vec3(0.0));
     
-    vec3 L = light.position - P;
+    vec3 L = light.position.xyz - P;
     float distance = length(L);
     L = L / distance; // normalize
 
@@ -73,8 +73,8 @@ LightingResult calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N) {
         light.attenuation.b,
         distance);
 
-    result.diffuse = light.color * calcDiffuse(L, N) * attenuation;
-    result.specular = light.color * calcSpecular(V, L, N, material.shininess) * attenuation;
+    result.diffuse = light.color.rgb * calcDiffuse(L, N) * attenuation;
+    result.specular = light.color.rgb * calcSpecular(V, L, N, material.shininess) * attenuation;
 
     return result;
 }
@@ -82,7 +82,7 @@ LightingResult calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N) {
 LightingResult calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N) {
     LightingResult result = LightingResult(vec3(0.0), vec3(0.0));
     
-    vec3 L = light.position - P;
+    vec3 L = light.position.xyz - P;
     float distance = length(L);
     L = L / distance; // normalize
 
@@ -100,8 +100,8 @@ LightingResult calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N) {
         light.attenuation.b,
         distance);
 
-    result.diffuse = light.color * calcDiffuse(L, N) * attenuation * spotlightFactor;
-    result.specular = light.color * calcSpecular(V, L, N, material.shininess) * attenuation * spotlightFactor;
+    result.diffuse = light.color.rgb * calcDiffuse(L, N) * attenuation * spotlightFactor;
+    result.specular = light.color.rgb * calcSpecular(V, L, N, material.shininess) * attenuation * spotlightFactor;
 
     return result;
 }
