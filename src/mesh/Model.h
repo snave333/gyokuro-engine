@@ -12,7 +12,12 @@ struct AABB;
 enum RenderType;
 
 class Model : public SceneNode {
+private:
+    static unsigned int ModelCounter;
+
 public:
+    unsigned int ID;
+
     int boundsLastFailedFrustumPlane = 0; // plane-coherency
 
     Model(Mesh* mesh);

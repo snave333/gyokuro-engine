@@ -121,7 +121,7 @@ struct SceneLoader {
             glm::vec2(2, 1))));
         m2->Translate(2, -1, 0);
 
-        Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial({ 0.5, 0, 1, 1 }, { 0.5, 0, 1 })));
+        Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial({ 0.5, 0, 1, 0.8f }, { 0.5, 0, 1 })));
         m3->Translate(0, -1, 0);
         // m3->Rotate(90, 0, 0);
 
@@ -130,8 +130,8 @@ struct SceneLoader {
                 { 1, 1, 1, 1 },
                 { 1, 1, 1 },
                 128,
-                Resources::GetTexture("crate_DIFF.png", true),
-                Resources::GetTexture("crate_SPEC.png", false))));
+                Resources::GetTexture("crate_DIFF.jpg", true),
+                Resources::GetTexture("crate_SPEC.jpg", false))));
         m4->Translate(0, -1, 4);
 
         sc->AddNode(floor);

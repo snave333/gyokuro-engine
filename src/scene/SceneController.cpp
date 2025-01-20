@@ -190,10 +190,10 @@ void SceneController::RenderScene() {
     // separate our visible objects into two vectors - opaque and blended
     for(const auto& model : visibleModels) {
         if(model->GetRenderType() == OPAQUE) {
-            opaqueDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix() });
+            opaqueDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix(), model->ID });
         }
         else {
-            alphaDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix() });
+            alphaDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix(), model->ID });
         }
         stats.drawCalls++;
     }
@@ -222,7 +222,7 @@ void SceneController::RenderScene() {
             const glm::vec3& aPos = glm::vec3(a.transform[3][0], a.transform[3][1], a.transform[3][2]);
             const glm::vec3& bPos = glm::vec3(b.transform[3][0], b.transform[3][1], b.transform[3][2]);;
 
-            return glm::length2(aPos - camPosition) - glm::length2(bPos - camPosition);
+            return glm::length2(aPos - camPosition) > glm::length2(bPos - camPosition);
         });
 
         renderer->RenderTransparent(alphaDrawCalls);

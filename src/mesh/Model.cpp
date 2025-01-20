@@ -2,8 +2,12 @@
 #include <mesh/Model.h>
 #include <math/AABB.h>
 
+unsigned int Model::ModelCounter = 0;
+
 Model::Model(Mesh* mesh) : SceneNode() {
     this->mesh = mesh;
+
+    ID = ++ModelCounter;
     
     UpdateBounds();
 };
