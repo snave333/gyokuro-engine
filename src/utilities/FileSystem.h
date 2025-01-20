@@ -39,6 +39,14 @@ public:
     static std::string CombinePath(const std::string& path1, const std::string& path2) {
         return path1 + PATH_SEPARATOR + path2;
     }
+
+    static std::string CombinePath(const std::string& path1, const std::string& path2, const std::string& path3) {
+        return path1 + PATH_SEPARATOR + path2 + PATH_SEPARATOR + path3;
+    }
+
+    static std::string CombinePath(const std::string& path1, const std::string& path2, const std::string& path3, const std::string& path4) {
+        return path1 + PATH_SEPARATOR + path2 + PATH_SEPARATOR + path3 + PATH_SEPARATOR + path4;
+    }
 };
 
 #endif // FILE_UTILS_H

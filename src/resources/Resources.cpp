@@ -12,7 +12,6 @@
 #include <algorithm>
 
 std::map<ResourceType, std::string> Resources::resourceTypeDirMap = {
-    { SHADER, "shaders" },
     { TEXTURE, "textures" },
     { FONT, "fonts" },
 };
@@ -23,6 +22,13 @@ std::map<long, TextureCube> Resources::cubeMaps = {};
 std::map<long, Font> Resources::fonts = {};
 
 void Resources::Initialize() {
+    // set the directory paths of our resource loaders
+
+    std::string cwd = FileSystem::GetCurrentWorkingDirectory();
+
+    ShaderLoader::ResourceDir = FileSystem::CombinePath(cwd, "resources", "shaders");
+    ShaderLoader::IncludesDir = FileSystem::CombinePath(cwd, "resources", "shaders", "include");
+
     // generate default textures
 
     long id;
@@ -80,10 +86,7 @@ Shader* Resources::GetShader(const char* vertexFileName, const char* fragmentFil
         return &Resources::shaders[id];
     }
 
-    std::string vertexFilePath = Resources::GetShaderPath(vertexFileName);
-    std::string fragmentFilePath = Resources::GetShaderPath(fragmentFileName);
-
-    Shader shader = ShaderLoader::LoadShader(vertexFilePath, fragmentFilePath);
+    Shader shader = ShaderLoader::LoadShader(vertexFileName, fragmentFileName);
 
     Resources::shaders[id] = shader;
 
@@ -143,10 +146,6 @@ Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {
     Resources::fonts[id] = font;
 
     return &Resources::fonts[id];
-}
-
-std::string Resources::GetShaderPath(const char* fileName) {
-    return FileSystem::CombinePath(GetResourcesDir(SHADER), std::string(fileName));
 }
 
 std::string Resources::GetTexturePath(const char* fileName) {

@@ -64,7 +64,9 @@
 			"forward_list": "cpp",
 			"__tree": "cpp",
 			"map": "cpp",
-			"__config": "cpp"
+			"__config": "cpp",
+			"regex": "cpp",
+			"unordered_set": "cpp"
 		}
 	}
 }

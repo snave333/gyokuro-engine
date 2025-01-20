@@ -10,7 +10,6 @@
 #include <glm/glm.hpp>
 
 enum ResourceType {
-    SHADER,
     TEXTURE,
     FONT,
 };
