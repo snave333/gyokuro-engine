@@ -1,4 +1,14 @@
 
+/**
+ * Camera uniform buffer object, found in camera.glsl, has the following signature:
+ * layout (std140) uniform Camera {
+ *     mat4 projection;
+ *     mat4 view;
+ *     vec4 viewPos; // .xyz: camera position in world space, .w = 0
+ * };
+ */
+
+
 #include <camera/Camera.h>
 
 #include <glad/glad.h>
@@ -25,9 +35,10 @@ Camera::Camera(glm::mat4 projection) {
     glGenBuffers(1, &uboMatrices);
     glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
 
+    // the size of our ubo
     unsigned long size = 2 * sizeof(glm::mat4) + sizeof(glm::vec4);
     
-    // allocate enough memory for the 2 matrices
+    // allocate enough memory for the 2 matrices and position
     glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW);
 
     // link the range of the entire buffer to binding point 0

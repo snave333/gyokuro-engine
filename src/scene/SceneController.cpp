@@ -96,17 +96,28 @@ void SceneController::AddNode(SceneNode* node) {
                 const SpotLight* spotLight = dynamic_cast<const SpotLight*>(lights[i]->GetLight());
 
                 if (pointLight) {
+                    if(numPointLights >= SceneController::MAX_POINT_LIGHTS) {
+                        std::cout << "WARNING::Scene has more point lights than maximum allowed ammout" << std::endl;
+                        continue;
+                    }
+
                     std::string baseName = "pointLights[" + std::to_string(numPointLights) + "]";
                     numPointLights++;
 
                     shader.SetVec3((baseName + ".position").c_str(), lights[i]->GetPosition());
                     shader.SetVec3((baseName + ".color").c_str(), pointLight->color);
-                    shader.SetFloat((baseName + ".constant").c_str(), pointLight->constant);
-                    shader.SetFloat((baseName + ".linear").c_str(), pointLight->linear);
-                    shader.SetFloat((baseName + ".quadratic").c_str(), pointLight->quadratic);
-                    
+                    shader.SetVec3((baseName + ".attenuation").c_str(), glm::vec3(
+                        pointLight->constant,
+                        pointLight->linear,
+                        pointLight->quadratic
+                    ));
                 }
                 else if (spotLight) {
+                    if(numSpotLights >= SceneController::MAX_SPOT_LIGHTS) {
+                        std::cout << "WARNING::Scene has more spot lights than maximum allowed ammout" << std::endl;
+                        continue;
+                    }
+
                     std::string baseName = "spotLights[" + std::to_string(numSpotLights) + "]";
                     numSpotLights++;
 
@@ -114,9 +125,11 @@ void SceneController::AddNode(SceneNode* node) {
                     shader.SetVec3((baseName + ".direction").c_str(), lights[i]->GetForward());
                     shader.SetVec3((baseName + ".color").c_str(), spotLight->color);
                     shader.SetFloat((baseName + ".cosAngle").c_str(), spotLight->cosAngle);
-                    shader.SetFloat((baseName + ".constant").c_str(), spotLight->constant);
-                    shader.SetFloat((baseName + ".linear").c_str(), spotLight->linear);
-                    shader.SetFloat((baseName + ".quadratic").c_str(), spotLight->quadratic);
+                    shader.SetVec3((baseName + ".attenuation").c_str(), glm::vec3(
+                        spotLight->constant,
+                        spotLight->linear,
+                        spotLight->quadratic
+                    ));
                 }
                 else {
                     shader.SetVec3("dirLight.direction", lights[i]->GetForward());
@@ -124,8 +137,8 @@ void SceneController::AddNode(SceneNode* node) {
                 }
             }
 
-            // shader.SetFloat("numPointLights", numPointLights);
-            // shader.SetFloat("numSpotLights", numSpotLights);
+            shader.SetInt("numPointLights", numPointLights);
+            shader.SetInt("numSpotLights", numSpotLights);
         }
     }
     else if(light) {

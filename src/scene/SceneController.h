@@ -35,6 +35,10 @@ struct IDrawable;
 
 class SceneController {
 public:
+    static const unsigned int MAX_POINT_LIGHTS = 4;
+    static const unsigned int MAX_SPOT_LIGHTS = 4;
+
+public:
     SceneController(Renderer* renderer, const int& width, const int& height);
     ~SceneController();
 

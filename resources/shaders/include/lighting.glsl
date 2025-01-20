@@ -1,55 +1,14 @@
 #include "material.glsl"
-
-// direct lighting defines
-
-#define MAX_NUM_LIGHTS 8
-#define LIGHT_TYPE_DIRECTIONAL 0
-#define LIGHT_TYPE_POINT 1
-#define LIGHT_TYPE_SPOT 2
-
-// direct lighting types
-
-struct DirectionalLight {
-    vec3 direction;
-    vec3 color;
-};
-
-struct PointLight {
-    vec3 position;
-    vec3 color;
-    // attenuation
-    float constant;
-    float linear;
-    float quadratic;
-};
-
-struct SpotLight {
-    vec3 position;
-    vec3 direction;
-    vec3 color;
-    // spotlight
-    float cosAngle;
-    // attenuation
-    float constant;
-    float linear;
-    float quadratic;
-};
+#include "lights.glsl"
 
 struct LightingResult {
     vec3 diffuse;
     vec3 specular;
 };
 
-// uniform Light lights[MAX_NUM_LIGHTS];
-// layout (std140) uniform Lights {};
-uniform vec3 globalAmbient;
-uniform DirectionalLight dirLight;
-uniform PointLight pointLights[2];
-uniform SpotLight spotLights[2];
-
-// direct lighting function definitions
-
 /*
+  Direct lighting function definitions:
+
   P - the fragment position
   N - the surface normal
   L - the normalized direction from P to the light source
@@ -73,11 +32,11 @@ float calcSpecular(vec3 V, vec3 L, vec3 N, float a) {
     return pow(NdotH, a);
 }
 
-float calcAttenuation(float kc, float kl, float kq, float d) {
+float calcAttenuation(float c, float l, float q, float distance) {
     return 1.0 / (
-        kc +
-        kl * d +
-        kq * (d * d));
+        c +
+        l * distance +
+        q * (distance * distance));
 }
 
 // technique taken from https://www.3dgep.com/texturing-lighting-directx-11/#Spotlight_Cone
@@ -108,7 +67,11 @@ LightingResult calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N) {
     L = L / distance; // normalize
 
     // attenuation
-    float attenuation = calcAttenuation(light.constant, light.linear, light.quadratic, distance);
+    float attenuation = calcAttenuation(
+        light.attenuation.r,
+        light.attenuation.g,
+        light.attenuation.b,
+        distance);
 
     result.diffuse = light.color * calcDiffuse(L, N) * attenuation;
     result.specular = light.color * calcSpecular(V, L, N, material.shininess) * attenuation;
@@ -131,7 +94,11 @@ LightingResult calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N) {
     }
 
     // attenuation
-    float attenuation = calcAttenuation(light.constant, light.linear, light.quadratic, distance);
+    float attenuation = calcAttenuation(
+        light.attenuation.r,
+        light.attenuation.g,
+        light.attenuation.b,
+        distance);
 
     result.diffuse = light.color * calcDiffuse(L, N) * attenuation * spotlightFactor;
     result.specular = light.color * calcSpecular(V, L, N, material.shininess) * attenuation * spotlightFactor;
@@ -146,13 +113,13 @@ LightingResult calcTotalLighting(vec3 V, vec3 P, vec3 N) {
     result.diffuse += directional.diffuse;
     result.specular += directional.specular;
 
-    for(int i = 0; i < pointLights.length(); i++) {
+    for(int i = 0; i < min(numPointLights, MAX_POINT_LIGHTS); i++) {
         LightingResult point = calcPointLight(pointLights[i], V, P, N);
         result.diffuse += point.diffuse;
         result.specular += point.specular;
     }
 
-    for(int i = 0; i < spotLights.length(); i++) {
+    for(int i = 0; i < min(numSpotLights, MAX_SPOT_LIGHTS); i++) {
         LightingResult spot = calcSpotLight(spotLights[i], V, P, N);
         result.diffuse += spot.diffuse;
         result.specular += spot.specular;
