@@ -8,8 +8,10 @@ class TextureCube;
 
 class TextureLoader {
 public:
-    static Texture2D LoadTexture(std::string imageFilePath, bool srgb);
-    static TextureCube LoadTextureCube(std::vector<std::string> faceFilePaths, bool srgb);
+    static std::string ResourceDir;
+    
+    static Texture2D LoadTexture(const char* imageFileName, bool srgb);
+    static TextureCube LoadTextureCube(std::vector<const char*> faceFileNames, bool srgb);
     static Texture2D GenerateTexture2D(int width, int height, unsigned int format, const unsigned char* pixels);
 
 private:

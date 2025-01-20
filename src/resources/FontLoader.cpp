@@ -1,6 +1,7 @@
 
 #include <resources/FontLoader.h>
 #include <ui/Font.h>
+#include <utilities/FileSystem.h>
 
 #include <iostream>
 #include <map>
@@ -10,17 +11,21 @@
 #include <ft2build.h>
 #include <freetype/freetype.h>
 
-Font FontLoader::LoadFont(std::string fontFilePath, unsigned int fontSize) {
+std::string FontLoader::ResourceDir = "";
+
+Font FontLoader::LoadFont(const char* fontFileName, unsigned int fontSize) {
+    std::string fontFilePath = FileSystem::CombinePath(ResourceDir, fontFileName);
+    
     FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
         std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
-        // return;
+        throw std::runtime_error("Failed to load font");
     }
 
     FT_Face face;
     if (FT_New_Face(ft, fontFilePath.c_str(), 0, &face)) {
         std::cout << "ERROR::FREETYPE: Failed to load font " << fontFilePath << std::endl;  
-        // return;
+        throw std::runtime_error("Failed to load font");
     }
 
     // set font size (0 width for auto)

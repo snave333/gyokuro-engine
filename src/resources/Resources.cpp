@@ -8,14 +8,6 @@
 
 #include <glad/glad.h>
 
-#include <iostream>
-#include <algorithm>
-
-std::map<ResourceType, std::string> Resources::resourceTypeDirMap = {
-    { TEXTURE, "textures" },
-    { FONT, "fonts" },
-};
-
 std::map<long, Shader> Resources::shaders = {};
 std::map<long, Texture2D> Resources::textures = {};
 std::map<long, TextureCube> Resources::cubeMaps = {};
@@ -28,6 +20,8 @@ void Resources::Initialize() {
 
     ShaderLoader::ResourceDir = FileSystem::CombinePath(cwd, "resources", "shaders");
     ShaderLoader::IncludesDir = FileSystem::CombinePath(cwd, "resources", "shaders", "include");
+    TextureLoader::ResourceDir = FileSystem::CombinePath(cwd, "resources", "textures");
+    FontLoader::ResourceDir = FileSystem::CombinePath(cwd, "resources", "fonts");
 
     // generate default textures
 
@@ -100,9 +94,7 @@ Texture2D* Resources::GetTexture(const char* imageFileName, bool srgb) {
         return &Resources::textures[id];
     }
 
-    std::string fullImagePath = Resources::GetTexturePath(imageFileName);
-
-    Texture2D texture = TextureLoader::LoadTexture(fullImagePath, srgb);
+    Texture2D texture = TextureLoader::LoadTexture(imageFileName, srgb);
 
     Resources::textures[id] = texture;
 
@@ -120,12 +112,7 @@ TextureCube* Resources::GetTextureCube(std::vector<const char*> faceFileNames, b
         return &Resources::cubeMaps[id];
     }
 
-    std::vector<std::string> fullFacePaths(6);
-    std::transform(faceFileNames.begin(), faceFileNames.end(), fullFacePaths.begin(), [](const char* fileName) {
-        return Resources::GetTexturePath(fileName);
-    });
-
-    TextureCube texture = TextureLoader::LoadTextureCube(fullFacePaths, srgb);
+    TextureCube texture = TextureLoader::LoadTextureCube(faceFileNames, srgb);
 
     Resources::cubeMaps[id] = texture;
 
@@ -139,26 +126,9 @@ Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {
         return &Resources::fonts[id];
     }
 
-    std::string fontFilePath = Resources::GetFontPath(fontFileName);
-
-    Font font = FontLoader::LoadFont(fontFilePath, fontSize);
+    Font font = FontLoader::LoadFont(fontFileName, fontSize);
 
     Resources::fonts[id] = font;
 
     return &Resources::fonts[id];
-}
-
-std::string Resources::GetTexturePath(const char* fileName) {
-    return FileSystem::CombinePath(GetResourcesDir(TEXTURE), std::string(fileName));
-}
-
-std::string Resources::GetFontPath(const char* fileName) {
-    return FileSystem::CombinePath(GetResourcesDir(FONT), std::string(fileName));
-}
-
-std::string Resources::GetResourcesDir(ResourceType resourceType) {
-    std::string cwd = FileSystem::GetCurrentWorkingDirectory();
-    std::string subDirName = Resources::resourceTypeDirMap[resourceType];
-
-    return FileSystem::CombinePath(cwd, FileSystem::CombinePath("resources", subDirName));
 }

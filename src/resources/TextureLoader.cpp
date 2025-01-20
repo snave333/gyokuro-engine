@@ -2,12 +2,20 @@
 #include <resources/TextureLoader.h>
 #include <shading/Texture2D.h>
 #include <shading/TextureCube.h>
+#include <utilities/FileSystem.h>
 
 #include <iostream>
+#include <algorithm>
+
 #include <glad/glad.h>
 #include <stb_image.h>
 
-Texture2D TextureLoader::LoadTexture(std::string imageFilePath, bool srgb) {
+std::string TextureLoader::ResourceDir = "";
+
+Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb) {
+    // get the full file path
+    std::string imageFilePath = FileSystem::CombinePath(ResourceDir, imageFileName);
+
     // create and bind the texture object
     unsigned int id;
     glGenTextures(1, &id);
@@ -45,7 +53,13 @@ Texture2D TextureLoader::LoadTexture(std::string imageFilePath, bool srgb) {
     return Texture2D(id, numChannels == 4);
 }
 
-TextureCube TextureLoader::LoadTextureCube(std::vector<std::string> faceFilePaths, bool srgb) {
+TextureCube TextureLoader::LoadTextureCube(std::vector<const char*> faceFileNames, bool srgb) {
+    // get the full file paths
+    std::vector<std::string> faceFilePaths(6);
+    std::transform(faceFileNames.begin(), faceFileNames.end(), faceFilePaths.begin(), [](const char* fileName) {
+        return FileSystem::CombinePath(ResourceDir, fileName);
+    });
+
     // create and bind the texture object
     unsigned int id;
     glGenTextures(1, &id);

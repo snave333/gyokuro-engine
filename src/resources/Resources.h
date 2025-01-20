@@ -9,11 +9,6 @@
 
 #include <glm/glm.hpp>
 
-enum ResourceType {
-    TEXTURE,
-    FONT,
-};
-
 class Resources {
 public:
     static void Initialize();
@@ -31,14 +26,7 @@ private:
     static std::map<long, TextureCube> cubeMaps;
     static std::map<long, Font> fonts;
 
-    static std::map<ResourceType, std::string> resourceTypeDirMap;
-
     static Texture2D GenerateBuiltInTexture(glm::vec4 color);
-
-    static std::string GetShaderPath(const char* fileName);
-    static std::string GetTexturePath(const char* fileName);
-    static std::string GetFontPath(const char* fileName);
-    static std::string GetResourcesDir(ResourceType resourceType);
 };
   
 #endif // RESOURCES_H

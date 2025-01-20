@@ -7,7 +7,9 @@ class Font;
 
 class FontLoader {
 public:
-    static Font LoadFont(std::string fontFilePath, unsigned int fontSize);
+    static std::string ResourceDir;
+    
+    static Font LoadFont(const char* fontFileName, unsigned int fontSize);
 };
   
 #endif // FONT_LOADER_H
