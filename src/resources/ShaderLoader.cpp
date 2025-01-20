@@ -70,11 +70,15 @@ Shader ShaderLoader::LoadShader(const char* vertexFileName, const char* fragment
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
     
+    // now save the uniforms for reduced gl calls later
+    std::map<std::string, int> uniforms;
+    GetUniformLocations(id, uniforms);
+
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 
-    return Shader(id);
+    return Shader(id, uniforms);
 }
 
 std::string ShaderLoader::ResolveIncludes(
@@ -156,4 +160,28 @@ std::string ShaderLoader::ReadFilePath(std::string filePath) {
     }
 
     return result;
+}
+
+void ShaderLoader::GetUniformLocations(unsigned int id, std::map<std::string, int>& uniforms) {
+    int numUniforms;
+    glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &numUniforms);
+
+    int maxUniformNameLength;
+    glGetProgramiv(id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformNameLength);
+
+    char* nameBuffer = new char[maxUniformNameLength];
+
+    for(int i = 0; i < numUniforms; i++) {
+        int length;
+        int size;
+        unsigned int type;
+
+        glGetActiveUniform(id, i, maxUniformNameLength, &length, &size, &type, nameBuffer);
+
+        int location = glGetUniformLocation(id, nameBuffer);
+
+        uniforms[std::string(nameBuffer, length)] = location;
+    }
+
+    delete[] nameBuffer;
 }

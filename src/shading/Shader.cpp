@@ -6,6 +6,11 @@
 
 #include <iostream>
 
+Shader::Shader(const unsigned int& shaderProgramId, std::map<std::string, int>& uniforms) {
+    ID = shaderProgramId;
+    this->uniforms = uniforms;
+}
+
 void Shader::Dispose() {
     glDeleteProgram(ID);
 }
@@ -15,7 +20,7 @@ void Shader::Use() const {
 }
 
 void Shader::SetBool(const char* name, bool value) const {
-    int location = glGetUniformLocation(ID, name);
+    int location = GetUniformLocation(name);
     if(location == -1) {
         std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND: " << name << std::endl;
         return;
@@ -24,7 +29,7 @@ void Shader::SetBool(const char* name, bool value) const {
 }
 
 void Shader::SetInt(const char* name, int value) const {
-    int location = glGetUniformLocation(ID, name);
+    int location = GetUniformLocation(name);
     if(location == -1) {
         std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND: " << name << std::endl;
         return;
@@ -33,7 +38,7 @@ void Shader::SetInt(const char* name, int value) const {
 }
 
 void Shader::SetFloat(const char* name, float value) const {
-    int location = glGetUniformLocation(ID, name);
+    int location = GetUniformLocation(name);
     if(location == -1) {
         std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND: " << name << std::endl;
         return;
@@ -42,7 +47,7 @@ void Shader::SetFloat(const char* name, float value) const {
 }
 
 void Shader::SetVec2(const char* name, glm::vec2 value) const {
-    int location = glGetUniformLocation(ID, name);
+    int location = GetUniformLocation(name);
     if(location == -1) {
         std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND: " << name << std::endl;
         return;
@@ -51,7 +56,7 @@ void Shader::SetVec2(const char* name, glm::vec2 value) const {
 }
 
 void Shader::SetVec3(const char* name, glm::vec3 value) const {
-    int location = glGetUniformLocation(ID, name);
+    int location = GetUniformLocation(name);
     if(location == -1) {
         std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND: " << name << std::endl;
         return;
@@ -60,7 +65,7 @@ void Shader::SetVec3(const char* name, glm::vec3 value) const {
 }
 
 void Shader::SetVec4(const char* name, glm::vec4 value) const {
-    int location = glGetUniformLocation(ID, name);
+    int location = GetUniformLocation(name);
     if(location == -1) {
         std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND: " << name << std::endl;
         return;
@@ -69,7 +74,7 @@ void Shader::SetVec4(const char* name, glm::vec4 value) const {
 }
 
 void Shader::SetMat4(const char* name, glm::mat4 value) const {
-    int location = glGetUniformLocation(ID, name);
+    int location = GetUniformLocation(name);
     if(location == -1) {
         std::cout << "ERROR::SHADER::UNIFORM_NOT_FOUND: " << name << std::endl;
         return;
@@ -84,4 +89,16 @@ void Shader::SetUniformBlockBinding(const char* name, int bindingPoint) const {
         return;
     }
     glUniformBlockBinding(ID, index, bindingPoint);
+}
+
+bool Shader::HasUniform(const char* name) const {
+    return uniforms.find(name) != uniforms.end();
+}
+
+int Shader::GetUniformLocation(const char* name) const {
+    if(uniforms.find(name) == uniforms.end()) {
+        return -1;
+    }
+
+    return uniforms.at(name);
 }

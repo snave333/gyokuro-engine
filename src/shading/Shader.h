@@ -1,12 +1,13 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#include <map>
 #include <glm/glm.hpp>
 
 class Shader {
 public:
     Shader() {}
-    Shader(const unsigned int& shaderProgramId) : ID(shaderProgramId) {}
+    Shader(const unsigned int& shaderProgramId, std::map<std::string, int>& uniforms);
     
     void Dispose();
 
@@ -27,6 +28,11 @@ public:
 private:
     // the program ID
     unsigned int ID;
+
+    std::map<std::string, int> uniforms;
+
+    bool HasUniform(const char* name) const;
+    int GetUniformLocation(const char* name) const;
 };
   
 #endif // SHADER_H
