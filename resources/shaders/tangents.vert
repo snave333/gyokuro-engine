@@ -3,7 +3,6 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec3 aTangent;
-layout (location = 3) in vec3 aBitangent;
 
 layout (std140) uniform Camera {
     mat4 projection;
@@ -41,7 +40,7 @@ void main()
         p = position + offset * lineLength;
         break;
     case 5: // bitangent (+y)
-        offset = normalize(vec3(normalMatrix * vec4(aBitangent, 1.0)));
+        offset = normalize(vec3(normalMatrix * vec4(cross(aNormal, aTangent), 1.0)));
         p = position + offset * lineLength;
         break;
     default:

@@ -12,6 +12,8 @@
 #include <mesh/Sphere.h>
 #include <mesh/Torus.h>
 #include <mesh/Pyramid.h>
+#include <mesh/AABBWireframe.h>
+#include <mesh/TangentsRenderer.h>
 #include <mesh/Skybox.h>
 #include <shading/UnlitMaterial.h>
 #include <shading/PhongMaterial.h>
@@ -21,7 +23,7 @@
 #include <lighting/SpotLight.h>
 
 struct SceneLoader {
-    static void LoadScene1(SceneController* sc) {
+    static void LoadVFCScene(SceneController* sc) {
         int w = 10;
         int h = 5;
         int d = 10;
@@ -42,7 +44,7 @@ struct SceneLoader {
         }
     }
 
-    static void LoadScene2(SceneController* sc) {
+    static void LoadLightingScene(SceneController* sc) {
         // add the lighting first
 
         LightNode* dirLight = new LightNode(new DirectionalLight(glm::vec3(1, 1, 0.8f) * 0.0f)); // disabled for now
@@ -140,6 +142,8 @@ struct SceneLoader {
         sc->AddNode(m3);
         sc->AddNode(m4);
 
+        // our update function
+
         sc->AddUpdateFunction([m1, m2, m3, m4](float dt) {
             m1->Rotate(dt * 45, glm::normalize(glm::vec3(0.5f, 1.0, 0.0)));
             m2->Rotate(dt * 60, glm::normalize(glm::vec3(0, 1.0, 0.0)));
@@ -148,7 +152,7 @@ struct SceneLoader {
         });
     }
 
-    static void LoadScene3(SceneController* sc) {
+    static void LoadTransparencyScene(SceneController* sc) {
         // skybox
 
         std::vector<const char*> faces {
@@ -178,6 +182,52 @@ struct SceneLoader {
         sc->AddNode(m1);
         sc->AddNode(m2);
         sc->AddNode(m3);
+    }
+
+    static void LoadUtilitiesScene(SceneController* sc) {
+        // skybox
+
+        std::vector<const char*> faces {
+            "skybox_px.jpg",
+            "skybox_nx.jpg",
+            "skybox_py.jpg",
+            "skybox_ny.jpg",
+            "skybox_nz.jpg",
+            "skybox_pz.jpg"
+        };
+        Skybox* skybox = new Skybox(Resources::GetTextureCube(faces, true));
+        sc->SetSkybox(skybox);
+
+        // meshes objects
+
+        Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 })));
+        m1->Translate(1, 0, 0);
+
+        Geometry* geo = new Sphere();
+        Model* m2 = new Model(new Mesh(geo, new UnlitMaterial({ 0, 0.5, 1, 1 })));
+        m2->Translate(-1, 0, 0);
+
+        sc->AddNode(m1);
+        sc->AddNode(m2);
+
+        // utility objects
+
+        AABBWireframe* aabb = new AABBWireframe(m1->GetBounds());
+
+        TangentsRenderer* tangents = new TangentsRenderer(*geo, 0.05f);
+
+        sc->AddDrawable(aabb);
+        sc->AddDrawable(tangents);
+
+        // our update function
+
+        sc->AddUpdateFunction([m1, m2, aabb, tangents](float dt) {
+            m1->Rotate(dt * 45, glm::normalize(glm::vec3(0.5f, 1.0, 0.0)));
+            m2->Rotate(dt * 15, glm::normalize(glm::vec3(0, 1.0, 0.0)));
+
+            aabb->Update(m1->GetBounds());
+            tangents->Update(m2->GetTransform(), m2->GetNormalMatrix());
+        });
     }
 };
 

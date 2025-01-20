@@ -2,6 +2,7 @@
 #define TANGENTS_RENDERER_H
 
 #include <glm/glm.hpp>
+#include <renderer/IDrawable.h>
 #include <mesh/Geometry.h>
 
 class Shader;
@@ -11,7 +12,6 @@ struct TangentVertex {
     glm::vec3 position;
     glm::vec3 normal;
     glm::vec3 tangent;
-    glm::vec3 bitangent;
 
     TangentVertex() {}
 
@@ -19,18 +19,17 @@ struct TangentVertex {
         this->position = glm::vec3(other.position);
         this->normal = glm::vec3(other.normal);
         this->tangent = glm::vec3(other.tangent);
-        this->bitangent = glm::vec3(other.bitangent);
     }
 };
 
-class TangentsRenderer {
+class TangentsRenderer : public IDrawable {
 public:
     // constructor
     TangentsRenderer(Geometry& geometry, float lineLength = 0.1f);
-    ~TangentsRenderer();
+    ~TangentsRenderer() override;
 
     void Update(const glm::mat4& modelMatrix, const glm::mat4& normalMatrix);
-    void Draw();
+    void Draw() override;
 
 private:
     float lineLength;

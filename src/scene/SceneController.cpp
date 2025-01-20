@@ -7,6 +7,7 @@
 #include <scene/SceneController.h>
 #include <renderer/Renderer.h>
 #include <renderer/DrawCall.h>
+#include <renderer/IDrawable.h>
 #include <resources/Resources.h>
 #include <scene/SceneNode.h>
 #include <shading/Shader.h>
@@ -15,8 +16,6 @@
 #include <lighting/SpotLight.h>
 #include <mesh/Model.h>
 #include <mesh/Skybox.h>
-// #include <mesh/AABBWireframe.h>
-// #include <mesh/TangentsRenderer.h>
 #include <camera/FlyCamera.h>
 #include <lighting/LightNode.h>
 #include <ui/Text.h>
@@ -54,6 +53,11 @@ SceneController::~SceneController() {
         delete model;
     }
     models.clear();
+
+    for(const auto& drawable : drawables) {
+        delete drawable;
+    }
+    drawables.clear();
 
     for(const auto& light : lights) {
         delete light;
@@ -129,6 +133,10 @@ void SceneController::AddNode(SceneNode* node) {
 
         // update the light uniform block, and any models in the scene using lighting
     }
+}
+
+void SceneController::AddDrawable(IDrawable* drawable) {
+    drawables.push_back(drawable);
 }
 
 void SceneController::SetSkybox(Skybox* skybox) {
@@ -208,6 +216,10 @@ void SceneController::RenderScene() {
             renderer->RenderSkybox(skybox, camera->GetView(), camera->GetProjection());
             stats.drawCalls++;
         }
+    }
+
+    for(IDrawable* drawable : drawables) {
+        drawable->Draw();
     }
 
     // transparency pass

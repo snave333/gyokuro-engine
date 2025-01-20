@@ -31,6 +31,7 @@ class Skybox;
 class Text;
 struct Frustum;
 struct LightNode;
+struct IDrawable;
 
 class SceneController {
 public:
@@ -41,6 +42,7 @@ public:
     void Render();
 
     void AddNode(SceneNode* node);
+    void AddDrawable(IDrawable* drawable);
     void SetSkybox(Skybox* skybox = nullptr);
     void AddUpdateFunction(std::function<void(float)> f) { updateFunctions.push_back(f); }
 
@@ -62,6 +64,7 @@ private:
     std::vector<LightNode*> lights = {};
 
     std::vector<Model*> models = {};
+    std::vector<IDrawable*> drawables = {};
 
     Text* textRenderer;
 

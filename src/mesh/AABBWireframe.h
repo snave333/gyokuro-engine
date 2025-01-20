@@ -3,20 +3,22 @@
 
 #include <glm/glm.hpp>
 
+#include <renderer/IDrawable.h>
 #include <math/AABB.h>
 
 class Shader;
 
-class AABBWireframe {
+class AABBWireframe : public IDrawable {
 public:
     // constructor
-    AABBWireframe(const AABB& aabb, glm::vec3 color = glm::vec3(1, 0, 1));
-    ~AABBWireframe();
+    AABBWireframe(const AABB& aabb, glm::vec4 color = glm::vec4(1, 0, 1, 1));
+    ~AABBWireframe() override;
 
     void Update(const AABB& aabb);
-    void Draw();
+    void Draw() override;
 
 private:
+    glm::vec4 color;
     Shader* shader = nullptr;
 
     // render data

@@ -6,7 +6,9 @@
 
 #include <glad/glad.h>
 
-AABBWireframe::AABBWireframe(const AABB& aabb, glm::vec3 color) {
+AABBWireframe::AABBWireframe(const AABB& aabb, glm::vec4 color) {
+    this->color = color;
+
     // the 8 corners of the AABB
     std::vector<glm::vec3> vertices = GetVertices(aabb.min, aabb.max);
 
@@ -41,7 +43,6 @@ AABBWireframe::AABBWireframe(const AABB& aabb, glm::vec3 color) {
     // create shader
     shader = Resources::GetShader("wireframe.vert", "solidColor.frag");
     shader->Use();
-    shader->SetVec3("color", color);
     shader->SetUniformBlockBinding("Camera", 0);
 }
 
@@ -74,6 +75,7 @@ void AABBWireframe::Update(const AABB& aabb) {
 
 void AABBWireframe::Draw() {
     shader->Use();
+    shader->SetVec4("color", color);
 
     glBindVertexArray(VAO);
     glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, 0); // 12 lines

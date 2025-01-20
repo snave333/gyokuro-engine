@@ -18,6 +18,7 @@
 void error_callback(int error, const char* description);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window, float dt);
+void checkShouldExit(GLFWwindow *window);
 void onMouseInput(GLFWwindow* window, double xpos, double ypos);
 
 Renderer* renderer;
@@ -76,7 +77,7 @@ int main(int argc, const char * argv[]) {
     renderer = new Renderer(window, width, height);
     sceneController = new SceneController(renderer, width, height);
 
-    SceneLoader::LoadScene2(sceneController);
+    SceneLoader::LoadUtilitiesScene(sceneController);
 
     // timing
     float currentTime;
@@ -103,6 +104,8 @@ int main(int argc, const char * argv[]) {
         
         // check and call events and swap the buffers
         glfwPollEvents();
+
+        checkShouldExit(window);
     }
 
     Resources::Dispose();
@@ -128,10 +131,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void processInput(GLFWwindow *window, float dt)
 {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
-
     // TODO a better solution for passing input to the scene controller
 
     if(sceneController == nullptr) {
@@ -155,6 +154,13 @@ void processInput(GLFWwindow *window, float dt)
     }
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
         sceneController->OnKeyPressed(GLFW_KEY_Q, dt);
+    }
+}
+
+void checkShouldExit(GLFWwindow *window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
 }
 

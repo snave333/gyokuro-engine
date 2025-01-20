@@ -41,9 +41,6 @@ TangentsRenderer::TangentsRenderer(Geometry& geometry, float lineLength) : lineL
     // tangents
     glEnableVertexAttribArray(2);	
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertex), (void*)offsetof(TangentVertex, tangent));
-    // bitangents
-    glEnableVertexAttribArray(3);	
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(TangentVertex), (void*)offsetof(TangentVertex, bitangent));
 
     // clean up and unbind
     glBindVertexArray(0);

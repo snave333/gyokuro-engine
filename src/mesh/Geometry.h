@@ -9,7 +9,6 @@ struct Vertex {
     glm::vec3 normal;
     glm::vec2 texCoord;
     glm::vec3 tangent = glm::vec3(0.0f);
-    glm::vec3 bitangent = glm::vec3(0.0f);
 
     // we calculate the tangent later
     Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord) :
@@ -59,11 +58,8 @@ struct Geometry {
             // accumulate our results
 
             v0.tangent += tangent;
-            v0.bitangent += bitangent;
             v1.tangent += tangent;
-            v1.bitangent += bitangent;
             v2.tangent += tangent;
-            v2.bitangent += bitangent;
         }
 
         // normalize the results per vert to account for verts that are shared
@@ -71,7 +67,6 @@ struct Geometry {
 
         for(auto& vertex : vertices) {
             vertex.tangent = glm::normalize(vertex.tangent);
-            vertex.bitangent = glm::normalize(vertex.bitangent);
         }
     }
 };
