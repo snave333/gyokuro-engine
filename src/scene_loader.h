@@ -17,6 +17,7 @@
 #include <mesh/Skybox.h>
 #include <shading/UnlitMaterial.h>
 #include <shading/PhongMaterial.h>
+#include <shading/GoochMaterial.h>
 #include <lighting/LightNode.h>
 #include <lighting/DirectionalLight.h>
 #include <lighting/PointLight.h>
@@ -228,6 +229,27 @@ struct SceneLoader {
             aabb->Update(m1->GetBounds());
             tangents->Update(m2->GetTransform(), m2->GetNormalMatrix());
         });
+    }
+
+    static void LoadGoochScene(SceneController* sc) {
+        // light
+
+        glm::vec3 pointLight1Color = glm::vec3(1, 1, 1);
+        LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color * 2.0f, 10));
+        Model* pointLight1Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f))));
+        pointLight1->Translate(-3, 1, -2);
+        pointLight1Model->Translate(-3, 1, -2);
+
+        sc->AddNode(pointLight1);
+
+        sc->AddNode(pointLight1Model);
+
+        // models
+
+        Model* m1 = new Model(new Mesh(new Sphere(), new GoochMaterial()));
+        m1->Scale(2);
+
+        sc->AddNode(m1);
     }
 };
 

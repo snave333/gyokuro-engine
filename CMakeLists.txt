@@ -39,6 +39,7 @@ add_executable(Gyokuro
     src/renderer/RenderState.cpp
     src/shading/UnlitMaterial.cpp
     src/shading/PhongMaterial.cpp
+    src/shading/GoochMaterial.cpp
     src/shading/Shader.cpp
     src/shading/Texture2D.cpp
     src/shading/TextureCube.cpp

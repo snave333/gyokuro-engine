@@ -77,7 +77,11 @@ int main(int argc, const char * argv[]) {
     renderer = new Renderer(window, width, height);
     sceneController = new SceneController(renderer, width, height);
 
-    SceneLoader::LoadLightingScene(sceneController);
+    // SceneLoader::LoadVFCScene(sceneController);
+    // SceneLoader::LoadLightingScene(sceneController);
+    // SceneLoader::LoadTransparencyScene(sceneController);
+    // SceneLoader::LoadUtilitiesScene(sceneController);
+    SceneLoader::LoadGoochScene(sceneController);
 
     // timing
     float currentTime;
