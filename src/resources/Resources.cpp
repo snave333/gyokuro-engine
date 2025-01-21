@@ -71,8 +71,8 @@ void Resources::Dispose() {
     Resources::fonts.clear();
 }
 
-Shader* Resources::GetShader(const char* vertexFileName, const char* fragmentFileName) {
-    std::string hashKey = std::string(vertexFileName) + "|" + std::string(fragmentFileName);
+Shader* Resources::GetShader(const char* vertFileName, const char* fragFileName) {
+    std::string hashKey = std::string(vertFileName) + "|" + std::string(fragFileName);
 
     long id = HASH(hashKey);
 
@@ -80,7 +80,26 @@ Shader* Resources::GetShader(const char* vertexFileName, const char* fragmentFil
         return &Resources::shaders[id];
     }
 
-    Shader shader = ShaderLoader::LoadShader(vertexFileName, fragmentFileName);
+    Shader shader = ShaderLoader::LoadShader(vertFileName, fragFileName);
+
+    Resources::shaders[id] = shader;
+
+    return &Resources::shaders[id];
+}
+
+Shader* Resources::GetShader(const char* vertFileName, const char* geomFileName, const char* fragFileName) {
+    std::string hashKey = 
+        std::string(vertFileName) + "|" +
+        std::string(geomFileName) + "|" +
+        std::string(fragFileName);
+
+    long id = HASH(hashKey);
+
+    if(Resources::shaders.find(id) != Resources::shaders.end()) {
+        return &Resources::shaders[id];
+    }
+
+    Shader shader = ShaderLoader::LoadShader(vertFileName, geomFileName, fragFileName);
 
     Resources::shaders[id] = shader;
 

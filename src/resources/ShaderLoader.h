@@ -12,7 +12,11 @@ public:
     static std::string ResourceDir;
     static std::string IncludesDir;
 
-    static Shader LoadShader(const char* vertexFileName, const char* fragmentFileName);
+    static Shader LoadShader(const char* vertFileName, const char* fragFileName);
+    static Shader LoadShader(
+        const char* vertFileName,
+        const char* geomFileName,
+        const char* fragFileName);
 
 private:
     static std::string ResolveIncludes(

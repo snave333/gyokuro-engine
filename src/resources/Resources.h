@@ -14,7 +14,8 @@ public:
     static void Initialize();
     static void Dispose();
 
-    static Shader* GetShader(const char* vertexFileName, const char* fragmentFileName);
+    static Shader* GetShader(const char* vertFileName, const char* fragFileName);
+    static Shader* GetShader(const char* vertFileName, const char* geomFileName, const char* fragFileName);
     static Texture2D* GetTexture(const char* imageFileName, bool srgb);
     static TextureCube* GetTextureCube(std::vector<const char*> faceFileNames, bool srgb);
     static Font* GetFont(const char* fontFileName, unsigned int fontSize);
