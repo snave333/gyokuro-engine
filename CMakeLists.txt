@@ -47,8 +47,8 @@ add_executable(Gyokuro
     src/mesh/Mesh.cpp
     src/mesh/Model.cpp
     src/mesh/Skybox.cpp
-    src/mesh/AABBWireframe.cpp
-    src/mesh/TangentsRenderer.cpp
+    src/drawable/AABBWireframe.cpp
+    src/drawable/TangentsRenderer.cpp
     src/camera/Camera.cpp
     src/camera/CameraNode.cpp
     src/camera/FlyCamera.cpp

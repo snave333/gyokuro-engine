@@ -1,5 +1,9 @@
 #version 330 core
 
+// This modified version of the Gooch lighting model was originally
+// demonstrated in the book "Realtime Rendering, Fourth Edition", and this
+// implementation currently only works with point lights.
+
 out vec4 FragColor;
 
 in VS_OUT {

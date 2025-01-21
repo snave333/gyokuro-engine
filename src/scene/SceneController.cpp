@@ -8,7 +8,7 @@
 #include <scene/SceneNode.h>
 #include <renderer/Renderer.h>
 #include <renderer/DrawCall.h>
-#include <renderer/IDrawable.h>
+#include <drawable/IDrawable.h>
 #include <resources/Resources.h>
 #include <shading/Shader.h>
 #include <lighting/LightNode.h>

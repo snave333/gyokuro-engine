@@ -80,7 +80,7 @@ int main(int argc, const char * argv[]) {
     // SceneLoader::LoadVFCScene(sceneController);
     // SceneLoader::LoadLightingScene(sceneController);
     // SceneLoader::LoadTransparencyScene(sceneController);
-    // SceneLoader::LoadUtilitiesScene(sceneController);
+    // SceneLoader::LoadDrawablesScene(sceneController);
     SceneLoader::LoadGoochScene(sceneController);
 
     // timing

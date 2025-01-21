@@ -2,7 +2,7 @@
 #define TANGENTS_RENDERER_H
 
 #include <glm/glm.hpp>
-#include <renderer/IDrawable.h>
+#include <drawable/IDrawable.h>
 #include <mesh/Geometry.h>
 
 class Shader;

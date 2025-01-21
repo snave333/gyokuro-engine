@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 
-#include <renderer/IDrawable.h>
+#include <drawable/IDrawable.h>
 #include <math/AABB.h>
 
 class Shader;

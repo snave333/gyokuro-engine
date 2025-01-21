@@ -1,5 +1,5 @@
 
-#include <mesh/TangentsRenderer.h>
+#include <drawable/TangentsRenderer.h>
 #include <resources/Resources.h>
 
 #include <glad/glad.h>

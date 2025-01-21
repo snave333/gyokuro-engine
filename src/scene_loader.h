@@ -12,8 +12,8 @@
 #include <mesh/Sphere.h>
 #include <mesh/Torus.h>
 #include <mesh/Pyramid.h>
-#include <mesh/AABBWireframe.h>
-#include <mesh/TangentsRenderer.h>
+#include <drawable/AABBWireframe.h>
+#include <drawable/TangentsRenderer.h>
 #include <mesh/Skybox.h>
 #include <shading/UnlitMaterial.h>
 #include <shading/PhongMaterial.h>
@@ -185,7 +185,7 @@ struct SceneLoader {
         sc->AddNode(m3);
     }
 
-    static void LoadUtilitiesScene(SceneController* sc) {
+    static void LoadDrawablesScene(SceneController* sc) {
         // skybox
 
         std::vector<const char*> faces {
@@ -234,9 +234,9 @@ struct SceneLoader {
     static void LoadGoochScene(SceneController* sc) {
         // light
 
-        glm::vec3 pointLight1Color = glm::vec3(1, 1, 1);
-        LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color * 2.0f, 10));
-        Model* pointLight1Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f))));
+        glm::vec3 pointLight1Color = glm::vec3(1, 1, 1) * 4.0f;
+        LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color, 10));
+        Model* pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f))));
         pointLight1->Translate(-3, 1, -2);
         pointLight1Model->Translate(-3, 1, -2);
 

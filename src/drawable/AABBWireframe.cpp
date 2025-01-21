@@ -1,5 +1,5 @@
 
-#include <mesh/AABBWireframe.h>
+#include <drawable/AABBWireframe.h>
 #include <math/AABB.h>
 #include <shading/Shader.h>
 #include <resources/Resources.h>
