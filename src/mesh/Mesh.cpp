@@ -14,6 +14,8 @@ Mesh::Mesh(Geometry* geometry, Material* material) {
     this->geometry->CalculateTangents();
     Initialize();
     ComputeBounds();
+
+    indexCount = this->geometry->indices.size();
 }
 
 void Mesh::Initialize() {
@@ -89,6 +91,6 @@ void Mesh::Draw() {
     }
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, geometry->indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

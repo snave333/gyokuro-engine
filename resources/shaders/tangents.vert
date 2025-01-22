@@ -6,58 +6,21 @@ layout (location = 2) in vec3 aTangent;
 
 #include "camera.glsl"
 
-out vec3 color;
+out VS_OUT {
+    vec3 fragPos;
+    vec3 normal;
+    vec3 tangent;
+} vs_out;
 
 uniform mat4 model;
 uniform mat4 normalMatrix;
-uniform float lineLength;
 
 void main()
 {
-    // world position and directions of base vertex
-    vec3 position = vec3(model * vec4(aPos, 1.0));
-    vec3 offset;
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
 
-    // position of final vertex
-    vec3 p = vec3( 0);
-
-    // current index of the vertex we're drawing
-    int i = gl_VertexID % 6;
-
-    // first determine our vertex position, offset in the proper direction
-
-    switch(i) {
-    case 1: // normal (+z)
-        offset = normalize(vec3(normalMatrix * vec4(aNormal, 1.0)));
-        p = position + offset * lineLength;
-        break;
-    case 3: // tangent (+x)
-        offset = normalize(vec3(normalMatrix * vec4(aTangent, 1.0)));
-        p = position + offset * lineLength;
-        break;
-    case 5: // bitangent (+y)
-        offset = normalize(vec3(normalMatrix * vec4(cross(aNormal, aTangent), 1.0)));
-        p = position + offset * lineLength;
-        break;
-    default:
-        p = position;
-        break;
-    }
-
-    // now determine our line color, coded by axis
-
-    int i2 = int(floor(i / 2.0));
-    switch(i2) {
-    case 0: // normal (+z)
-        color = vec3(0, 0, 1);
-        break;
-    case 1: // tangent (+x)
-        color = vec3(1, 0, 0);
-        break;
-    case 2: // bitangent (+y)
-        color = vec3(0, 1, 0);
-        break;
-    }
-
-    gl_Position = projection * view * vec4(p, 1.0);
+    // transform our position and normal into world space
+    vs_out.fragPos = vec3(model * vec4(aPos, 1.0));
+    vs_out.normal = vec3(normalMatrix * vec4(aNormal, 1.0));
+    vs_out.tangent = vec3(normalMatrix * vec4(aTangent, 1.0));
 }

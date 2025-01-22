@@ -39,11 +39,8 @@ private:
     // render data
     unsigned int VAO;
     unsigned int VBO;
-    unsigned int EBO;
 
-    unsigned int indexCount;
-
-    void GetLines(Geometry& geometry, std::vector<TangentVertex>& vertices, std::vector<unsigned int>& indices);
+    unsigned int vertexCount;
 };
   
 #endif // TANGENTS_RENDERER_H
