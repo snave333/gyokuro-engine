@@ -50,9 +50,11 @@ protected:
     glm::mat4 transform = glm::mat4(1.0f);
     glm::mat4 normalMatrix = glm::mat4(1.0f);
 
-    bool isDirty = true;
+    virtual void SetDirty();
 
 private:
+    bool isTransformDirty = true;
+
     void UpdateMatrices();
 };
 

@@ -3,7 +3,7 @@
 
 
 const glm::mat4& SceneNode::GetTransform() {
-    if(isDirty) {
+    if(isTransformDirty) {
         UpdateMatrices();
     }
 
@@ -11,11 +11,15 @@ const glm::mat4& SceneNode::GetTransform() {
 }
 
 const glm::mat4& SceneNode::GetNormalMatrix() {
-    if(isDirty) {
+    if(isTransformDirty) {
         UpdateMatrices();
     }
 
     return normalMatrix;
+}
+
+void SceneNode::SetDirty() {
+    isTransformDirty = true;
 }
 
 void SceneNode::UpdateMatrices() {
@@ -27,7 +31,7 @@ void SceneNode::UpdateMatrices() {
 
     normalMatrix = glm::transpose(glm::inverse(transform));
     
-    isDirty = false;
+    isTransformDirty = false;
 }
 
 glm::vec3 SceneNode::GetForward() {
@@ -44,60 +48,60 @@ glm::vec3 SceneNode::GetUp() {
 
 void SceneNode::SetPosition(float x, float y, float z) {
     position = glm::vec3(x, y, z);
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::SetPosition(const glm::vec3 &position) {
     this->position = position;
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::SetRotation(float pitchDeg, float yawDeg, float rollDeg) {
     glm::vec3 angles = glm::radians(glm::vec3(pitchDeg, yawDeg, rollDeg));
     rotation = glm::quat(angles);
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::SetRotation(float angleDeg, const glm::vec3 &axis) {
     rotation = glm::angleAxis(glm::radians(angleDeg), axis);
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::SetRotation(const glm::fquat &rotation) {
     this->rotation = rotation;
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::SetScale(float scale) {
     this->scale = glm::vec3(scale, scale, scale);
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::SetScale(float x, float y, float z) {
     this->scale = glm::vec3(x, y, z);
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::SetScale(const glm::vec3 &scale) {
     this->scale = scale;
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::Translate(float x, float y, float z) {
     position += glm::vec3(x, y, z);
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::Translate(const glm::vec3 &translation) {
     position += translation;
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::Rotate(float pitchDeg, float yawDeg, float rollDeg) {
     glm::vec3 angles = glm::radians(glm::vec3(pitchDeg, yawDeg, rollDeg));
     if(glm::length2(angles) > 0.0f) {
         rotation = rotation * glm::quat(angles);
-        isDirty = true;
+        SetDirty();
     }
 }
 
@@ -105,21 +109,21 @@ void SceneNode::Rotate(float angleDeg, const glm::vec3 &axis) {
     float angleRad = glm::radians(angleDeg);
     if(angleRad != 0.0f) {
         rotation = rotation * glm::angleAxis(angleRad, axis);
-        isDirty = true;
+        SetDirty();
     }
 }
 
 void SceneNode::Scale(float scale) {
     this->scale *= scale;
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::Scale(float x, float y, float z) {
     scale *= glm::vec3(x, y, z);
-    isDirty = true;
+    SetDirty();
 }
 
 void SceneNode::Scale(const glm::vec3 &scale) {
     this->scale *= scale;
-    isDirty = true;
+    SetDirty();
 }

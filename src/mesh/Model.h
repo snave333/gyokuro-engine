@@ -36,9 +36,12 @@ public:
 protected:
     Mesh* mesh = nullptr;
 
+    void SetDirty() override;
+
 private:
     AABB bounds;
     std::array<glm::vec3, 8> boundsLUT = {};
+    bool isBoundsDirty = true;
 
     void UpdateBounds();
     void UpdateBoundsLUT();

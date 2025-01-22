@@ -18,11 +18,16 @@ Model::~Model() {
 }
 
 const AABB& Model::GetBounds() {
-    if(isDirty) {
+    if(isBoundsDirty) {
         UpdateBounds();
     }
 
     return bounds;
+}
+
+void Model::SetDirty() {
+    SceneNode::SetDirty();
+    isBoundsDirty = true;
 }
 
 void Model::UpdateBounds() {
@@ -55,6 +60,8 @@ void Model::UpdateBounds() {
     bounds = { newMin, newMax };
 
     UpdateBoundsLUT();
+
+    isBoundsDirty = false;
 }
 
 void Model::UpdateBoundsLUT() {
