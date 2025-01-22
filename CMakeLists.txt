@@ -20,6 +20,12 @@ add_subdirectory( deps/glfw )
 add_subdirectory( deps/glm )
 add_subdirectory( deps/freetype )
 
+# configure and add assimp asset importer
+set( ASSIMP_NO_EXPORT ON CACHE BOOL  "Importers only" )
+set( ASSIMP_BUILD_TESTS OFF CACHE BOOL  "Don't build tests" )
+set( ASSIMP_INSTALL OFF CACHE BOOL  "We're using as a submodule" )
+add_subdirectory( deps/assimp )
+
 # add the glad lib from https://glad.dav1d.de/
 add_library(glad STATIC deps/glad/src/glad.c)
 target_include_directories(glad PUBLIC deps/glad/include)
@@ -69,6 +75,7 @@ target_link_libraries(Gyokuro
     glad
     glfw
     stb_image
+    assimp
     glm
     freetype)
 

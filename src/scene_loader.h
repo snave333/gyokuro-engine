@@ -3,6 +3,10 @@
 
 #include <glm/glm.hpp>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include <scene/SceneController.h>
 
 #include <mesh/Model.h>
@@ -250,6 +254,24 @@ struct SceneLoader {
         m1->Scale(2);
 
         sc->AddNode(m1);
+    }
+
+    static void LoadModelScene(SceneController* sc) {
+        std::string path = "/Users/spencerevans/pm-repos/gyokuro-resources/DamagedHelmet.glb";
+        Assimp::Importer importer;
+        const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate); // aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph
+
+        if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+            std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+            return;
+        }
+
+        std::cout << "assimp successfully imported model with " <<
+            std::to_string(scene->mNumMeshes) << " meshes, " <<
+            std::to_string(scene->mNumMaterials) << " materials, and " <<
+            std::to_string(scene->mNumTextures) << " textures" << std::endl;
+
+        // delete scene;
     }
 };
 

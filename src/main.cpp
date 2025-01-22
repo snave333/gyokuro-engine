@@ -81,7 +81,8 @@ int main(int argc, const char * argv[]) {
     // SceneLoader::LoadLightingScene(sceneController);
     // SceneLoader::LoadTransparencyScene(sceneController);
     // SceneLoader::LoadDrawablesScene(sceneController);
-    SceneLoader::LoadGoochScene(sceneController);
+    // SceneLoader::LoadGoochScene(sceneController);
+    SceneLoader::LoadModelScene(sceneController);
 
     // timing
     float currentTime;
