@@ -6,6 +6,7 @@
 	],
 	"settings": {
 		"files.associations": {
+			"*.geom": "glsl",
 			"__bit_reference": "cpp",
 			"__hash_table": "cpp",
 			"__locale": "cpp",
@@ -66,7 +67,12 @@
 			"map": "cpp",
 			"__config": "cpp",
 			"regex": "cpp",
-			"unordered_set": "cpp"
+			"unordered_set": "cpp",
+			"any": "cpp",
+			"cinttypes": "cpp",
+			"condition_variable": "cpp",
+			"list": "cpp",
+			"set": "cpp"
 		}
 	}
 }
