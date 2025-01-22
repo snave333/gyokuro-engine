@@ -1,6 +1,7 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+#include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 

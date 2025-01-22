@@ -1,6 +1,7 @@
 #ifndef AABB_WIREFRAME_H
 #define AABB_WIREFRAME_H
 
+#include <vector>
 #include <glm/glm.hpp>
 
 #include <drawable/IDrawable.h>

@@ -1,6 +1,7 @@
 #ifndef LIGHTS_UBO_H
 #define LIGHTS_UBO_H
 
+#include <vector>
 #include <glm/glm.hpp>
 
 class LightNode;
