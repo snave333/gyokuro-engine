@@ -18,12 +18,10 @@ public:
     ModelNode(Model* model);
     ~ModelNode();
 
-    Mesh* GetMesh() { return model->GetMesh(); }
-    Material* GetMaterial() { return model->GetMesh()->GetMaterial(); }
-    const RenderType& GetRenderType() { return model->GetMesh()->GetRenderType(); }
-
+    const Model& GetModel() const { return *model; }
+    
     const AABB& GetBounds();
-    const std::array<glm::vec3, 8>& GetLUT() { return boundsLUT; }
+    const std::array<glm::vec3, 8>& GetLUT() const { return boundsLUT; }
 
 protected:
     Model* model = nullptr;

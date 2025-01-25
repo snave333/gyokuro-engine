@@ -123,13 +123,19 @@ struct SceneLoader {
         ModelNode* m1 = new ModelNode(new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 }))));
         m1->Translate(4, -1, 0);
 
-        ModelNode* m2 = new ModelNode(new Model(new Mesh(new Sphere(), new UnlitMaterial(
-            { 0, 0.5, 1, 1 },
-            Resources::GetTexture("awesomeface.png", true),
-            glm::vec2(2, 1)))));
+        ModelNode* m2 = new ModelNode(new Model({
+            new Mesh(new Sphere(0.6f), new UnlitMaterial(
+                { 0, 0.5, 1, 1 },
+                Resources::GetTexture("awesomeface.png", true),
+                glm::vec2(2, 1))),
+            new Mesh(new Cube(0.2f), new UnlitMaterial({ 1, 0, 1, 1 }))
+        }));
         m2->Translate(2, -1, 0);
 
-        ModelNode* m3 = new ModelNode(new Model(new Mesh(new Torus(), new PhongMaterial({ 0.5, 0, 1, 0.8f }, { 0.5, 0, 1 }))));
+        ModelNode* m3 = new ModelNode(new Model({
+            new Mesh(new Torus(), new PhongMaterial({ 0.5, 0, 1, 0.8f }, { 0.5, 0, 1 })),
+            new Mesh(new Sphere(0.3f), new UnlitMaterial({ 0, 1, 1, 1 })),
+        }));
         m3->Translate(0, -1, 0);
         // m3->Rotate(90, 0, 0);
 
@@ -191,22 +197,12 @@ struct SceneLoader {
     }
 
     static void LoadDrawablesScene(SceneController* sc) {
-        // skybox
-
-        std::vector<const char*> faces {
-            "skybox_px.jpg",
-            "skybox_nx.jpg",
-            "skybox_py.jpg",
-            "skybox_ny.jpg",
-            "skybox_nz.jpg",
-            "skybox_pz.jpg"
-        };
-        Skybox* skybox = new Skybox(Resources::GetTextureCube(faces, true));
-        sc->SetSkybox(skybox);
-
         // meshes objects
 
-        ModelNode* m1 = new ModelNode(new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 }))));
+        ModelNode* m1 = new ModelNode(new Model({
+            new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 })),
+            new Mesh(new Sphere(0.65f), new UnlitMaterial({ 0, 1, 0.5, 1 })),
+        }));
         m1->Translate(1, 0, 0);
 
         Geometry* geo = new Sphere();

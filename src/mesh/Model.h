@@ -20,11 +20,8 @@ public:
     Model(std::vector<Mesh*> meshes);
     ~Model();
 
-    Mesh* GetMesh() { return meshes[0]; }
-    Material* GetMaterial() { return meshes[0]->GetMaterial(); }
-    const RenderType& GetRenderType() { return meshes[0]->GetRenderType(); }
-
-    const AABB& GetBounds() { return bounds; }
+    const std::vector<Mesh*>& GetMeshes() const { return meshes; }
+    const AABB& GetBounds() const { return bounds; }
 
 private:
     std::vector<Mesh*> meshes = {};

@@ -4,38 +4,38 @@
 #include <mesh/Geometry.h>
 
 struct Cube : public Geometry {
-    Cube() {
+    Cube(float halfSize = 0.5f) {
         glm::vec3 positions[] = {
             // +x
-            { 0.5f, -0.5f,  0.5f }, // 3
-            { 0.5f, -0.5f, -0.5f }, // 7
-            { 0.5f,  0.5f, -0.5f }, // 6
-            { 0.5f,  0.5f,  0.5f }, // 2
+            { halfSize, -halfSize,  halfSize }, // 3
+            { halfSize, -halfSize, -halfSize }, // 7
+            { halfSize,  halfSize, -halfSize }, // 6
+            { halfSize,  halfSize,  halfSize }, // 2
             // -x
-            {-0.5f, -0.5f, -0.5f }, // 4
-            {-0.5f, -0.5f,  0.5f }, // 0
-            {-0.5f,  0.5f,  0.5f }, // 1
-            {-0.5f,  0.5f, -0.5f }, // 5
+            {-halfSize, -halfSize, -halfSize }, // 4
+            {-halfSize, -halfSize,  halfSize }, // 0
+            {-halfSize,  halfSize,  halfSize }, // 1
+            {-halfSize,  halfSize, -halfSize }, // 5
             // +y
-            {-0.5f,  0.5f,  0.5f }, // 1
-            { 0.5f,  0.5f,  0.5f }, // 2
-            { 0.5f,  0.5f, -0.5f }, // 6
-            {-0.5f,  0.5f, -0.5f }, // 5
+            {-halfSize,  halfSize,  halfSize }, // 1
+            { halfSize,  halfSize,  halfSize }, // 2
+            { halfSize,  halfSize, -halfSize }, // 6
+            {-halfSize,  halfSize, -halfSize }, // 5
             // -y
-            {-0.5f, -0.5f, -0.5f }, // 4
-            { 0.5f, -0.5f, -0.5f }, // 7
-            { 0.5f, -0.5f,  0.5f }, // 3
-            {-0.5f, -0.5f,  0.5f }, // 0
+            {-halfSize, -halfSize, -halfSize }, // 4
+            { halfSize, -halfSize, -halfSize }, // 7
+            { halfSize, -halfSize,  halfSize }, // 3
+            {-halfSize, -halfSize,  halfSize }, // 0
             // +z
-            {-0.5f, -0.5f,  0.5f }, // 0
-            { 0.5f, -0.5f,  0.5f }, // 3
-            { 0.5f,  0.5f,  0.5f }, // 2
-            {-0.5f,  0.5f,  0.5f }, // 1
+            {-halfSize, -halfSize,  halfSize }, // 0
+            { halfSize, -halfSize,  halfSize }, // 3
+            { halfSize,  halfSize,  halfSize }, // 2
+            {-halfSize,  halfSize,  halfSize }, // 1
             // -z
-            { 0.5f, -0.5f, -0.5f }, // 7
-            {-0.5f, -0.5f, -0.5f }, // 4
-            {-0.5f,  0.5f, -0.5f }, // 5
-            { 0.5f,  0.5f, -0.5f }  // 6
+            { halfSize, -halfSize, -halfSize }, // 7
+            {-halfSize, -halfSize, -halfSize }, // 4
+            {-halfSize,  halfSize, -halfSize }, // 5
+            { halfSize,  halfSize, -halfSize }  // 6
         };
 
         glm::vec3 normals[] = {

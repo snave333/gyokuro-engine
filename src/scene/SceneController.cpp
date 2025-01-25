@@ -53,8 +53,8 @@ SceneController::~SceneController() {
     delete skybox;
     skybox = nullptr;
 
-    for(const auto& model : models) {
-        delete model;
+    for(const auto& modelNode : models) {
+        delete modelNode;
     }
     models.clear();
 
@@ -63,8 +63,8 @@ SceneController::~SceneController() {
     }
     drawables.clear();
 
-    for(const auto& light : lights) {
-        delete light;
+    for(const auto& lightNode : lights) {
+        delete lightNode;
     }
     lights.clear();
 
@@ -73,26 +73,29 @@ SceneController::~SceneController() {
 }
 
 void SceneController::AddNode(SceneNode* node) {
-    ModelNode* model = dynamic_cast<ModelNode*>(node);
-    LightNode* light = dynamic_cast<LightNode*>(node);
+    ModelNode* modelNode = dynamic_cast<ModelNode*>(node);
+    LightNode* lightNode = dynamic_cast<LightNode*>(node);
 
-    if(model) {
-        models.push_back(model);
+    if(modelNode) {
+        models.push_back(modelNode);
 
-        const Material* material = model->GetMaterial();
-        const Shader& shader = material->GetShader();
+        const std::vector<Mesh*>& meshes = modelNode->GetModel().GetMeshes();
+        for(Mesh* mesh : meshes) {
+            const Material* material = mesh->GetMaterial();
+            const Shader& shader = material->GetShader();
 
-        // bind the Camera uniform block
-        shader.Use();
-        shader.SetUniformBlockBinding("Camera", 0);
+            // bind the Camera uniform block
+            shader.Use();
+            shader.SetUniformBlockBinding("Camera", 0);
 
-        // if the model uses lighting, set the lighting uniforms
-        if(material->usesDirectLighting) {
-            shader.SetUniformBlockBinding("Lights", 1);
+            // if the model uses lighting, set the lighting uniforms
+            if(material->usesDirectLighting) {
+                shader.SetUniformBlockBinding("Lights", 1);
+            }
         }
     }
-    else if(light) {
-        lights.push_back(light);
+    else if(lightNode) {
+        lights.push_back(lightNode);
 
         // update the light uniform block
 
@@ -161,20 +164,25 @@ void SceneController::RenderScene() {
     camera->UpdateViewMatrixUniform();
 
     // separate our visible objects into two vectors - opaque and blended
-    for(const auto& model : visibleModels) {
-        if(model->GetRenderType() == OPAQUE) {
-            opaqueDrawCalls.push_back(DrawCall{
-                model->GetMesh(),
-                model->GetMaterial(),
-                model->GetTransform(),
-                model->GetNormalMatrix() });
-        }
-        else {
-            alphaDrawCalls.push_back(DrawCall{
-                model->GetMesh(),
-                model->GetMaterial(),
-                model->GetTransform(),
-                model->GetNormalMatrix() });
+    for(const auto& modelNode : visibleModels) {
+        const std::vector<Mesh*>& meshes = modelNode->GetModel().GetMeshes();
+        for(Mesh* mesh : meshes) {
+            if(mesh->GetRenderType() == OPAQUE) {
+                opaqueDrawCalls.push_back(DrawCall{
+                    mesh,
+                    mesh->GetMaterial(),
+                    modelNode->GetTransform(),
+                    modelNode->GetNormalMatrix()
+                });
+            }
+            else {
+                alphaDrawCalls.push_back(DrawCall{
+                    mesh,
+                    mesh->GetMaterial(),
+                    modelNode->GetTransform(),
+                    modelNode->GetNormalMatrix()
+                });
+            }
         }
         stats.drawCalls++;
     }
@@ -204,9 +212,9 @@ void SceneController::RenderScene() {
         // NOTE this doesn't take rotation or scale into account
 
         const glm::vec3& camPosition = camera->GetPosition();
-        std::sort(alphaDrawCalls.begin(), alphaDrawCalls.end(), [camPosition](const DrawCall a, const DrawCall b) {
-            const glm::vec3& aPos = glm::vec3(a.transform[3][0], a.transform[3][1], a.transform[3][2]);
-            const glm::vec3& bPos = glm::vec3(b.transform[3][0], b.transform[3][1], b.transform[3][2]);;
+        std::sort(alphaDrawCalls.begin(), alphaDrawCalls.end(), [camPosition](const DrawCall& a, const DrawCall& b) {
+            glm::vec3 aPos = { a.transform[3][0], a.transform[3][1], a.transform[3][2] };
+            glm::vec3 bPos = { b.transform[3][0], b.transform[3][1], b.transform[3][2] };
 
             return glm::length2(aPos - camPosition) > glm::length2(bPos - camPosition);
         });
@@ -225,16 +233,16 @@ void SceneController::FrustumCull(
     // FIXME: this is a niave approach where all models in the scene are
     // iterated through.
     // TODO Look into using a BVH to quickly cull large swathes of scene models.
-    for(const auto& model : sceneModels) {
-        const AABB& bounds = model->GetBounds();
-        const std::array<glm::vec3, 8>& boundsLUT = model->GetLUT();
+    for(const auto& modelNode : sceneModels) {
+        const AABB& bounds = modelNode->GetBounds();
+        const std::array<glm::vec3, 8>& boundsLUT = modelNode->GetLUT();
 
         // FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds);
         // FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT);
-        FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT, &model->boundsLastFailedFrustumPlane);
+        FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT, &modelNode->boundsLastFailedFrustumPlane);
 
         if(result != OUTSIDE) {
-            visibleSceneModels.push_back(model);
+            visibleSceneModels.push_back(modelNode);
         }
     }
 }
