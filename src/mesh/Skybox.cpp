@@ -2,6 +2,7 @@
 #include <mesh/Skybox.h>
 #include <shading/Shader.h>
 #include <resources/Resources.h>
+#include <shading/TextureCube.h>
 
 #include <glad/glad.h>
 

@@ -49,6 +49,7 @@ add_executable(Gyokuro
     src/shading/Shader.cpp
     src/shading/Texture2D.cpp
     src/shading/TextureCube.cpp
+    src/lighting/LightNode.cpp
     src/lighting/LightsUBO.cpp
     src/mesh/Mesh.cpp
     src/mesh/Model.cpp

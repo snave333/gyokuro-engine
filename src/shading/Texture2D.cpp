@@ -3,6 +3,13 @@
 
 #include <glad/glad.h>
 
+Texture2D::Texture2D() {
+}
+
+Texture2D::Texture2D(const unsigned int& textureId, bool hasAlpha)
+    : ID(textureId), hasAlpha(hasAlpha)
+{}
+
 void Texture2D::Dispose() {
     glDeleteTextures(1, &ID);
 }

@@ -3,9 +3,8 @@
 
 class Texture2D {
 public:
-    Texture2D() {}
-    Texture2D(const unsigned int& textureId, bool hasAlpha)
-        : ID(textureId), hasAlpha(hasAlpha) {}
+    Texture2D();
+    Texture2D(const unsigned int& textureId, bool hasAlpha);
     
     void Dispose();
 

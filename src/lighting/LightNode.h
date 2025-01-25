@@ -6,11 +6,8 @@
 
 class LightNode : public SceneNode {
 public:
-    LightNode(Light* light) : light(light) {}
-    ~LightNode() {
-        delete light;
-        light = nullptr;
-    }
+    LightNode(Light* light);
+    ~LightNode();
 
     const Light* GetLight() { return light; }
 

@@ -2,12 +2,13 @@
 #define RESOURCES_H
 
 #include <map>
-#include <shading/Shader.h>
-#include <shading/Texture2D.h>
-#include <shading/TextureCube.h>
-#include <ui/Font.h>
 
 #include <glm/glm.hpp>
+
+class Shader;
+class Texture2D;
+class TextureCube;
+class Font;
 
 class Resources {
 public:

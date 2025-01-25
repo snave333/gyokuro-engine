@@ -1,6 +1,7 @@
 
 #include <drawable/TangentsRenderer.h>
 #include <resources/Resources.h>
+#include <shading/Shader.h>
 
 #include <glad/glad.h>
 

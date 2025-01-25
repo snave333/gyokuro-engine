@@ -11,7 +11,7 @@ struct DrawCall {
     Material* material;
     glm::mat4 transform;
     glm::mat4 normalMatrix;
-    unsigned int modelID;
+    // unsigned int modelID;
 };
 
 #endif // DRAW_CALL_H

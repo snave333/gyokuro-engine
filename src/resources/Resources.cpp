@@ -6,6 +6,11 @@
 #include <utilities/FileSystem.h>
 #include <utilities/Hash.h>
 
+#include <shading/Shader.h>
+#include <shading/Texture2D.h>
+#include <shading/TextureCube.h>
+#include <ui/Font.h>
+
 #include <glad/glad.h>
 
 std::map<long, Shader> Resources::shaders = {};

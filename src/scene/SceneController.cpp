@@ -163,10 +163,10 @@ void SceneController::RenderScene() {
     // separate our visible objects into two vectors - opaque and blended
     for(const auto& model : visibleModels) {
         if(model->GetRenderType() == OPAQUE) {
-            opaqueDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix(), model->ID });
+            opaqueDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix() });
         }
         else {
-            alphaDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix(), model->ID });
+            alphaDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix() });
         }
         stats.drawCalls++;
     }
