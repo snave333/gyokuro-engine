@@ -1,50 +1,36 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <scene/SceneNode.h>
 #include <mesh/Mesh.h>
 
 #include <glm/glm.hpp>
 
-class Shader;
 class Material;
 struct AABB;
 enum RenderType;
 
-class Model : public SceneNode {
+class Model {
 private:
     static unsigned int ModelCounter;
 
 public:
     unsigned int ID;
 
-    int boundsLastFailedFrustumPlane = 0; // plane-coherency
-
     Model(Mesh* mesh);
+    Model(std::vector<Mesh*> meshes);
     ~Model();
 
-    // TODO make mesh a list of meshes
-    // void AddMesh(const Mesh &mesh);
+    Mesh* GetMesh() { return meshes[0]; }
+    Material* GetMaterial() { return meshes[0]->GetMaterial(); }
+    const RenderType& GetRenderType() { return meshes[0]->GetRenderType(); }
 
-    Mesh* GetMesh() { return mesh; }
-    Material* GetMaterial() { return mesh->GetMaterial(); }
-    const RenderType& GetRenderType() { return mesh->GetRenderType(); }
-
-    const AABB& GetBounds();
-    const std::array<glm::vec3, 8>& GetLUT() { return boundsLUT; }
-
-protected:
-    Mesh* mesh = nullptr;
-
-    void SetDirty() override;
+    const AABB& GetBounds() { return bounds; }
 
 private:
+    std::vector<Mesh*> meshes = {};
     AABB bounds;
-    std::array<glm::vec3, 8> boundsLUT = {};
-    bool isBoundsDirty = true;
 
-    void UpdateBounds();
-    void UpdateBoundsLUT();
+    void ComputeBounds();
 };
 
 #endif // MODEL_H

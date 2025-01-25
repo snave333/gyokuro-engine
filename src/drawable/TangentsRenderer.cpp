@@ -8,7 +8,7 @@
 TangentsRenderer::TangentsRenderer(Geometry& geometry, float lineLength) : lineLength(lineLength) {
     this->lineLength = glm::max(lineLength, 0.01f);
 
-    geometry.CalculateTangents();
+    geometry.ComputeTangents();
 
     // translate to TangentVertex types
     std::vector<TangentVertex> vertices;

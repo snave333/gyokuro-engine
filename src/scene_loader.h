@@ -9,6 +9,7 @@
 
 #include <scene/SceneController.h>
 
+#include <mesh/ModelNode.h>
 #include <mesh/Model.h>
 #include <mesh/Mesh.h>
 #include <mesh/Cube.h>
@@ -39,7 +40,7 @@ struct SceneLoader {
         for(int x = -floorf(halfW); x < ceilf(halfW); x++) {
             for(int y = -floorf(halfH); y < ceilf(halfH); y++) {
                 for(int z = -floorf(halfD); z < ceilf(halfD); z++) {
-                    Model* model = new Model(new Mesh(new Cube(), new UnlitMaterial()));
+                    ModelNode* model = new ModelNode(new Model(new Mesh(new Cube(), new UnlitMaterial())));
                     model->SetPosition(x * spacing, y * spacing, z * spacing);
                     model->SetScale(0.5f);
 
@@ -57,19 +58,19 @@ struct SceneLoader {
 
         glm::vec3 pointLight1Color = glm::vec3(0.2f, 0.6f, 1);
         LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color, 10));
-        Model* pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f))));
+        ModelNode* pointLight1Model = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f)))));
         pointLight1->Translate(3, -1, 4);
         pointLight1Model->Translate(3, -1, 4);
 
         glm::vec3 pointLight2Color = glm::vec3(1, 0.6f, 0.2f);
         LightNode* pointLight2 = new LightNode(new PointLight(pointLight2Color * 10.0f, 10));
-        Model* pointLight2Model = new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(glm::vec4(pointLight2Color, 1.0f))));
+        ModelNode* pointLight2Model = new ModelNode(new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(glm::vec4(pointLight2Color, 1.0f)))));
         pointLight2->Translate(-3, -1, 4);
         pointLight2Model->Translate(-3, -1, 4);
 
         glm::vec3 spotLight1Color = glm::vec3(0.6f, 0.2f, 1.0f);
         LightNode* spotLight1 = new LightNode(new SpotLight(spotLight1Color * 6.0f, 20.0f, 10));
-        Model* spotLight1Model = new Model(new Mesh(new Pyramid(0.1f, 0.2f), new UnlitMaterial(glm::vec4(spotLight1Color, 1.0f))));
+        ModelNode* spotLight1Model = new ModelNode(new Model(new Mesh(new Pyramid(0.1f, 0.2f), new UnlitMaterial(glm::vec4(spotLight1Color, 1.0f)))));
         spotLight1->Translate(4, 1, -5);
         spotLight1Model->Translate(4, 1, -5);
         spotLight1->Rotate(45, 0, 0);
@@ -77,7 +78,7 @@ struct SceneLoader {
 
         glm::vec3 spotLight2Color = glm::vec3(1.0f, 0.2f, 0.2f);
         LightNode* spotLight2 = new LightNode(new SpotLight(spotLight2Color * 6.0f, 40.0f, 10));
-        Model* spotLight2Model = new Model(new Mesh(new Pyramid(0.15f, 0.2f), new UnlitMaterial(glm::vec4(spotLight2Color, 1.0f))));
+        ModelNode* spotLight2Model = new ModelNode(new Model(new Mesh(new Pyramid(0.15f, 0.2f), new UnlitMaterial(glm::vec4(spotLight2Color, 1.0f)))));
         spotLight2->Translate(2, 1, -5);
         spotLight2Model->Translate(2, 1, -5);
         spotLight2->Rotate(45, -15, 0);
@@ -109,36 +110,36 @@ struct SceneLoader {
 
         // next add the models
 
-        Model* floor = new Model(new Mesh(new Quad(), new PhongMaterial(
+        ModelNode* floor = new ModelNode(new Model(new Mesh(new Quad(), new PhongMaterial(
             { 1, 1, 1, 1 }, { 1, 1, 1 }, 64,
             Resources::GetTexture("brick_DIFF.jpg", true),
             nullptr,
             Resources::GetTexture("brick_NRM.jpg", false),
-            glm::vec2(4))));
+            glm::vec2(4)))));
         floor->Translate(0, -2, 0);
         floor->Rotate(-90, 0, 0);
         floor->Scale(10);
 
-        Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 })));
+        ModelNode* m1 = new ModelNode(new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 }))));
         m1->Translate(4, -1, 0);
 
-        Model* m2 = new Model(new Mesh(new Sphere(), new UnlitMaterial(
+        ModelNode* m2 = new ModelNode(new Model(new Mesh(new Sphere(), new UnlitMaterial(
             { 0, 0.5, 1, 1 },
             Resources::GetTexture("awesomeface.png", true),
-            glm::vec2(2, 1))));
+            glm::vec2(2, 1)))));
         m2->Translate(2, -1, 0);
 
-        Model* m3 = new Model(new Mesh(new Torus(), new PhongMaterial({ 0.5, 0, 1, 0.8f }, { 0.5, 0, 1 })));
+        ModelNode* m3 = new ModelNode(new Model(new Mesh(new Torus(), new PhongMaterial({ 0.5, 0, 1, 0.8f }, { 0.5, 0, 1 }))));
         m3->Translate(0, -1, 0);
         // m3->Rotate(90, 0, 0);
 
-        Model* m4 = new Model(new Mesh(new Cube(),
+        ModelNode* m4 = new ModelNode(new Model(new Mesh(new Cube(),
             new PhongMaterial(
                 { 1, 1, 1, 1 },
                 { 1, 1, 1 },
                 128,
                 Resources::GetTexture("crate_DIFF.jpg", true),
-                Resources::GetTexture("crate_SPEC.jpg", false))));
+                Resources::GetTexture("crate_SPEC.jpg", false)))));
         m4->Translate(0, -1, 4);
 
         sc->AddNode(floor);
@@ -173,14 +174,14 @@ struct SceneLoader {
 
         // transparent objects
 
-        Model* m1 = new Model(new Mesh(new Quad(), new UnlitMaterial(glm::vec4(1), Resources::GetTexture("window.png", true))));
+        ModelNode* m1 = new ModelNode(new Model(new Mesh(new Quad(), new UnlitMaterial(glm::vec4(1), Resources::GetTexture("window.png", true)))));
         m1->Rotate(180, 0, 0);
 
-        Model* m2 = new Model(new Mesh(new Quad(), new UnlitMaterial(glm::vec4(1), Resources::GetTexture("window.png", true))));
+        ModelNode* m2 = new ModelNode(new Model(new Mesh(new Quad(), new UnlitMaterial(glm::vec4(1), Resources::GetTexture("window.png", true)))));
         m2->Translate(0.75f, 0.25f, 2);
         m2->Rotate(180, 0, 0);
 
-        Model* m3 = new Model(new Mesh(new Quad(), new UnlitMaterial(glm::vec4(0, 0.5f, 0.8f, 0.2f))));
+        ModelNode* m3 = new ModelNode(new Model(new Mesh(new Quad(), new UnlitMaterial(glm::vec4(0, 0.5f, 0.8f, 0.2f)))));
         m3->Translate(0, -0.25f, 3);
         m3->Rotate(180, 0, 0);
 
@@ -205,11 +206,11 @@ struct SceneLoader {
 
         // meshes objects
 
-        Model* m1 = new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 })));
+        ModelNode* m1 = new ModelNode(new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 }))));
         m1->Translate(1, 0, 0);
 
         Geometry* geo = new Sphere();
-        Model* m2 = new Model(new Mesh(geo, new UnlitMaterial({ 0, 0.5, 1, 1 })));
+        ModelNode* m2 = new ModelNode(new Model(new Mesh(geo, new UnlitMaterial({ 0, 0.5, 1, 1 }))));
         m2->Translate(-1, 0, 0);
 
         sc->AddNode(m1);
@@ -240,7 +241,7 @@ struct SceneLoader {
 
         glm::vec3 pointLight1Color = glm::vec3(1, 1, 1) * 4.0f;
         LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color, 10));
-        Model* pointLight1Model = new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f))));
+        ModelNode* pointLight1Model = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f)))));
         pointLight1->Translate(-3, 1, -2);
         pointLight1Model->Translate(-3, 1, -2);
 
@@ -250,7 +251,7 @@ struct SceneLoader {
 
         // models
 
-        Model* m1 = new Model(new Mesh(new Sphere(), new GoochMaterial()));
+        ModelNode* m1 = new ModelNode(new Model(new Mesh(new Sphere(), new GoochMaterial())));
         m1->Scale(2);
 
         sc->AddNode(m1);

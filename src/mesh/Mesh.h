@@ -15,7 +15,7 @@ enum RenderType;
 class Mesh {
 public:
     // constructor
-    Mesh(Geometry* geometry, Material* material);
+    Mesh(Geometry* geometry, Material* material, bool computeTangents = true);
     ~Mesh();
 
     void Draw();

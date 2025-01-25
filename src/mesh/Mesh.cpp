@@ -7,11 +7,14 @@
 
 #include <glad/glad.h>
 
-Mesh::Mesh(Geometry* geometry, Material* material) {
+Mesh::Mesh(Geometry* geometry, Material* material, bool computeTangents) {
     this->geometry = geometry;
     this->material = material;
 
-    this->geometry->CalculateTangents();
+    if(computeTangents) {
+        this->geometry->ComputeTangents();
+    }
+
     Initialize();
     ComputeBounds();
 

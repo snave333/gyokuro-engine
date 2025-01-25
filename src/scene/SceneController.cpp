@@ -13,7 +13,7 @@
 #include <shading/Shader.h>
 #include <lighting/LightNode.h>
 #include <lighting/LightsUBO.h>
-#include <mesh/Model.h>
+#include <mesh/ModelNode.h>
 #include <mesh/Skybox.h>
 #include <camera/FlyCamera.h>
 #include <ui/Text.h>
@@ -73,7 +73,7 @@ SceneController::~SceneController() {
 }
 
 void SceneController::AddNode(SceneNode* node) {
-    Model* model = dynamic_cast<Model*>(node);
+    ModelNode* model = dynamic_cast<ModelNode*>(node);
     LightNode* light = dynamic_cast<LightNode*>(node);
 
     if(model) {
@@ -163,10 +163,18 @@ void SceneController::RenderScene() {
     // separate our visible objects into two vectors - opaque and blended
     for(const auto& model : visibleModels) {
         if(model->GetRenderType() == OPAQUE) {
-            opaqueDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix() });
+            opaqueDrawCalls.push_back(DrawCall{
+                model->GetMesh(),
+                model->GetMaterial(),
+                model->GetTransform(),
+                model->GetNormalMatrix() });
         }
         else {
-            alphaDrawCalls.push_back(DrawCall{ model->GetMesh(), model->GetMaterial(), model->GetTransform(), model->GetNormalMatrix() });
+            alphaDrawCalls.push_back(DrawCall{
+                model->GetMesh(),
+                model->GetMaterial(),
+                model->GetTransform(),
+                model->GetNormalMatrix() });
         }
         stats.drawCalls++;
     }
@@ -185,6 +193,7 @@ void SceneController::RenderScene() {
 
     for(IDrawable* drawable : drawables) {
         drawable->Draw();
+        stats.drawCalls++;
     }
 
     // transparency pass
@@ -208,8 +217,8 @@ void SceneController::RenderScene() {
 
 void SceneController::FrustumCull(
     const Frustum& cameraFrustum,
-    const std::vector<Model*>& sceneModels,
-    std::vector<Model*>& visibleSceneModels
+    const std::vector<ModelNode*>& sceneModels,
+    std::vector<ModelNode*>& visibleSceneModels
 ) {
     std::array<std::pair<int, int>, 6> frustumLUT = cameraFrustum.ComputeAABBTestLUT();
 
@@ -268,7 +277,7 @@ void SceneController::RenderStats() {
     stream << std::fixed << stats.alphaMs;
 
     std::string alphaMs = stream.str();
-    textRenderer->RenderText(std::string("alpha pass: ") + opaqueMs + std::string(" ms"), 10, 30);
+    textRenderer->RenderText(std::string("alpha pass: ") + alphaMs + std::string(" ms"), 10, 30);
     stats.drawCalls++;
 
     // total geometry pass

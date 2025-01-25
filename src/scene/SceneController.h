@@ -1,7 +1,6 @@
 #ifndef SCENE_CONTROLLER_H
 #define SCENE_CONTROLLER_H
 
-#include <functional>
 #include <glm/glm.hpp>
 
 struct FrameStats {
@@ -23,7 +22,7 @@ struct FrameStats {
 class Renderer;
 class DrawCall;
 class SceneNode;
-class Model;
+class ModelNode;
 class AABBWireframe;
 class TangentsRenderer;
 class FlyCamera;
@@ -69,7 +68,7 @@ private:
     std::vector<LightNode*> lights = {};
     LightsUBO* lightsUBO = nullptr;
 
-    std::vector<Model*> models = {};
+    std::vector<ModelNode*> models = {};
     std::vector<IDrawable*> drawables = {};
 
     Text* textRenderer;
@@ -79,15 +78,15 @@ private:
 
     // per-frame
     FrameStats stats;
-    std::vector<Model*> visibleModels = {};
+    std::vector<ModelNode*> visibleModels = {};
     std::vector<DrawCall> opaqueDrawCalls = {};
     std::vector<DrawCall> alphaDrawCalls = {};
 
     void RenderScene();
     void FrustumCull(
         const Frustum& cameraFrustum,
-        const std::vector<Model*>& sceneModels,
-        std::vector<Model*>& visibleSceneModels
+        const std::vector<ModelNode*>& sceneModels,
+        std::vector<ModelNode*>& visibleSceneModels
     );
     void RenderStats();
 };

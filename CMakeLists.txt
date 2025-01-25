@@ -53,6 +53,7 @@ add_executable(Gyokuro
     src/lighting/LightsUBO.cpp
     src/mesh/Mesh.cpp
     src/mesh/Model.cpp
+    src/mesh/ModelNode.cpp
     src/mesh/Skybox.cpp
     src/drawable/AABBWireframe.cpp
     src/drawable/TangentsRenderer.cpp

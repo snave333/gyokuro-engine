@@ -20,7 +20,7 @@ struct Geometry {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    void CalculateTangents() {
+    void ComputeTangents() {
         // variables for calculating tangent/bitangent
         unsigned int i0, i1, i2;
         glm::vec3 edge1, edge2;
