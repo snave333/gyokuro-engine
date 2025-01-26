@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 
+class Model;
 class Shader;
 class Texture2D;
 class TextureCube;
@@ -15,6 +16,7 @@ public:
     static void Initialize();
     static void Dispose();
 
+    static Model* GetModel(const char* fileName);
     static Shader* GetShader(const char* vertFileName, const char* fragFileName);
     static Shader* GetShader(const char* vertFileName, const char* geomFileName, const char* fragFileName);
     static Texture2D* GetTexture(const char* imageFileName, bool srgb);

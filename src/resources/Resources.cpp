@@ -1,11 +1,13 @@
 
 #include <resources/Resources.h>
+#include <resources/ModelLoader.h>
 #include <resources/ShaderLoader.h>
 #include <resources/TextureLoader.h>
 #include <resources/FontLoader.h>
 #include <utilities/FileSystem.h>
 #include <utilities/Hash.h>
 
+#include <mesh/Model.h>
 #include <shading/Shader.h>
 #include <shading/Texture2D.h>
 #include <shading/TextureCube.h>
@@ -74,6 +76,10 @@ void Resources::Dispose() {
         font.second.Dispose();
     }
     Resources::fonts.clear();
+}
+
+Model* Resources::GetModel(const char* fileName) {
+    return ModelLoader::LoadModel(fileName);
 }
 
 Shader* Resources::GetShader(const char* vertFileName, const char* fragFileName) {

@@ -254,21 +254,44 @@ struct SceneLoader {
     }
 
     static void LoadModelScene(SceneController* sc) {
-        std::string path = "/Users/spencerevans/pm-repos/gyokuro-resources/DamagedHelmet.glb";
-        Assimp::Importer importer;
-        const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate); // aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph
+        // some lighting
 
-        if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-            std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
-            return;
-        }
+        glm::vec3 pointLight1Color = glm::vec3(0.2f, 0.6f, 1);
+        LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color, 10));
+        ModelNode* pointLight1Model = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f)))));
+        glm::vec3 p1Position = { 3, -2, -2 };
+        pointLight1->Translate(p1Position);
+        pointLight1Model->Translate(p1Position);
 
-        std::cout << "assimp successfully imported model with " <<
-            std::to_string(scene->mNumMeshes) << " meshes, " <<
-            std::to_string(scene->mNumMaterials) << " materials, and " <<
-            std::to_string(scene->mNumTextures) << " textures" << std::endl;
+        glm::vec3 pointLight2Color = glm::vec3(1, 0.6f, 0.2f);
+        LightNode* pointLight2 = new LightNode(new PointLight(pointLight2Color * 10.0f, 10));
+        ModelNode* pointLight2Model = new ModelNode(new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(glm::vec4(pointLight2Color, 1.0f)))));
+        glm::vec3 p2Position = { -3, 2, -2 };
+        pointLight2->Translate(p2Position);
+        pointLight2Model->Translate(p2Position);
 
-        // delete scene;
+        sc->AddNode(pointLight1);
+        sc->AddNode(pointLight2);
+
+        sc->AddNode(pointLight1Model);
+        sc->AddNode(pointLight2Model);
+
+        // the model we're loading
+
+        ModelNode* helmet = new ModelNode(Resources::GetModel("/Users/spencerevans/pm-repos/gyokuro-resources/DamagedHelmet.glb"));
+        helmet->Translate(-1, 0, 0);
+
+        ModelNode* dice =   new ModelNode(Resources::GetModel("/Users/spencerevans/pm-repos/gyokuro-resources/dice/Dice.fbx"));
+        dice->Translate(1, 0, 0);
+        dice->Scale(0.5f);
+
+        sc->AddNode(helmet);
+        sc->AddNode(dice);
+
+        sc->AddUpdateFunction([helmet, dice](float dt) {
+            helmet->Rotate(0, dt * -15, 0);
+            dice->Rotate(0, dt * -15, 0);
+        });
     }
 };
 
