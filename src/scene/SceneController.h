@@ -9,6 +9,7 @@ struct FrameStats {
     float opaqueMs = 0;
     float alphaMs = 0;
     unsigned int drawCalls = 0;
+    unsigned int tris = 0;
 
     void Reset() {
         geometryMs = 0;
@@ -16,6 +17,7 @@ struct FrameStats {
         opaqueMs = 0;
         alphaMs = 0;
         drawCalls = 0;
+        tris = 0;
     }
 };
 

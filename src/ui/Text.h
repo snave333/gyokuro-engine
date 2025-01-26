@@ -16,9 +16,13 @@ public:
     void RenderText(std::string text, unsigned int x, unsigned int y,
         float scale = 1.0f, glm::vec3 color = glm::vec3(1));
 
+    const unsigned int& GetFontSize() { return fontSize; }
+
 private:
     Font* font = nullptr;
     Shader* shader = nullptr;
+
+    unsigned int fontSize;
 
     unsigned int VAO;
     unsigned int VBO;

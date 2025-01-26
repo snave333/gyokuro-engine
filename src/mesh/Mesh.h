@@ -24,6 +24,7 @@ public:
     const RenderType& GetRenderType() { return material->renderType; }
 
     const AABB& GetBounds() { return bounds; }
+    const unsigned int& GetNumTris() { return numTris; }
 
 protected:
     Geometry* geometry = nullptr;
@@ -41,6 +42,7 @@ private:
     unsigned int EBO;
 
     unsigned int indexCount;
+    unsigned int numTris;
 };
 
 #endif // MESH_H

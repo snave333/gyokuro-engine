@@ -14,6 +14,9 @@ struct Vertex {
     // we calculate the tangent later
     Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord) :
         position(position), normal(normal), texCoord(texCoord) {}
+
+    Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord, glm::vec3 tangent) :
+        position(position), normal(normal), texCoord(texCoord), tangent(tangent) {}
 };
 
 struct Geometry {

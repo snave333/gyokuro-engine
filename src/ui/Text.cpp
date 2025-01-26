@@ -11,6 +11,7 @@
 Text::Text(const char* fontName, const glm::ivec2& viewportSize, unsigned int fontSize) {
     font = Resources::GetFont(fontName, fontSize);
     shader = Resources::GetShader("glyph.vert", "glyph.frag");
+    this->fontSize = fontSize;
 
     // generate our vertex array and buffer
     glGenVertexArrays(1, &VAO);
@@ -67,8 +68,7 @@ void Text::RenderText(std::string text, unsigned int x, unsigned int y, float sc
 
     // iterate through all characters
     std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++)
-    {
+    for (c = text.begin(); c != text.end(); c++) {
         Character ch = font->GetCharacter(*c);
 
         float xpos = x + ch.bearing.x * scale;
@@ -88,8 +88,13 @@ void Text::RenderText(std::string text, unsigned int x, unsigned int y, float sc
             { xpos + w, ypos + h,   1.0f, 0.0f }           
         };
 
+        // skip the space character because it causes a texture error
+        if(*c == 32) {
+            x += (ch.advance >> 6) * scale;
+            continue;
+        }
+
         // render glyph texture over quad
-        // glBindTexture(GL_TEXTURE_2D, *c == 32 ? 0 : ch.textureID); // space
         glBindTexture(GL_TEXTURE_2D, ch.textureID);
 
         // update content of VBO memory

@@ -19,6 +19,7 @@ Mesh::Mesh(Geometry* geometry, Material* material, bool computeTangents) {
     ComputeBounds();
 
     indexCount = this->geometry->indices.size();
+    numTris = indexCount / 3;
 }
 
 void Mesh::Initialize() {

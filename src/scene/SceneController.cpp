@@ -38,7 +38,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
     // our ui layer
 
-    textRenderer = new Text("SourceCodePro-Regular.ttf", size, 14);
+    textRenderer = new Text("SourceCodePro-Regular.ttf", size, 12);
 }
 
 SceneController::~SceneController() {
@@ -183,8 +183,10 @@ void SceneController::RenderScene() {
                     modelNode->GetNormalMatrix()
                 });
             }
+
+            stats.drawCalls++;
+            stats.tris += mesh->GetNumTris();
         }
-        stats.drawCalls++;
     }
 
     // opaque pass
@@ -196,6 +198,7 @@ void SceneController::RenderScene() {
         if(skybox != nullptr) {
             renderer->RenderSkybox(skybox, camera->GetView(), camera->GetProjection());
             stats.drawCalls++;
+            stats.tris += 12;
         }
     }
 
@@ -253,50 +256,55 @@ void SceneController::RenderStats() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // number of draw calls
-
-    textRenderer->RenderText(std::string("draw calls: ") + std::to_string(stats.drawCalls), 10, 90);
-    stats.drawCalls++;
+    std::vector<std::string> strings = {};
 
     // view frustum culling
 
     std::ostringstream stream;
     stream.precision(2);
     stream << std::fixed << stats.vfcMs;
-
-    std::string vfcMs = stream.str();
-    textRenderer->RenderText(std::string("vfc: ") + vfcMs + std::string(" ms"), 10, 70);
-    stats.drawCalls++;
+    strings.push_back(std::string("vfc: ") + stream.str() + std::string(" ms"));
 
     // opaque pass
 
     stream.str("");
     stream.clear();
     stream << std::fixed << stats.opaqueMs;
-
-    std::string opaqueMs = stream.str();
-    textRenderer->RenderText(std::string("opaque pass: ") + opaqueMs + std::string(" ms"), 10, 50);
-    stats.drawCalls++;
+    strings.push_back(std::string("opaque pass: ") + stream.str() + std::string(" ms"));
 
     // alpha pass
 
     stream.str("");
     stream.clear();
     stream << std::fixed << stats.alphaMs;
-
-    std::string alphaMs = stream.str();
-    textRenderer->RenderText(std::string("alpha pass: ") + alphaMs + std::string(" ms"), 10, 30);
-    stats.drawCalls++;
+    strings.push_back(std::string("alpha pass: ") + stream.str() + std::string(" ms"));
 
     // total geometry pass
 
     stream.str("");
     stream.clear();
     stream << std::fixed << stats.geometryMs;
+    strings.push_back(std::string("total: ") + stream.str() + std::string(" ms"));
 
-    std::string geometryMs = stream.str();
-    textRenderer->RenderText(std::string("total: ") + geometryMs + std::string(" ms"), 10, 10);
-    stats.drawCalls++;
+    // now draw the stats
+
+    unsigned int edgeBuffer = 8;
+    unsigned int fontSize = textRenderer->GetFontSize();
+    unsigned int spacing = 2;
+
+    unsigned int y = edgeBuffer;
+    for(int i = strings.size() - 1; i >= 0; i--) {
+        textRenderer->RenderText(strings[i], edgeBuffer, y);
+        y += fontSize + spacing;
+    }
+
+    // number of draw calls
+
+    textRenderer->RenderText(std::string("draw calls: ") + std::to_string(stats.drawCalls), 180, edgeBuffer + fontSize + spacing);
+
+    // number of tris
+
+    textRenderer->RenderText(std::string("tris: ") + std::to_string(stats.tris), 180, edgeBuffer);
 
     glDisable(GL_BLEND);
 }
