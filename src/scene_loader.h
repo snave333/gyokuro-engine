@@ -278,10 +278,10 @@ struct SceneLoader {
 
         // the model we're loading
 
-        ModelNode* helmet = new ModelNode(Resources::GetModel("/Users/spencerevans/pm-repos/gyokuro-resources/DamagedHelmet.glb"));
+        ModelNode* helmet = new ModelNode(Resources::GetModel("DamagedHelmet.glb"));
         helmet->Translate(-1, 0, 0);
 
-        ModelNode* dice =   new ModelNode(Resources::GetModel("/Users/spencerevans/pm-repos/gyokuro-resources/dice/Dice.fbx"));
+        ModelNode* dice =   new ModelNode(Resources::GetModel("Dice.fbx"));
         dice->Translate(1, 0, 0);
         dice->Scale(0.5f);
 

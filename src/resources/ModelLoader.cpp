@@ -1,6 +1,8 @@
 
 #include <resources/ModelLoader.h>
 #include <resources/Resources.h>
+#include <resources/TextureLoader.h>
+#include <utilities/FileSystem.h>
 #include <mesh/Model.h>
 #include <mesh/Mesh.h>
 #include <mesh/Geometry.h>
@@ -13,38 +15,46 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+std::string ModelLoader::ResourceDir = "";
+
 Assimp::Importer ModelLoader::importer;
 
 Model* ModelLoader::LoadModel(const char* fileName) {
+    // get the full file path
+    std::string modelFilePath = FileSystem::CombinePath(ResourceDir, fileName);
+
+    // use assimp to load the model
     const aiScene* scene = ModelLoader::importer.ReadFile(
-        fileName,
-        aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace
+        modelFilePath,
+        aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
     ); // aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph
+
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         std::cout << "ERROR::ASSIMP::" << ModelLoader::importer.GetErrorString() << std::endl;
-        return nullptr;
+        throw std::runtime_error("ERROR::ASSIMP::" + std::string(ModelLoader::importer.GetErrorString()));
     }
 
     std::cout << "assimp successfully imported model with " <<
         std::to_string(scene->mNumMeshes) << " meshes, " <<
         std::to_string(scene->mNumMaterials) << " materials, and " <<
-        std::to_string(scene->mNumTextures) << " textures" << std::endl;
+        std::to_string(scene->mNumTextures) << " textures " <<
+        "for model" << fileName << std::endl;
 
-    // TODO
+    // assemble the meshes which makeup the model
     std::vector<Mesh*> meshes;
     ProcessNode(scene->mRootNode, scene, meshes);
-
-    ModelLoader::importer.FreeScene();
 
     return new Model(meshes);
 }
 
 void ModelLoader::ProcessNode(aiNode* node, const aiScene* scene, std::vector<Mesh*>& meshes) {
+    // process all node meshes
     for(unsigned int i = 0; i < node->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         meshes.push_back(ProcessMesh(mesh, scene));
     }
 
+    // now process node's children
     for(unsigned int i = 0; i < node->mNumChildren; i++) {
         ProcessNode(node->mChildren[i], scene, meshes);
     }
@@ -53,7 +63,8 @@ void ModelLoader::ProcessNode(aiNode* node, const aiScene* scene, std::vector<Me
 Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture2D> textures;
+
+    std::cout << "\tprocessing " << std::to_string(mesh->mNumVertices) << " vertices" << std::endl;
 
     // process vertices
     glm::vec3 position;
@@ -84,6 +95,8 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
         vertices.push_back(Vertex( position, normal, texCoord, tangent ));
     }
 
+    std::cout << "\tprocessing " << std::to_string(mesh->mNumFaces) << " faces" << std::endl;
+
     // process indices
     for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
         aiFace face = mesh->mFaces[i];
@@ -93,13 +106,52 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     }
 
     // process material
+    Texture2D* diffMap = nullptr;
+    Texture2D* specMap = nullptr;
+    Texture2D* nrmMap = nullptr;
     if(mesh->mMaterialIndex >= 0) {
+        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
+        std::cout << "\tprocessing material with " << std::to_string(mesh->mNumFaces) << " faces" << std::endl;
+
+        diffMap = LoadMaterialTexture(material, aiTextureType_DIFFUSE, scene);
+        specMap = LoadMaterialTexture(material, aiTextureType_SPECULAR, scene);
+        nrmMap = LoadMaterialTexture(material, aiTextureType_NORMALS, scene);
     }
 
-    return new Mesh(new Geometry{ vertices, indices }, new PhongMaterial(), false);
+    return new Mesh(
+        new Geometry{ vertices, indices },
+        new PhongMaterial(glm::vec4(1), glm::vec4(1), 128, diffMap, specMap, nrmMap));
 }
 
-std::vector<Texture2D> ModelLoader::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName) {
-    return {};
+Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, const aiScene* scene) {
+    std::cout << "\tfound " << std::to_string(mat->GetTextureCount(type)) << " textures of type " << std::to_string(type) << std::endl;
+    
+    // TODO return an array of textures of type
+    aiString str;
+    for(unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
+        aiReturn result = mat->GetTexture(type, i, &str);
+
+        if(result != AI_SUCCESS) {
+            continue;
+        }
+        
+        std::cout << "\t\tfound texture '" << str.C_Str() << "'" << std::endl;
+
+        const aiTexture* texture = scene->GetEmbeddedTexture(str.C_Str());
+        if(texture) {
+            std::cout << "\t\tskipping embedded texture '" << texture->mFilename.C_Str() << "', " <<
+                std::to_string(texture->mWidth) << "x" << std::to_string(texture->mHeight) << " - " <<
+                texture->achFormatHint << std::endl;
+            
+            // Texture2D t = TextureLoader::LoadEmbeddedTexture(texture, type == aiTextureType_DIFFUSE);
+        }
+        else {
+            // try to load from the file system
+            // NOTE: assumes textures use file names, and are placed in textures folder
+            Texture2D* texture = Resources::GetTexture(str.C_Str(), type == aiTextureType_DIFFUSE);
+        }
+    }
+
+    return nullptr;
 }

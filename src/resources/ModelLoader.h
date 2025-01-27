@@ -10,6 +10,8 @@ class Texture2D;
 
 class ModelLoader {
 public:
+    static std::string ResourceDir;
+
     static Model* LoadModel(const char* fileName);
 
 private:
@@ -17,7 +19,7 @@ private:
 
     static void ProcessNode(aiNode* node, const aiScene* scene, std::vector<Mesh*>& meshes);
     static Mesh* ProcessMesh(aiMesh* mesh, const aiScene* scene);
-    static std::vector<Texture2D> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+    static Texture2D* LoadMaterialTexture(aiMaterial* mat, aiTextureType type, const aiScene* scene);
 };
   
 #endif // Model_LOADER_H

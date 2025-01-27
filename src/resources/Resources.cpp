@@ -8,6 +8,7 @@
 #include <utilities/Hash.h>
 
 #include <mesh/Model.h>
+#include <mesh/Geometry.h>
 #include <shading/Shader.h>
 #include <shading/Texture2D.h>
 #include <shading/TextureCube.h>
@@ -25,6 +26,7 @@ void Resources::Initialize() {
 
     std::string cwd = FileSystem::GetCurrentWorkingDirectory();
 
+    ModelLoader::ResourceDir = FileSystem::CombinePath(cwd, "resources", "models");
     ShaderLoader::ResourceDir = FileSystem::CombinePath(cwd, "resources", "shaders");
     ShaderLoader::IncludesDir = FileSystem::CombinePath(cwd, "resources", "shaders", "include");
     TextureLoader::ResourceDir = FileSystem::CombinePath(cwd, "resources", "textures");
