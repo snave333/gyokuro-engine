@@ -11,8 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package(OpenGL REQUIRED)
 
 # configure and add glfw
-set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
-set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
+set( GLFW_BUILD_DOCS OFF CACHE BOOL "GLFW lib only" )
+set( GLFW_INSTALL OFF CACHE BOOL "GLFW lib only" )
 # set( BUILD_SHARED_LIBS ON CACHE BOOL  "GLFW dynamic lib" )
 add_subdirectory( deps/glfw )
 
@@ -21,17 +21,17 @@ add_subdirectory( deps/glm )
 add_subdirectory( deps/freetype )
 
 # configure and add assimp asset importer
-set( ASSIMP_NO_EXPORT ON CACHE BOOL  "Importers only" )
-set( ASSIMP_BUILD_TESTS OFF CACHE BOOL  "Don't build tests" )
-set( ASSIMP_INSTALL OFF CACHE BOOL  "We're using as a submodule" )
+set( ASSIMP_NO_EXPORT ON CACHE BOOL "Importers only" )
+set( ASSIMP_BUILD_TESTS OFF CACHE BOOL "Don't build tests" )
+set( ASSIMP_INSTALL OFF CACHE BOOL "We're using as a submodule" )
 add_subdirectory( deps/assimp )
 
 # add the glad lib from https://glad.dav1d.de/
 add_library(glad STATIC deps/glad/src/glad.c)
 target_include_directories(glad PUBLIC deps/glad/include)
 
-# add the stb_image lib from https://github.com/nothings/stb/tree/master
-add_library(stb_image STATIC deps/stb_image/src/stb_image_impl.c)
+# add the stb_image lib from https://github.com/nothings/stb/
+add_library(stb_image STATIC deps/stb_image/src/stb_image.c)
 target_include_directories(stb_image PUBLIC deps/stb_image/include)
 
 # compile with debug symbols and without optimization so we hit breakpoints

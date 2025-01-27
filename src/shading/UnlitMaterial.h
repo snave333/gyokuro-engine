@@ -11,6 +11,7 @@ class UnlitMaterial : public Material {
 public:
     UnlitMaterial(
         glm::vec4 color = glm::vec4(1),
+        bool additive = false,
         Texture2D* texture = nullptr,
         glm::vec2 uvTiling = glm::vec2(1),
         glm::vec2 uvOffset = glm::vec2(0)

@@ -38,7 +38,7 @@ Model* ModelLoader::LoadModel(const char* fileName) {
         std::to_string(scene->mNumMeshes) << " meshes, " <<
         std::to_string(scene->mNumMaterials) << " materials, and " <<
         std::to_string(scene->mNumTextures) << " textures " <<
-        "for model" << fileName << std::endl;
+        "for model " << fileName << std::endl;
 
     // assemble the meshes which makeup the model
     std::vector<Mesh*> meshes;
@@ -112,7 +112,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     if(mesh->mMaterialIndex >= 0) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        std::cout << "\tprocessing material with " << std::to_string(mesh->mNumFaces) << " faces" << std::endl;
+        std::cout << "\tprocessing material with " << std::to_string(material->mNumProperties) << " properties" << std::endl;
 
         diffMap = LoadMaterialTexture(material, aiTextureType_DIFFUSE, scene);
         specMap = LoadMaterialTexture(material, aiTextureType_SPECULAR, scene);

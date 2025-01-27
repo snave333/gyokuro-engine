@@ -40,9 +40,9 @@ A C++ OpenGL rendering library – pronounced "gee-o-kuh-roo". Uses the forward 
     * [x] P/N vertex LUT optimization
     * [x] Plane coherence optimization
   * [ ] Scene bounding volume hierarchy
-* [ ] Blending
+* [x] Blending
   * [x] Sorted transparency
-  * [ ] Additive
+  * [x] Additive
 * [x] Resource Caching
   * [x] Shaders
   * [x] Textures

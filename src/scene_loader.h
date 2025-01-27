@@ -120,12 +120,13 @@ struct SceneLoader {
         floor->Rotate(-90, 0, 0);
         floor->Scale(10);
 
-        ModelNode* m1 = new ModelNode(new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 }))));
+        ModelNode* m1 = new ModelNode(new Model(new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 }, true))));
         m1->Translate(4, -1, 0);
 
         ModelNode* m2 = new ModelNode(new Model({
             new Mesh(new Sphere(0.6f), new UnlitMaterial(
                 { 0, 0.5, 1, 1 },
+                false,
                 Resources::GetTexture("awesomeface.png", true),
                 glm::vec2(2, 1))),
             new Mesh(new Cube(0.2f), new UnlitMaterial({ 1, 0, 1, 1 }))
@@ -201,7 +202,7 @@ struct SceneLoader {
 
         ModelNode* m1 = new ModelNode(new Model({
             new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 })),
-            new Mesh(new Sphere(0.65f), new UnlitMaterial({ 0, 1, 0.5, 1 })),
+            new Mesh(new Sphere(0.65f), new UnlitMaterial({ 0, 1, 0.5, 1 }, true)),
         }));
         m1->Translate(1, 0, 0);
 

@@ -6,6 +6,7 @@
 
 UnlitMaterial::UnlitMaterial(
     glm::vec4 color,
+    bool additive,
     Texture2D* texture,
     glm::vec2 uvTiling,
     glm::vec2 uvOffset
@@ -31,7 +32,10 @@ UnlitMaterial::UnlitMaterial(
         hasAlpha = hasAlpha || texture->hasAlpha;
     }
 
-    if(hasAlpha) {
+    if(additive) {
+        renderType = ADDITIVE;
+    }
+    else if(hasAlpha) {
         renderType = TRANSPARENT;
     }
 }

@@ -42,7 +42,7 @@ Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb) {
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else {
-        std::cout << "Failed to load texture" << std::endl;
+        throw std::runtime_error("Failed to load texture");
     }
 
     // free the image memory
@@ -86,6 +86,7 @@ TextureCube TextureLoader::LoadTextureCube(std::vector<const char*> faceFileName
         stbi_image_free(data);
     }
 
+    // set the texture wrapping/filtering options
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -103,14 +104,14 @@ Texture2D TextureLoader::GenerateTexture2D(int width, int height, unsigned int f
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
 
+    // generate the texture
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);
+
     // set the texture wrapping/filtering options (on the currently bound texture object)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    // generate the texture
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
