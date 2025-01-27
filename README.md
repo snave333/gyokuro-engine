@@ -1,12 +1,11 @@
 # Gyokuro Rendering Library
 
-A C++ OpenGL rendering library – pronounced "gee-o-kuh-roo". Uses the forward shading technique.
+A C++ OpenGL rendering library – pronounced "gee-o-kuh-roo". Uses the forward shading technique. Targets the OpenGL 3.3 Core profile.
 
 ## Roadmap
 
 * [ ] Camera
-  * [x] Perspective
-  * [x] Orthagraphic
+  * [x] Perspective/orthagraphic projections
   * [x] Free-look, fly camera
   * [ ] Orbit camera
 * [x] 3D Primitives
@@ -18,8 +17,8 @@ A C++ OpenGL rendering library – pronounced "gee-o-kuh-roo". Uses the forward 
 * [x] Shaders
   * [x] GLSL file loading
   * [x] #include "<filename>.glsl" support
-  * [x] Camera matrices Uniform Buffer Object
-  * [x] Scene lighting Uniform Buffer Object
+  * [x] Camera matrices UBO
+  * [x] Scene lighting UBO
 * [x] 2D Texture Loading
 * [ ] Lights
   * [x] Directional
@@ -29,12 +28,17 @@ A C++ OpenGL rendering library – pronounced "gee-o-kuh-roo". Uses the forward 
 * [x] Material Definitions
   * [x] Unlit (supports color map)
   * [x] Phong (supports diffuse, specular, and normal map)
-* [x] Utility Drawables
-  * [x] Mesh Normals/Tangents/Bitangents Viewer (geometry shader)
-  * [x] AABB Renderer
-* [x] Skybox
+* [ ] Utility Drawables
+  * [x] Mesh normals/tangents/bitangents viewer (geom shader)
+  * [x] AABB wireframe renderer
+  * [ ] Frustum wireframe renderer
+* [ ] Skybox
+  * [x] Cubemap
+  * [ ] Skydome
 * [ ] View Frustum Culling
   * [x] AABB based model culling
+    * [x] P/N vertex LUT optimization
+    * [x] Plane coherence optimization
   * [ ] Scene bounding volume hierarchy
 * [ ] Blending
   * [x] Sorted transparency
@@ -53,6 +57,8 @@ A C++ OpenGL rendering library – pronounced "gee-o-kuh-roo". Uses the forward 
   * [x] Reinhard tone mapping
   * [x] Gamma correction
 * [ ] Model loading
+  * [x] Separate model/texture file loading
+  * [ ] Embedded file types (glb)
 * [ ] PBR
 * [ ] Image effects
 * [ ] Shadows
