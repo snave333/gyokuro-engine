@@ -9,6 +9,8 @@
 
 #include <glad/glad.h>
 #include <stb_image.h>
+#include <assimp/texture.h>
+#include <jpeglib.h>
 
 std::string TextureLoader::ResourceDir = "";
 
@@ -21,12 +23,6 @@ Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb) {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
     
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     // flip vertically
     stbi_set_flip_vertically_on_load(true);
     
@@ -48,9 +44,74 @@ Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb) {
     // free the image memory
     stbi_image_free(data);
 
+    // set the texture wrapping/filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return Texture2D(id, numChannels == 4);
+}
+
+Texture2D* TextureLoader::LoadEmbeddedTexture(const aiTexture* texture, bool srgb) {
+    int width, height, numChannels;
+    unsigned char* imageData = nullptr;
+
+    // check format of the embedded texture
+    std::string formatHint(texture->achFormatHint);
+
+    // compressed data
+    // https://assimp-docs.readthedocs.io/en/latest/usage/use_the_lib.html#textures
+    if(texture->mHeight == 0) {
+        if(formatHint == "jpg") {
+            // texture->mWidth is the size of the raw data
+            TextureLoader::DecompressJpegData(
+                texture->pcData, texture->mWidth, &width, &height, &numChannels, &imageData);
+        }
+        // else if(formatHint == "png") {} // TODO look into using libpng
+        else {
+            std::cerr << "Unsupported embedded texture compression format " + formatHint << std::endl;
+            return nullptr;
+        }
+    }
+    // uncompressed image data
+    else {
+        // TODO parse format from hint - e.g. rgba8888, argb8888, rgba5650, etc.
+        std::cerr << "Unsupported embedded texture format" + formatHint << std::endl;
+        return nullptr;
+    }
+
+    if(!imageData) {
+        std::cerr << "Failed to extract image data from aiTexture" << std::endl;
+        return nullptr;
+    }
+
+    // create and bind the texture object
+    unsigned int id;
+    glGenTextures(1, &id);
+    glBindTexture(GL_TEXTURE_2D, id);
+    
+    unsigned int format;
+    unsigned int internalFormat;
+    GetTextureFormat(srgb, numChannels, &format, &internalFormat);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, imageData);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // set the texture wrapping/filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // free the image data after uploading it to the GPU
+    free(imageData);
+
+    return new Texture2D(id, numChannels == 4);
 }
 
 TextureCube TextureLoader::LoadTextureCube(std::vector<const char*> faceFileNames, bool srgb) {
@@ -118,6 +179,44 @@ Texture2D TextureLoader::GenerateTexture2D(int width, int height, unsigned int f
     bool hasAlpha = format == GL_RGBA || format == GL_SRGB_ALPHA;
 
     return Texture2D(id, hasAlpha);
+}
+
+void TextureLoader::DecompressJpegData(
+    const aiTexel* pcData, const unsigned int& pcDataSize,
+    int* width, int* height, int* numChannels,
+    unsigned char** imageData
+) {
+    // use libjpeg to decode the JPEG data
+    struct jpeg_decompress_struct cinfo;
+    struct jpeg_error_mgr jerr;
+    cinfo.err = jpeg_std_error(&jerr);
+    jpeg_create_decompress(&cinfo);
+
+    jpeg_mem_src(&cinfo, (unsigned char*)pcData, pcDataSize); 
+
+    jpeg_read_header(&cinfo, TRUE);
+    jpeg_start_decompress(&cinfo);
+
+    *width = cinfo.output_width;
+    *height = cinfo.output_height;
+    *numChannels = cinfo.output_components; // typically 3 for RGB
+
+    *imageData = (unsigned char*)malloc(*width * *height * *numChannels);
+    if (!*imageData) {
+        jpeg_destroy_decompress(&cinfo);
+        std::cout << "Failed to allocate memory for JPEG image." << std::endl;
+        return;
+    }
+
+    // decompress the JPEG data into the imageData buffer
+    while (cinfo.output_scanline < cinfo.output_height) {
+        unsigned char* rowPtr[1];
+        rowPtr[0] = *imageData + cinfo.output_scanline * *width * *numChannels;
+        jpeg_read_scanlines(&cinfo, rowPtr, 1);
+    }
+
+    jpeg_finish_decompress(&cinfo);
+    jpeg_destroy_decompress(&cinfo);
 }
 
 void TextureLoader::GetTextureFormat(const bool& srgb, const int& numChannels, unsigned int* format, unsigned int* internalFormat) {

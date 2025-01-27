@@ -27,7 +27,7 @@ Model* ModelLoader::LoadModel(const char* fileName) {
     const aiScene* scene = ModelLoader::importer.ReadFile(
         modelFilePath,
         aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
-    ); // aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph
+    ); // aiProcess_GenSmoothNormals | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         std::cout << "ERROR::ASSIMP::" << ModelLoader::importer.GetErrorString() << std::endl;
@@ -64,7 +64,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    std::cout << "\tprocessing " << std::to_string(mesh->mNumVertices) << " vertices" << std::endl;
+    std::cout << "- processing " << std::to_string(mesh->mNumVertices) << " vertices" << std::endl;
 
     // process vertices
     glm::vec3 position;
@@ -95,7 +95,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
         vertices.push_back(Vertex( position, normal, texCoord, tangent ));
     }
 
-    std::cout << "\tprocessing " << std::to_string(mesh->mNumFaces) << " faces" << std::endl;
+    std::cout << "- processing " << std::to_string(mesh->mNumFaces) << " faces" << std::endl;
 
     // process indices
     for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
@@ -112,7 +112,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     if(mesh->mMaterialIndex >= 0) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        std::cout << "\tprocessing material with " << std::to_string(material->mNumProperties) << " properties" << std::endl;
+        std::cout << "- processing material with " << std::to_string(material->mNumProperties) << " properties" << std::endl;
 
         diffMap = LoadMaterialTexture(material, aiTextureType_DIFFUSE, scene);
         specMap = LoadMaterialTexture(material, aiTextureType_SPECULAR, scene);
@@ -121,37 +121,41 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
 
     return new Mesh(
         new Geometry{ vertices, indices },
-        new PhongMaterial(glm::vec4(1), glm::vec4(1), 128, diffMap, specMap, nrmMap));
+        new PhongMaterial(glm::vec4(1), glm::vec4(1), 128, diffMap, specMap, nrmMap),
+        false);
 }
 
 Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, const aiScene* scene) {
-    std::cout << "\tfound " << std::to_string(mat->GetTextureCount(type)) << " textures of type " << std::to_string(type) << std::endl;
+    std::cout << "- found " << std::to_string(mat->GetTextureCount(type)) << " textures of type " << std::to_string(type) << std::endl;
+
+    Texture2D* texture = nullptr;
     
     // TODO return an array of textures of type
+
     aiString str;
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiReturn result = mat->GetTexture(type, i, &str);
-
         if(result != AI_SUCCESS) {
+            std::cerr << "Failed to get texture path from material" << std::endl;
             continue;
         }
         
-        std::cout << "\t\tfound texture '" << str.C_Str() << "'" << std::endl;
-
-        const aiTexture* texture = scene->GetEmbeddedTexture(str.C_Str());
-        if(texture) {
-            std::cout << "\t\tskipping embedded texture '" << texture->mFilename.C_Str() << "', " <<
-                std::to_string(texture->mWidth) << "x" << std::to_string(texture->mHeight) << " - " <<
-                texture->achFormatHint << std::endl;
+        const aiTexture* aiTex = scene->GetEmbeddedTexture(str.C_Str());
+        if(aiTex) {
+            std::cout << "- embedded texture '" << str.C_Str() << "', " <<
+                std::to_string(aiTex->mWidth) << "x" << std::to_string(aiTex->mHeight) << " - " <<
+                aiTex->achFormatHint << std::endl;
             
-            // Texture2D t = TextureLoader::LoadEmbeddedTexture(texture, type == aiTextureType_DIFFUSE);
+            texture = TextureLoader::LoadEmbeddedTexture(aiTex, type == aiTextureType_DIFFUSE);
         }
         else {
-            // try to load from the file system
-            // NOTE: assumes textures use file names, and are placed in textures folder
-            Texture2D* texture = Resources::GetTexture(str.C_Str(), type == aiTextureType_DIFFUSE);
+            std::cout << "- referenced texture '" << str.C_Str() << "'" << std::endl;
+
+            // NOTE: this assumes referenced textures use file names (not paths),
+            // and are placed in the /textures folder.
+            texture = Resources::GetTexture(str.C_Str(), type == aiTextureType_DIFFUSE);
         }
     }
 
-    return nullptr;
+    return texture;
 }
