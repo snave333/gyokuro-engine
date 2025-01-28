@@ -74,6 +74,8 @@ A C++ OpenGL rendering library – pronounced "gee-o-kuh-roo". Uses the forward 
 
 ## Acknowledgments
 
+"Dice.fbx" 3D model and textures by [Josh Cook](https://www.linkedin.com/in/josh-cook-380a3a147/).
+
 * [Computer Graphics Programming In OpenGL With C++](https://www.merclearning.com/titles/Computer_Graphics_Programming_in_OpenGL_with_C++.html)
 * [Real-Time Rendering](https://www.realtimerendering.com/)
 * [Game Engine Architecture](https://www.gameenginebook.com/)
