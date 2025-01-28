@@ -56,9 +56,9 @@ A C++ OpenGL rendering library – pronounced "gee-o-kuh-roo". Uses the forward 
   * [x] Render buffer
   * [x] Reinhard tone mapping
   * [x] Gamma correction
-* [ ] Model loading
+* [x] Model loading
   * [x] Separate model/texture file loading
-  * [ ] Embedded file types (glb)
+  * [x] Embedded texture support (glb)
 * [ ] PBR
 * [ ] Image effects
 * [ ] Shadows
