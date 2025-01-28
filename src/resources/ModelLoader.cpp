@@ -145,7 +145,7 @@ Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type,
         const aiTexture* aiTex = scene->GetEmbeddedTexture(str.C_Str());
         if(aiTex) {
             std::cout << "- embedded texture '" << str.C_Str() << "', " <<
-                std::to_string(aiTex->mWidth) << "x" << std::to_string(aiTex->mHeight) << " - " <<
+                std::to_string(aiTex->mWidth) << " x " << std::to_string(aiTex->mHeight) << " - " <<
                 aiTex->achFormatHint << std::endl;
             
             texture = TextureLoader::LoadEmbeddedTexture(aiTex, type == aiTextureType_DIFFUSE);
@@ -186,7 +186,7 @@ void ModelLoader::LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene)
             const aiTexture* aiTex = scene->GetEmbeddedTexture(str.C_Str());
             if(aiTex) {
                 std::cout << "\tembedded texture '" << str.C_Str() << "', " <<
-                    std::to_string(aiTex->mWidth) << "x" << std::to_string(aiTex->mHeight) << " - " <<
+                    std::to_string(aiTex->mWidth) << " x " << std::to_string(aiTex->mHeight) << " - " <<
                     aiTex->achFormatHint << std::endl;
             }
             else {

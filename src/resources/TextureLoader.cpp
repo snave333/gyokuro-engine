@@ -201,6 +201,9 @@ void TextureLoader::DecompressJpegData(
     *height = cinfo.output_height;
     *numChannels = cinfo.output_components; // typically 3 for RGB
 
+    std::cout << "Decompressing " << std::to_string(*width) << " x " << std::to_string(*height) <<
+        " JPEG image with " << std::to_string(*numChannels) << " channels" << std::endl;
+
     *imageData = (unsigned char*)malloc(*width * *height * *numChannels);
     if (!*imageData) {
         jpeg_destroy_decompress(&cinfo);
