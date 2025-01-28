@@ -279,10 +279,18 @@ struct SceneLoader {
 
         // the models we're loading
 
-        ModelNode* helmet = new ModelNode(Resources::GetModel("DamagedHelmet.glb"));
+        ModelNode* helmet = new ModelNode(Resources::GetModel("DamagedHelmet.glb", true));
         helmet->Translate(-1, 0, 0);
 
-        ModelNode* dice =   new ModelNode(Resources::GetModel("Dice.fbx"));
+        Model* diceModel = Resources::GetModel("Dice.fbx", false);
+        diceModel->GetMeshes()[0]->SetMaterial(new PhongMaterial(
+            glm::vec4(1), glm::vec4(1), 128,
+            Resources::GetTexture("Dice_Diffuse.png", true),
+            Resources::GetTexture("Dice_SpecularGlossiness.png", false),
+            Resources::GetTexture("Dice_Normal.png", false)
+        ));
+
+        ModelNode* dice = new ModelNode(diceModel);
         dice->Translate(1, 0, 0);
         dice->Scale(0.5f);
 

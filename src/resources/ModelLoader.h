@@ -12,7 +12,7 @@ class ModelLoader {
 public:
     static std::string ResourceDir;
 
-    static Model* LoadModel(const char* fileName);
+    static Model* LoadModel(const char* fileName, bool flipUVs);
 
 private:
     static Assimp::Importer importer;

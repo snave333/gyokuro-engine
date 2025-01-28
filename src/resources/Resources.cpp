@@ -80,8 +80,8 @@ void Resources::Dispose() {
     Resources::fonts.clear();
 }
 
-Model* Resources::GetModel(const char* fileName) {
-    return ModelLoader::LoadModel(fileName);
+Model* Resources::GetModel(const char* fileName, bool flipUVs) {
+    return ModelLoader::LoadModel(fileName, flipUVs);
 }
 
 Shader* Resources::GetShader(const char* vertFileName, const char* fragFileName) {

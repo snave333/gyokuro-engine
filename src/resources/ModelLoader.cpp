@@ -19,15 +19,19 @@ std::string ModelLoader::ResourceDir = "";
 
 Assimp::Importer ModelLoader::importer;
 
-Model* ModelLoader::LoadModel(const char* fileName) {
+Model* ModelLoader::LoadModel(const char* fileName, bool flipUVs) {
     // get the full file path
     std::string modelFilePath = FileSystem::CombinePath(ResourceDir, fileName);
 
+    // our import flags
+    unsigned int flags = aiProcess_Triangulate | aiProcess_CalcTangentSpace;
+    // aiProcess_GenSmoothNormals | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph
+    if(flipUVs) {
+        flags |= aiProcess_FlipUVs;
+    }
+
     // use assimp to load the model
-    const aiScene* scene = ModelLoader::importer.ReadFile(
-        modelFilePath,
-        aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
-    ); // aiProcess_GenSmoothNormals | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph
+    const aiScene* scene = ModelLoader::importer.ReadFile(modelFilePath, flags);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         std::cout << "ERROR::ASSIMP::" << ModelLoader::importer.GetErrorString() << std::endl;
@@ -84,6 +88,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
         tangent.y = mesh->mTangents[i].y;
         tangent.z = mesh->mTangents[i].z;
 
+        // NOTE we're only using the first set of tex coords for now
         if(mesh->mTextureCoords[0]) {
             texCoord.x = mesh->mTextureCoords[0][i].x;
             texCoord.y = mesh->mTextureCoords[0][i].y;
@@ -155,7 +160,8 @@ Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type,
 
             // NOTE: this assumes referenced textures use file names (not paths),
             // and are placed in the /textures folder.
-            texture = Resources::GetTexture(str.C_Str(), type == aiTextureType_DIFFUSE);
+            std::string fileName = FileSystem::GetFileName(str.C_Str());
+            texture = Resources::GetTexture(fileName.c_str(), type == aiTextureType_DIFFUSE);
         }
     }
 

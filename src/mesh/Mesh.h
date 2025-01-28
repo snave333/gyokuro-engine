@@ -21,6 +21,7 @@ public:
     void Draw();
 
     Material* GetMaterial() { return material; }
+    void SetMaterial(Material* newMaterial);
     const RenderType& GetRenderType() { return material->renderType; }
 
     const AABB& GetBounds() { return bounds; }

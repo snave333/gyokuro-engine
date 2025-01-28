@@ -89,6 +89,17 @@ Mesh::~Mesh() {
     glDeleteBuffers(1, &EBO);
 }
 
+void Mesh::SetMaterial(Material* newMaterial) {
+    if(this->material) {
+        delete this->material;
+        this->material = nullptr;
+    }
+
+    if(newMaterial) {
+        this->material = newMaterial;
+    }
+}
+
 void Mesh::Draw() {
     if(VAO == 0) {
         return;

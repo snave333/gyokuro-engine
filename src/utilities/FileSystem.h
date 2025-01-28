@@ -47,6 +47,18 @@ public:
     static std::string CombinePath(const std::string& path1, const std::string& path2, const std::string& path3, const std::string& path4) {
         return path1 + PATH_SEPARATOR + path2 + PATH_SEPARATOR + path3 + PATH_SEPARATOR + path4;
     }
+
+    static std::string GetFileName(const char* filePath) {
+        return GetFileName(std::string(filePath));
+    }
+
+    static std::string GetFileName(std::string filePath) {
+        // find the position of the last directory separator ('/' or '\')
+        size_t pos = filePath.find_last_of("/\\");
+        
+        // extract and return the substring after the last separator
+        return (pos == std::string::npos) ? filePath : filePath.substr(pos + 1);
+    }
 };
 
 #endif // FILE_UTILS_H

@@ -52,6 +52,9 @@ PhongMaterial::PhongMaterial(
 }
 
 PhongMaterial::~PhongMaterial() {
+    diffuseMap = nullptr;
+    specularMap = nullptr;
+    normalMap = nullptr;
 }
 
 void PhongMaterial::Queue() {
