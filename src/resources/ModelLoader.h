@@ -20,6 +20,9 @@ private:
     static void ProcessNode(aiNode* node, const aiScene* scene, std::vector<Mesh*>& meshes);
     static Mesh* ProcessMesh(aiMesh* mesh, const aiScene* scene);
     static Texture2D* LoadMaterialTexture(aiMaterial* mat, aiTextureType type, const aiScene* scene);
+
+    static void LogMaterialProperties(aiMaterial* mat);
+    static void LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene);
 };
   
 #endif // Model_LOADER_H

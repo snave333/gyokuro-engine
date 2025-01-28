@@ -277,7 +277,7 @@ struct SceneLoader {
         sc->AddNode(pointLight1Model);
         sc->AddNode(pointLight2Model);
 
-        // the model we're loading
+        // the models we're loading
 
         ModelNode* helmet = new ModelNode(Resources::GetModel("DamagedHelmet.glb"));
         helmet->Translate(-1, 0, 0);

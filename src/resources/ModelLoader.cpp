@@ -113,6 +113,8 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
         std::cout << "- processing material with " << std::to_string(material->mNumProperties) << " properties" << std::endl;
+        // LogMaterialProperties(material);
+        // LogMaterialTextureTypes(material, scene);
 
         diffMap = LoadMaterialTexture(material, aiTextureType_DIFFUSE, scene);
         specMap = LoadMaterialTexture(material, aiTextureType_SPECULAR, scene);
@@ -158,4 +160,38 @@ Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type,
     }
 
     return texture;
+}
+
+void ModelLoader::LogMaterialProperties(aiMaterial* mat) {
+    for(unsigned int i = 0; i < mat->mNumProperties; i++) {
+        aiMaterialProperty* prop = mat->mProperties[i];
+        std::string data = std::string(prop->mData, prop->mDataLength);
+        std::cout << "aiMaterial[" << prop->mKey.C_Str() << "] = " << data << std::endl;
+    }
+}
+
+void ModelLoader::LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene) {
+    for(unsigned int t = aiTextureType_NONE; t <= AI_TEXTURE_TYPE_MAX; t++) {
+        aiTextureType type = static_cast<aiTextureType>(t);
+        unsigned int count = mat->GetTextureCount(type);
+
+        if(count > 0) {
+            std::cout << "found " << std::to_string(count) << " textures of type " << std::to_string(type) << std::endl;
+        }
+        
+        aiString str;
+        for(unsigned int i = 0; i < count; i++) {
+            mat->GetTexture(type, i, &str);
+            
+            const aiTexture* aiTex = scene->GetEmbeddedTexture(str.C_Str());
+            if(aiTex) {
+                std::cout << "\tembedded texture '" << str.C_Str() << "', " <<
+                    std::to_string(aiTex->mWidth) << "x" << std::to_string(aiTex->mHeight) << " - " <<
+                    aiTex->achFormatHint << std::endl;
+            }
+            else {
+                std::cout << "\treferenced texture '" << str.C_Str() << "'" << std::endl;
+            }
+        }
+    }
 }
