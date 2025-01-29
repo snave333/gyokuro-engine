@@ -3,6 +3,8 @@
 
 #include <mesh/Geometry.h>
 
+namespace gyo {
+
 struct Cube : public Geometry {
     Cube(float halfSize = 0.5f) {
         glm::vec3 positions[] = {
@@ -119,5 +121,7 @@ struct Cube : public Geometry {
         };
     }
 };
+
+} // namespace gyo
 
 #endif // CUBE_H

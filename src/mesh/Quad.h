@@ -3,6 +3,8 @@
 
 #include <mesh/Geometry.h>
 
+namespace gyo {
+
 struct Quad : public Geometry {
     Quad() {
         vertices = {
@@ -17,5 +19,7 @@ struct Quad : public Geometry {
         };
     }
 };
+
+} // namespace gyo
 
 #endif // QUAD_H

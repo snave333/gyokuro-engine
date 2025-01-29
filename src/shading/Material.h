@@ -6,6 +6,8 @@
 
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 class Material {
 public:
     virtual ~Material() {
@@ -22,5 +24,7 @@ public:
 protected:
     Shader* shader = nullptr;
 };
+
+} // namespace gyo
 
 #endif // MATERIAL_H

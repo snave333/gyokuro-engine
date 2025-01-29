@@ -16,6 +16,8 @@
 
 #include <glad/glad.h>
 
+namespace gyo {
+
 std::map<long, Shader> Resources::shaders = {};
 std::map<long, Texture2D> Resources::textures = {};
 std::map<long, TextureCube> Resources::cubeMaps = {};
@@ -164,3 +166,5 @@ Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {
 
     return &Resources::fonts[id];
 }
+
+} // namespace gyo

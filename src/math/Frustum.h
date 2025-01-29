@@ -8,6 +8,8 @@
 #include <math/AABB.h>
 #include <math/Plane.h>
 
+namespace gyo {
+
 enum class FrustumTestResult {
     OUTSIDE,
     INSIDE,
@@ -159,5 +161,7 @@ struct Frustum {
         return intersects ? FrustumTestResult::INTERSECTING : FrustumTestResult::INSIDE;
     }
 };
+
+} // namespace gyo
 
 #endif // FRUSTUM_H

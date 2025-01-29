@@ -4,6 +4,8 @@
 #include <map>
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 struct Character {
     unsigned int textureID;  // ID handle of the glyph texture
     glm::ivec2   size;       // size of glyph
@@ -23,4 +25,6 @@ private:
     std::map<char, Character> characters;
 };
   
+} // namespace gyo
+
 #endif // FONT_H

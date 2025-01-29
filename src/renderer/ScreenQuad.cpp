@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 
+namespace gyo {
+
 ScreenQuad::ScreenQuad() {
     float vertices[] = {  
         // positions   // texCoords
@@ -62,3 +64,5 @@ void ScreenQuad::Draw(unsigned int textureColorbuffer) {
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
+
+} // namespace gyo

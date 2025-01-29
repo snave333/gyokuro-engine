@@ -7,6 +7,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
+namespace gyo {
+
 class SceneNode {
 public:
     SceneNode() {}
@@ -57,5 +59,7 @@ private:
 
     void UpdateMatrices();
 };
+
+} // namespace gyo
 
 #endif // SCENE_NODE_H

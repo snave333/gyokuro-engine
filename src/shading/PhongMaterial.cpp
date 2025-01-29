@@ -3,6 +3,8 @@
 #include <resources/Resources.h>
 #include <shading/Texture2D.h>
 
+namespace gyo {
+
 PhongMaterial::PhongMaterial(
     glm::vec4 diffuse,
     glm::vec3 specular,
@@ -70,3 +72,5 @@ void PhongMaterial::Queue() {
     shader->SetVec4("uvTilingOffset",
         glm::vec4(uvTiling.x, uvTiling.y, uvOffset.x, uvOffset.y));
 }
+
+} // namespace gyo

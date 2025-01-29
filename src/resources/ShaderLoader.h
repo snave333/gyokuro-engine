@@ -5,6 +5,8 @@
 #include <unordered_set>
 #include <map>
 
+namespace gyo {
+
 class Shader;
 
 class ShaderLoader {
@@ -29,4 +31,6 @@ private:
     static void GetUniformLocations(unsigned int id, std::map<std::string, int>& uniforms);
 };
   
+} // namespace gyo
+
 #endif // SHADER_LOADER_H

@@ -3,6 +3,8 @@
 #include <shading/Shader.h>
 #include <resources/Resources.h>
 
+namespace gyo {
+
 GoochMaterial::GoochMaterial(glm::vec3 coolColor, glm::vec3 warmColor) {
     this->coolColor = coolColor;
     this->warmColor = warmColor;
@@ -21,3 +23,5 @@ void GoochMaterial::Queue() {
     shader->SetVec3("coolColor", coolColor);
     shader->SetVec3("warmColor", warmColor);
 }
+
+} // namespace gyo

@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace gyo {
+
 class Font;
 
 class FontLoader {
@@ -12,4 +14,6 @@ public:
     static Font LoadFont(const char* fontFileName, unsigned int fontSize);
 };
   
+} // namespace gyo
+
 #endif // FONT_LOADER_H

@@ -9,6 +9,8 @@
 #include <scene/SceneController.h>
 #include <resources/Resources.h>
 
+namespace gyo {
+
 Engine* Engine::Instance = nullptr;
 
 Engine::Engine(unsigned int ptWidth, unsigned int ptHeight) {
@@ -167,3 +169,5 @@ void Engine::checkShouldExit(GLFWwindow *window) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
 }
+
+} // namespace gyo

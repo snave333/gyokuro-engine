@@ -5,6 +5,8 @@
 #include <drawable/IDrawable.h>
 #include <mesh/Geometry.h>
 
+namespace gyo {
+
 class Shader;
 struct Geometry;
 
@@ -42,5 +44,7 @@ private:
 
     unsigned int vertexCount;
 };
-  
+
+} // namespace gyo
+
 #endif // TANGENTS_RENDERER_H

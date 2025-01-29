@@ -1,6 +1,8 @@
 
 #include <camera/FlyCamera.h>
 
+namespace gyo {
+
 FlyCamera::~FlyCamera() {}
 
 void FlyCamera::OnLook(float xOffset, float yOffset) {
@@ -15,3 +17,5 @@ void FlyCamera::OnLook(float xOffset, float yOffset) {
 
     SetRotation(pitch, yaw, 0);
 }
+
+} // namespace gyo

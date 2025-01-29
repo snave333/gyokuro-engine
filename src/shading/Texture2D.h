@@ -1,6 +1,8 @@
 #ifndef TEXTURE2D_H
 #define TEXTURE2D_H
 
+namespace gyo {
+
 class Texture2D {
 public:
     Texture2D();
@@ -16,5 +18,7 @@ private:
     // the texture id
     unsigned int ID;
 };
+
+} // namespace gyo
 
 #endif // TEXTURE2D_H

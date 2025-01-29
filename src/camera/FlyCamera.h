@@ -3,6 +3,8 @@
 
 #include <camera/CameraNode.h>
 
+namespace gyo {
+
 class FlyCamera : public CameraNode {
 public:
     FlyCamera(Camera* camera) : CameraNode(camera) { };
@@ -15,5 +17,7 @@ private:
     float pitch;
     const float mouseSensitivity = 0.1f;
 };
+
+} // namespace gyo
 
 #endif // FLY_CAMERA_H

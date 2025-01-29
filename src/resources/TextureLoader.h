@@ -3,10 +3,13 @@
 
 #include <string>
 
-class Texture2D;
-class TextureCube;
 struct aiTexture;
 struct aiTexel;
+
+namespace gyo {
+
+class Texture2D;
+class TextureCube;
 
 class TextureLoader {
 public:
@@ -25,4 +28,6 @@ private:
     static void GetTextureFormat(const bool& srgb, const int& numChannels, unsigned int* format, unsigned int* internalFormat);
 };
   
+} // namespace gyo
+
 #endif // TEXTURE_LOADER_H

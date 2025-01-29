@@ -6,6 +6,8 @@
 
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 class Mesh;
 class Material;
 struct AABB;
@@ -35,5 +37,7 @@ private:
     void UpdateBounds();
     void UpdateBoundsLUT();
 };
+
+} // namespace gyo
 
 #endif // MODEL_NODE_H

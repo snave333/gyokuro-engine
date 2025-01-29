@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 class Camera {
 public:
     // static
@@ -23,5 +25,7 @@ protected:
 private:
     unsigned int uboMatrices;
 };
+
+} // namespace gyo
 
 #endif // CAMERA_H

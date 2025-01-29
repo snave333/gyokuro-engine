@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 
+namespace gyo {
+
 TangentsRenderer::TangentsRenderer(Geometry& geometry, float lineLength) : lineLength(lineLength) {
     this->lineLength = glm::max(lineLength, 0.01f);
 
@@ -72,3 +74,5 @@ void TangentsRenderer::Draw() {
     glDrawArrays(GL_POINTS, 0, vertexCount);
     glBindVertexArray(0);
 }
+
+} // namespace gyo

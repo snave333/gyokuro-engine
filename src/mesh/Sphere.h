@@ -4,6 +4,8 @@
 #include <mesh/Geometry.h>
 #include <glm/gtc/constants.hpp>
 
+namespace gyo {
+
 struct Sphere : public Geometry {
     Sphere(float radius = 0.5f, int stacks = 20, int slices = 20) {
         // generate vertices
@@ -45,5 +47,7 @@ struct Sphere : public Geometry {
         }
     }
 };
+
+} // namespace gyo
 
 #endif // SPHERE_H

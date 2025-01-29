@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 struct FrameStats {
     float geometryMs = 0;
     float vfcMs = 0;
@@ -92,5 +94,7 @@ private:
     );
     void RenderStats();
 };
+
+} // namespace gyo
 
 #endif // SCENE_CONTROLLER_H

@@ -8,6 +8,8 @@
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+namespace gyo {
+
 Text::Text(const char* fontName, const glm::ivec2& viewportSize, unsigned int fontSize) {
     font = Resources::GetFont(fontName, fontSize);
     shader = Resources::GetShader("glyph.vert", "glyph.frag");
@@ -112,3 +114,5 @@ void Text::RenderText(std::string text, unsigned int x, unsigned int y, float sc
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+} // namespace gyo

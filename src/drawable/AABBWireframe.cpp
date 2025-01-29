@@ -6,6 +6,8 @@
 
 #include <glad/glad.h>
 
+namespace gyo {
+
 AABBWireframe::AABBWireframe(const AABB& aabb, glm::vec4 color) {
     this->color = color;
 
@@ -81,3 +83,5 @@ void AABBWireframe::Draw() {
     glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, 0); // 12 lines
     glBindVertexArray(0);
 }
+
+} // namespace gyo

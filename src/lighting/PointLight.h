@@ -3,6 +3,8 @@
 
 #include <lighting/Light.h>
 
+namespace gyo {
+
 struct PointLight : public Light {
     // attenuation
     float constant;
@@ -17,5 +19,7 @@ struct PointLight : public Light {
         GetAttenuation(range, constant, linear, quadratic);
     }
 };
+
+} // namespace gyo
 
 #endif // POINT_LIGHT_H

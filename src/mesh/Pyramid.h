@@ -3,6 +3,8 @@
 
 #include <mesh/Geometry.h>
 
+namespace gyo {
+
 struct Pyramid : public Geometry {
     Pyramid(float halfBase = 0.5f, float height = 1.0f) {
         // define the vertices of the pyramid
@@ -63,5 +65,7 @@ struct Pyramid : public Geometry {
         };
     }
 };
+
+} // namespace gyo
 
 #endif // PYRAMID_H

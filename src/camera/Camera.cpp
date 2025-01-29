@@ -14,6 +14,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+namespace gyo {
+
 Camera* Camera::PerspectiveCamera(float fovYDeg, float aspectRatio, float near, float far) {
     return new Camera(glm::perspective(glm::radians(fovYDeg), aspectRatio, near, far));
 }
@@ -62,3 +64,5 @@ void Camera::UpdateViewMatrixUniform(const glm::mat4& view, const glm::vec3& vie
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
+
+} // namespace gyo

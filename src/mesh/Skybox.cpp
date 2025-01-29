@@ -6,6 +6,8 @@
 
 #include <glad/glad.h>
 
+namespace gyo {
+
 Skybox::Skybox(TextureCube* cubeMap) {
     this->cubeMap = cubeMap;
 
@@ -100,3 +102,5 @@ void Skybox::Draw(glm::mat4 view, glm::mat4 projection) {
     cubeMap->Bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
+
+} // namespace gyo

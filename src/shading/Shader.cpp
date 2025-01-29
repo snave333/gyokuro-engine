@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+namespace gyo {
+
 Shader::Shader(const unsigned int& shaderProgramId, std::map<std::string, int>& uniforms) {
     ID = shaderProgramId;
     this->uniforms = uniforms;
@@ -102,3 +104,5 @@ int Shader::GetUniformLocation(const char* name) const {
 
     return uniforms.at(name);
 }
+
+} // namespace gyo

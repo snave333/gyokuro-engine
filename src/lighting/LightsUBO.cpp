@@ -22,6 +22,8 @@
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
+namespace gyo {
+
 LightsUBO::LightsUBO() {
     // create our lights uniform buffer object, and bind for initialization
     glGenBuffers(1, &uboLights);
@@ -175,3 +177,5 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
+
+} // namespace gyo

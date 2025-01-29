@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 struct Plane {
     glm::vec3 normal;
     float distance;
@@ -13,5 +15,7 @@ struct Plane {
         distance /= length;
     }
 };
+
+} // namespace gyo
 
 #endif // PLANE_H

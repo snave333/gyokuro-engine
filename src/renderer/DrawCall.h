@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 class Mesh;
 class Material;
 
@@ -13,5 +15,7 @@ struct DrawCall {
     glm::mat4 normalMatrix;
     // unsigned int modelID;
 };
+
+} // namespace gyo
 
 #endif // DRAW_CALL_H

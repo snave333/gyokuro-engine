@@ -5,6 +5,8 @@
 
 #include <shading/Material.h>
 
+namespace gyo {
+
 class Texture2D;
 
 class GoochMaterial : public Material {
@@ -21,5 +23,7 @@ private:
     glm::vec3 coolColor;
     glm::vec3 warmColor;
 };
+
+} // namespace gyo
 
 #endif // GOOCH_MATERIAL_H

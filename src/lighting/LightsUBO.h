@@ -4,6 +4,8 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 class LightNode;
 
 class LightsUBO {
@@ -15,5 +17,7 @@ public:
 private:
     unsigned int uboLights;
 };
+
+} // namespace gyo
 
 #endif // LIGHTS_UBO_H

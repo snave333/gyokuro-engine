@@ -4,6 +4,8 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 
+namespace gyo {
+
 class Model;
 class Mesh;
 class Texture2D;
@@ -25,4 +27,6 @@ private:
     static void LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene);
 };
   
+} // namespace gyo
+
 #endif // Model_LOADER_H

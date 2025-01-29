@@ -1,6 +1,8 @@
 
 #include <renderer/RenderState.h>
 
+namespace gyo {
+
 RenderState::RenderState() {
 }
 
@@ -52,3 +54,5 @@ void RenderState::SetFaceCullingEnabled(bool enable, GLenum face) {
         cullFace = face;
     }
 }
+
+} // namespace gyo

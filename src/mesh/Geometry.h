@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 
+namespace gyo {
+
 struct Vertex {
     glm::vec3 position;
     glm::vec3 normal;
@@ -74,5 +76,7 @@ struct Geometry {
         }
     }
 };
+
+} // namespace gyo
 
 #endif // GEOMETRY_H

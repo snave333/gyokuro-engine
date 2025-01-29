@@ -5,6 +5,8 @@
 
 #include <shading/Material.h>
 
+namespace gyo {
+
 class Texture2D;
 
 class UnlitMaterial : public Material {
@@ -26,5 +28,7 @@ private:
     glm::vec2 uvTiling;
     glm::vec2 uvOffset;
 };
+
+} // namespace gyo
 
 #endif // UNLIT_MATERIAL_H

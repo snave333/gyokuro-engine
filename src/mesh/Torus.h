@@ -4,6 +4,8 @@
 #include <mesh/Geometry.h>
 #include <glm/gtc/constants.hpp>
 
+namespace gyo {
+
 struct Torus : public Geometry {
     Torus(float majorRadius = 0.5f,
           float minorRadius = 0.2f,
@@ -56,5 +58,7 @@ struct Torus : public Geometry {
         }
     }
 };
+
+} // namespace gyo
 
 #endif // TORUS_H

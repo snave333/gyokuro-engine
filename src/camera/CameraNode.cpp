@@ -1,6 +1,8 @@
 
 #include <camera/CameraNode.h>
 
+namespace gyo {
+
 CameraNode::~CameraNode() {
     delete camera;
     camera = nullptr;
@@ -78,3 +80,5 @@ Frustum CameraNode::GetFrustum() {
 
     return frustum;
 }
+
+} // namespace gyo

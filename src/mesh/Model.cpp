@@ -2,6 +2,8 @@
 #include <mesh/Model.h>
 #include <math/AABB.h>
 
+namespace gyo {
+
 unsigned int Model::ModelCounter = 0;
 
 Model::Model(Mesh* mesh) : Model(std::vector<Mesh*>{ mesh }) {}
@@ -36,3 +38,5 @@ void Model::ComputeBounds() {
 
     bounds = { minPoint, maxPoint };
 }
+
+} // namespace gyo

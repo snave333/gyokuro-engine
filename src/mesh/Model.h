@@ -5,6 +5,8 @@
 
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 class Material;
 struct AABB;
 
@@ -28,5 +30,7 @@ private:
 
     void ComputeBounds();
 };
+
+} // namespace gyo
 
 #endif // MODEL_H

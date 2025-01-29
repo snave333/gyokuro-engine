@@ -15,6 +15,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+namespace gyo {
+
 std::string ModelLoader::ResourceDir = "";
 
 Assimp::Importer ModelLoader::importer;
@@ -201,3 +203,5 @@ void ModelLoader::LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene)
         }
     }
 }
+
+} // namespace gyo

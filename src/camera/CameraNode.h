@@ -5,6 +5,8 @@
 #include <scene/SceneNode.h>
 #include <math/Frustum.h>
 
+namespace gyo {
+
 struct Frustum;
 
 class CameraNode : public SceneNode {
@@ -22,5 +24,7 @@ public:
 protected:
     Camera* camera = nullptr;
 };
+
+} // namespace gyo
 
 #endif // CAMERA_NODE_H

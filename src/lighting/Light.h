@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 struct Light {
     glm::vec3 color;
     
@@ -59,5 +61,7 @@ struct Light {
         }
     }
 };
+
+} // namespace gyo
 
 #endif // LIGHT_H

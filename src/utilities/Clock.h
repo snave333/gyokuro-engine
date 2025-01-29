@@ -6,6 +6,8 @@
 #include <string>
 #include <chrono>
 
+namespace gyo {
+
 #define CLOCK(name) Clock clock_##name(#name)
 #define CLOCKT(name, t) Clock clock_##name(#name, t)
 
@@ -39,5 +41,7 @@ private:
     std::chrono::high_resolution_clock::time_point start;
     float* timeMs = nullptr;
 };
+
+} // namespace gyo
 
 #endif // CLOCK_H

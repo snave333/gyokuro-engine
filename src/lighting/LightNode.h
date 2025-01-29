@@ -4,6 +4,8 @@
 #include <scene/SceneNode.h>
 #include <lighting/Light.h>
 
+namespace gyo {
+
 class LightNode : public SceneNode {
 public:
     LightNode(Light* light);
@@ -14,5 +16,7 @@ public:
 private:
     Light* light;
 };
+
+} // namespace gyo
 
 #endif // LIGHT_NODE_H

@@ -11,6 +11,8 @@
 #include <ft2build.h>
 #include <freetype/freetype.h>
 
+namespace gyo {
+
 std::string FontLoader::ResourceDir = "";
 
 Font FontLoader::LoadFont(const char* fontFileName, unsigned int fontSize) {
@@ -84,3 +86,5 @@ Font FontLoader::LoadFont(const char* fontFileName, unsigned int fontSize) {
 
     return Font(characters);
 }
+
+} // namespace gyo

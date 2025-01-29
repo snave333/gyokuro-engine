@@ -5,6 +5,8 @@
 
 #include <renderer/RenderState.h>
 
+namespace gyo {
+
 class ScreenQuad;
 class DrawCall;
 class Skybox;
@@ -40,5 +42,7 @@ private:
 
     void PrintGLInfo();
 };
+
+} // namespace gyo
 
 #endif // RENDERER_H

@@ -12,6 +12,8 @@
 #include <assimp/texture.h>
 #include <jpeglib.h>
 
+namespace gyo {
+
 std::string TextureLoader::ResourceDir = "";
 
 Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb) {
@@ -236,3 +238,5 @@ void TextureLoader::GetTextureFormat(const bool& srgb, const int& numChannels, u
         *internalFormat = srgb ? GL_SRGB_ALPHA : GL_RGBA;
     }
 }
+
+} // namespace gyo

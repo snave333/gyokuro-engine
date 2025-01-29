@@ -2,6 +2,8 @@
 #include <mesh/ModelNode.h>
 #include <math/AABB.h>
 
+namespace gyo {
+
 ModelNode::ModelNode(Model* model) : SceneNode() {
     this->model = model;
 
@@ -72,3 +74,5 @@ void ModelNode::UpdateBoundsLUT() {
     boundsLUT[6] = { bounds.min.x, bounds.max.y, bounds.max.z };  // 110
     boundsLUT[7] = { bounds.max.x, bounds.max.y, bounds.max.z };  // 111
 }
+
+} //  namespace gyo

@@ -9,6 +9,8 @@
 
 #include <glad/glad.h>
 
+namespace gyo {
+
 class RenderState {
 public:
     // constructor
@@ -28,5 +30,7 @@ private:
     GLenum depthFunction;
     GLenum cullFace;
 };
+
+} // namespace gyo
 
 #endif // RENDER_STATE_H

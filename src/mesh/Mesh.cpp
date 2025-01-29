@@ -7,6 +7,8 @@
 
 #include <glad/glad.h>
 
+namespace gyo {
+
 Mesh::Mesh(Geometry* geometry, Material* material, bool computeTangents) {
     this->geometry = geometry;
     this->material = material;
@@ -109,3 +111,5 @@ void Mesh::Draw() {
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
+
+} // namespace gyo

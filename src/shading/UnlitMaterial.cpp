@@ -4,6 +4,8 @@
 #include <shading/Texture2D.h>
 #include <resources/Resources.h>
 
+namespace gyo {
+
 UnlitMaterial::UnlitMaterial(
     glm::vec4 color,
     bool additive,
@@ -56,3 +58,5 @@ void UnlitMaterial::Queue() {
             glm::vec4(uvTiling.x, uvTiling.y, uvOffset.x, uvOffset.y));
     }
 }
+
+} // namespace gyo

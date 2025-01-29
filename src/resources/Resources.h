@@ -5,6 +5,8 @@
 
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 class Model;
 class Shader;
 class Texture2D;
@@ -33,4 +35,6 @@ private:
     static Texture2D GenerateBuiltInTexture(glm::vec4 color);
 };
   
+} // namespace gyo
+
 #endif // RESOURCES_H

@@ -1,6 +1,7 @@
 
 #include <scene/SceneNode.h>
 
+namespace gyo {
 
 const glm::mat4& SceneNode::GetTransform() {
     if(isTransformDirty) {
@@ -127,3 +128,5 @@ void SceneNode::Scale(const glm::vec3 &scale) {
     this->scale *= scale;
     SetDirty();
 }
+
+} // namespace gyo

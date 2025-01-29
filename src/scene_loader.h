@@ -25,6 +25,8 @@
 #include <lighting/PointLight.h>
 #include <lighting/SpotLight.h>
 
+using namespace gyo;
+
 struct SceneLoader {
     static void LoadVFCScene(SceneController& sc) {
         int w = 10;

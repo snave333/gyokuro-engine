@@ -8,6 +8,8 @@
 #include <math/AABB.h>
 #include <shading/Material.h>
 
+namespace gyo {
+
 class Shader;
 struct Geometry;
 
@@ -44,5 +46,7 @@ private:
     unsigned int indexCount;
     unsigned int numTris;
 };
+
+} // namespace gyo
 
 #endif // MESH_H

@@ -3,6 +3,8 @@
 
 #include <lighting/Light.h>
 
+namespace gyo {
+
 struct SpotLight : public Light {
     float cosAngle;
     // attenuation
@@ -15,5 +17,7 @@ struct SpotLight : public Light {
         GetAttenuation(range, constant, linear, quadratic);
     }
 };
+
+} // namespace gyo
 
 #endif // SPOT_LIGHT_H

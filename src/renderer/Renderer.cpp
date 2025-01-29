@@ -9,6 +9,8 @@
 
 #include <glad/glad.h>
 
+namespace gyo {
+
 Renderer::Renderer(const int& width, const int& height) {
     size = glm::ivec2(width, height);
 
@@ -228,3 +230,5 @@ void Renderer::EndGeometryPass() {
 void Renderer::EndFrame() {
     // TODO do final tonemapping and gamma correction pass here?
 }
+
+} // namespace gyo

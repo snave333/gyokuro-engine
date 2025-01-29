@@ -23,6 +23,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+namespace gyo {
+
 SceneController::SceneController(Renderer* r, const int& width, const int& height) {
     renderer = r;
     size = glm::ivec2(width, height);
@@ -357,3 +359,5 @@ void SceneController::OnMouseMove(float x, float y) {
         camera->OnLook(xOffset, yOffset);
     }
 }
+
+} // namespace gyo

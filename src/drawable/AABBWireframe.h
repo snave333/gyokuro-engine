@@ -7,6 +7,8 @@
 #include <drawable/IDrawable.h>
 #include <math/AABB.h>
 
+namespace gyo {
+
 class Shader;
 
 class AABBWireframe : public IDrawable {
@@ -30,4 +32,6 @@ private:
     std::vector<glm::vec3> GetVertices(const glm::vec3& min, const glm::vec3& max);
 };
   
+} // namespace gyo
+
 #endif // AABB_WIREFRAME_H

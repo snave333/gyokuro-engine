@@ -16,10 +16,10 @@
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
 
-    Engine* engine = new Engine(1280, 720);
+    gyo::Engine* engine = new gyo::Engine(1280, 720);
 
     if(!engine->IsRunning()) {
-        std::cout << "Engine failed to start." << std::endl;
+        std::cerr << "Engine failed to start." << std::endl;
         return 1;
     }
 
@@ -33,6 +33,8 @@ int main(int argc, const char * argv[]) {
     while(engine->IsRunning()) {
         engine->Frame();
     }
+
+    std::cout << "Shutting down..." << std::endl;
     
     delete engine;
 

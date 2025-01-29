@@ -10,6 +10,8 @@
 
 #include <glad/glad.h>
 
+namespace gyo {
+
 std::string ShaderLoader::ResourceDir = "";
 std::string ShaderLoader::IncludesDir = "";
 
@@ -275,3 +277,5 @@ void ShaderLoader::GetUniformLocations(unsigned int id, std::map<std::string, in
 
     delete[] nameBuffer;
 }
+
+} // namespace gyo

@@ -1,9 +1,12 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+struct GLFWwindow;
+
+namespace gyo {
+
 class SceneController;
 class Renderer;
-struct GLFWwindow;
 
 class Engine {
 public:
@@ -39,5 +42,7 @@ private:
     void processInput(GLFWwindow *window, float dt);
     void checkShouldExit(GLFWwindow *window);
 };
+
+} // namespace gyo
 
 #endif // ENGINE_H

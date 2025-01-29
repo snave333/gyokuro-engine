@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 class Shader;
 class TextureCube;
 
@@ -21,5 +23,7 @@ private:
     TextureCube* cubeMap = nullptr;
     Shader* shader = nullptr;
 };
+
+} // namespace gyo
 
 #endif // SKYBOX_H

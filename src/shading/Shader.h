@@ -4,6 +4,8 @@
 #include <map>
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 class Shader {
 public:
     Shader() {}
@@ -35,4 +37,6 @@ private:
     int GetUniformLocation(const char* name) const;
 };
   
+} // namespace gyo
+
 #endif // SHADER_H

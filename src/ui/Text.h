@@ -4,6 +4,8 @@
 #include <string>
 #include <glm/glm.hpp>
 
+namespace gyo {
+
 class Font;
 class Shader;
 
@@ -28,4 +30,6 @@ private:
     unsigned int VBO;
 };
   
+} // namespace gyo
+
 #endif // TEXT_H

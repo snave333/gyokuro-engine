@@ -9,6 +9,8 @@
 #include <windows.h>
 #endif
 
+namespace gyo {
+
 class FileSystem {
 private:
 
@@ -60,5 +62,7 @@ public:
         return (pos == std::string::npos) ? filePath : filePath.substr(pos + 1);
     }
 };
+
+} // namespace gyo
 
 #endif // FILE_UTILS_H

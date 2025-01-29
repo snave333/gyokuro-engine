@@ -9,6 +9,8 @@
 
 #include <string>
 
+namespace gyo {
+
 #define HASH(string) simple_hash(string)
 
 // djb2 hashing algorithm
@@ -26,5 +28,7 @@ inline unsigned int simple_hash(const char* cStr) {
     std::string str(cStr);
     return simple_hash(str);
 }
+
+} // namespace gyo
 
 #endif // HASH_H
