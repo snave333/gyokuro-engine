@@ -1,14 +1,14 @@
 
-#include <resources/ModelLoader.h>
-#include <resources/Resources.h>
-#include <resources/TextureLoader.h>
+#include <gyo/internal/resources/ModelLoader.h>
+#include <gyo/resources/Resources.h>
+#include <gyo/internal/resources/TextureLoader.h>
 #include <utilities/FileSystem.h>
-#include <mesh/Model.h>
-#include <mesh/Mesh.h>
-#include <mesh/Geometry.h>
-#include <shading/Material.h>
-#include <shading/PhongMaterial.h>
-#include <shading/Texture2D.h>
+#include <gyo/mesh/Model.h>
+#include <gyo/mesh/Mesh.h>
+#include <gyo/internal/mesh/Geometry.h>
+#include <gyo/internal/shading/Material.h>
+#include <gyo/shading/PhongMaterial.h>
+#include <gyo/internal/shading/Texture2D.h>
 
 #include <iostream>
 

@@ -1,5 +1,5 @@
 
-#include <ui/Font.h>
+#include <gyo/internal/ui/Font.h>
 
 #include <glad/glad.h>
 

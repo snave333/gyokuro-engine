@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 
 #include <math/AABB.h>
-#include <shading/Material.h>
+#include <gyo/internal/shading/Material.h>
 
 namespace gyo {
 

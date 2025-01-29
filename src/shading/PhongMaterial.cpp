@@ -1,7 +1,7 @@
 
-#include <shading/PhongMaterial.h>
-#include <resources/Resources.h>
-#include <shading/Texture2D.h>
+#include <gyo/shading/PhongMaterial.h>
+#include <gyo/resources/Resources.h>
+#include <gyo/internal/shading/Texture2D.h>
 
 namespace gyo {
 

@@ -1,8 +1,8 @@
 
-#include <mesh/Skybox.h>
-#include <shading/Shader.h>
-#include <resources/Resources.h>
-#include <shading/TextureCube.h>
+#include <gyo/mesh/Skybox.h>
+#include <gyo/internal/shading/Shader.h>
+#include <gyo/resources/Resources.h>
+#include <gyo/internal/shading/TextureCube.h>
 
 #include <glad/glad.h>
 

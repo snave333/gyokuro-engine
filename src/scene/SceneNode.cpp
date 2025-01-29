@@ -1,5 +1,5 @@
 
-#include <scene/SceneNode.h>
+#include <gyo/internal/scene/SceneNode.h>
 
 namespace gyo {
 

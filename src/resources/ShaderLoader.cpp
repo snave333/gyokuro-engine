@@ -1,6 +1,6 @@
 
-#include <resources/ShaderLoader.h>
-#include <shading/Shader.h>
+#include <gyo/internal/resources/ShaderLoader.h>
+#include <gyo/internal/shading/Shader.h>
 #include <utilities/FileSystem.h>
 
 #include <fstream>

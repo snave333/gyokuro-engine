@@ -1,5 +1,5 @@
 
-#include <camera/FlyCamera.h>
+#include <gyo/internal/camera/FlyCamera.h>
 
 namespace gyo {
 

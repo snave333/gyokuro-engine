@@ -1,7 +1,7 @@
 #ifndef SPOT_LIGHT_H
 #define SPOT_LIGHT_H
 
-#include <lighting/Light.h>
+#include <gyo/internal/lighting/Light.h>
 
 namespace gyo {
 

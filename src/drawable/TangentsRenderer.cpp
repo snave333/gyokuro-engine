@@ -1,7 +1,7 @@
 
-#include <drawable/TangentsRenderer.h>
-#include <resources/Resources.h>
-#include <shading/Shader.h>
+#include <gyo/drawable/TangentsRenderer.h>
+#include <gyo/resources/Resources.h>
+#include <gyo/internal/shading/Shader.h>
 
 #include <glad/glad.h>
 

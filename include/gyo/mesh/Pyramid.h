@@ -1,7 +1,7 @@
 #ifndef PYRAMID_H
 #define PYRAMID_H
 
-#include <mesh/Geometry.h>
+#include <gyo/internal/mesh/Geometry.h>
 
 namespace gyo {
 

@@ -1,8 +1,8 @@
 #ifndef MODEL_NODE_H
 #define MODEL_NODE_H
 
-#include <scene/SceneNode.h>
-#include <mesh/Model.h>
+#include <gyo/internal/scene/SceneNode.h>
+#include <gyo/mesh/Model.h>
 
 #include <glm/glm.hpp>
 

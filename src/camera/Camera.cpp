@@ -8,7 +8,7 @@
  * }; // total size with std140 layout: 144 bytes
  */
 
-#include <camera/Camera.h>
+#include <gyo/internal/camera/Camera.h>
 
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>

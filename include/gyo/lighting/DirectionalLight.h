@@ -1,7 +1,7 @@
 #ifndef DIRECTIONAL_LIGHT_H
 #define DIRECTIONAL_LIGHT_H
 
-#include <lighting/Light.h>
+#include <gyo/internal/lighting/Light.h>
 
 namespace gyo {
 

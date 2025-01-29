@@ -1,5 +1,5 @@
 
-#include <shading/TextureCube.h>
+#include <gyo/internal/shading/TextureCube.h>
 
 #include <glad/glad.h>
 

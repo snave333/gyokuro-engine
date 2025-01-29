@@ -1,11 +1,11 @@
 
 #include <iostream>
 
-#include <renderer/Renderer.h>
-#include <renderer/ScreenQuad.h>
-#include <renderer/DrawCall.h>
-#include <mesh/Mesh.h>
-#include <mesh/Skybox.h>
+#include <gyo/internal/renderer/Renderer.h>
+#include <gyo/internal/renderer/ScreenQuad.h>
+#include <gyo/internal/renderer/DrawCall.h>
+#include <gyo/mesh/Mesh.h>
+#include <gyo/mesh/Skybox.h>
 
 #include <glad/glad.h>
 

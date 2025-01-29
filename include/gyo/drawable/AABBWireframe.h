@@ -4,7 +4,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include <drawable/IDrawable.h>
+#include <gyo/internal/drawable/IDrawable.h>
 #include <math/AABB.h>
 
 namespace gyo {

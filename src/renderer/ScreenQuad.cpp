@@ -1,7 +1,7 @@
 
-#include <renderer/ScreenQuad.h>
-#include <shading/Shader.h>
-#include <resources/Resources.h>
+#include <gyo/internal/renderer/ScreenQuad.h>
+#include <gyo/internal/shading/Shader.h>
+#include <gyo/resources/Resources.h>
 
 #include <glad/glad.h>
 

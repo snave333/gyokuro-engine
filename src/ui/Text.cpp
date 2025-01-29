@@ -1,9 +1,9 @@
 
-#include <ui/Text.h>
+#include <gyo/internal/ui/Text.h>
 
-#include <ui/Font.h>
-#include <shading/Shader.h>
-#include <resources/Resources.h>
+#include <gyo/internal/ui/Font.h>
+#include <gyo/internal/shading/Shader.h>
+#include <gyo/resources/Resources.h>
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>

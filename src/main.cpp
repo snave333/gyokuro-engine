@@ -10,7 +10,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <core/Engine.h>
+#include <gyo/core/Engine.h>
 #include <scene_loader.h>
 
 int main(int argc, const char * argv[]) {

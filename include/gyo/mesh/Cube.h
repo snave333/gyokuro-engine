@@ -1,7 +1,7 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-#include <mesh/Geometry.h>
+#include <gyo/internal/mesh/Geometry.h>
 
 namespace gyo {
 

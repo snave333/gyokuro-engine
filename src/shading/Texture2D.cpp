@@ -1,5 +1,5 @@
 
-#include <shading/Texture2D.h>
+#include <gyo/internal/shading/Texture2D.h>
 
 #include <glad/glad.h>
 

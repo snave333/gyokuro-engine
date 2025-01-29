@@ -1,5 +1,5 @@
 
-#include <mesh/Model.h>
+#include <gyo/mesh/Model.h>
 #include <math/AABB.h>
 
 namespace gyo {

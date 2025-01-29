@@ -4,19 +4,19 @@
 #include <sstream>
 #include <algorithm>
 
-#include <scene/SceneController.h>
-#include <scene/SceneNode.h>
-#include <renderer/Renderer.h>
-#include <renderer/DrawCall.h>
-#include <drawable/IDrawable.h>
-#include <resources/Resources.h>
-#include <shading/Shader.h>
-#include <lighting/LightNode.h>
-#include <lighting/LightsUBO.h>
-#include <mesh/ModelNode.h>
-#include <mesh/Skybox.h>
-#include <camera/FlyCamera.h>
-#include <ui/Text.h>
+#include <gyo/scene/SceneController.h>
+#include <gyo/internal/scene/SceneNode.h>
+#include <gyo/internal/renderer/Renderer.h>
+#include <gyo/internal/renderer/DrawCall.h>
+#include <gyo/internal/drawable/IDrawable.h>
+#include <gyo/resources/Resources.h>
+#include <gyo/internal/shading/Shader.h>
+#include <gyo/lighting/LightNode.h>
+#include <gyo/internal/lighting/LightsUBO.h>
+#include <gyo/mesh/ModelNode.h>
+#include <gyo/mesh/Skybox.h>
+#include <gyo/internal/camera/FlyCamera.h>
+#include <gyo/internal/ui/Text.h>
 #include <utilities/Clock.h>
 
 #include <glm/gtc/matrix_transform.hpp>

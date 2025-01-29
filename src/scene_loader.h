@@ -3,27 +3,7 @@
 
 #include <glm/glm.hpp>
 
-#include <resources/Resources.h>
-#include <scene/SceneController.h>
-
-#include <mesh/ModelNode.h>
-#include <mesh/Model.h>
-#include <mesh/Mesh.h>
-#include <mesh/Cube.h>
-#include <mesh/Quad.h>
-#include <mesh/Sphere.h>
-#include <mesh/Torus.h>
-#include <mesh/Pyramid.h>
-#include <drawable/AABBWireframe.h>
-#include <drawable/TangentsRenderer.h>
-#include <mesh/Skybox.h>
-#include <shading/UnlitMaterial.h>
-#include <shading/PhongMaterial.h>
-#include <shading/GoochMaterial.h>
-#include <lighting/LightNode.h>
-#include <lighting/DirectionalLight.h>
-#include <lighting/PointLight.h>
-#include <lighting/SpotLight.h>
+#include <gyo/gyo.h>
 
 using namespace gyo;
 

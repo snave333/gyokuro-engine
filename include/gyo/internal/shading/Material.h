@@ -1,8 +1,8 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include <shading/Shader.h>
-#include <renderer/RenderType.h>
+#include <gyo/internal/shading/Shader.h>
+#include <gyo/internal/renderer/RenderType.h>
 
 #include <glm/glm.hpp>
 

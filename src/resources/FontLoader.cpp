@@ -1,6 +1,6 @@
 
-#include <resources/FontLoader.h>
-#include <ui/Font.h>
+#include <gyo/internal/resources/FontLoader.h>
+#include <gyo/internal/ui/Font.h>
 #include <utilities/FileSystem.h>
 
 #include <iostream>

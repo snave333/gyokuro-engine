@@ -1,5 +1,5 @@
 
-#include <camera/CameraNode.h>
+#include <gyo/internal/camera/CameraNode.h>
 
 namespace gyo {
 

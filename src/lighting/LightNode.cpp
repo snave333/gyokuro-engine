@@ -1,5 +1,5 @@
 
-#include <lighting/LightNode.h>
+#include <gyo/lighting/LightNode.h>
 
 namespace gyo {
 

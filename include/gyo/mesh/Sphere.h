@@ -1,7 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include <mesh/Geometry.h>
+#include <gyo/internal/mesh/Geometry.h>
 #include <glm/gtc/constants.hpp>
 
 namespace gyo {

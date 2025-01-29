@@ -1,18 +1,18 @@
 
-#include <resources/Resources.h>
-#include <resources/ModelLoader.h>
-#include <resources/ShaderLoader.h>
-#include <resources/TextureLoader.h>
-#include <resources/FontLoader.h>
+#include <gyo/resources/Resources.h>
+#include <gyo/internal/resources/ModelLoader.h>
+#include <gyo/internal/resources/ShaderLoader.h>
+#include <gyo/internal/resources/TextureLoader.h>
+#include <gyo/internal/resources/FontLoader.h>
 #include <utilities/FileSystem.h>
 #include <utilities/Hash.h>
 
-#include <mesh/Model.h>
-#include <mesh/Geometry.h>
-#include <shading/Shader.h>
-#include <shading/Texture2D.h>
-#include <shading/TextureCube.h>
-#include <ui/Font.h>
+#include <gyo/mesh/Model.h>
+#include <gyo/internal/mesh/Geometry.h>
+#include <gyo/internal/shading/Shader.h>
+#include <gyo/internal/shading/Texture2D.h>
+#include <gyo/internal/shading/TextureCube.h>
+#include <gyo/internal/ui/Font.h>
 
 #include <glad/glad.h>
 

@@ -2,8 +2,8 @@
 #define TANGENTS_RENDERER_H
 
 #include <glm/glm.hpp>
-#include <drawable/IDrawable.h>
-#include <mesh/Geometry.h>
+#include <gyo/internal/drawable/IDrawable.h>
+#include <gyo/internal/mesh/Geometry.h>
 
 namespace gyo {
 

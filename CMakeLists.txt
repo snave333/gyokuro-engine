@@ -92,6 +92,7 @@ add_executable(Gyokuro
 
 # include headers
 target_include_directories(Gyokuro PRIVATE src)
+target_include_directories(Gyokuro PRIVATE include)
 target_include_directories(Gyokuro PRIVATE ${JPEGLIB_INCLUDE_DIR})
 
 # link with our dependencies

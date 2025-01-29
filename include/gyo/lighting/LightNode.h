@@ -1,8 +1,8 @@
 #ifndef LIGHT_NODE_H
 #define LIGHT_NODE_H
 
-#include <scene/SceneNode.h>
-#include <lighting/Light.h>
+#include <gyo/internal/scene/SceneNode.h>
+#include <gyo/internal/lighting/Light.h>
 
 namespace gyo {
 

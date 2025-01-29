@@ -1,8 +1,8 @@
 #ifndef CAMERA_NODE_H
 #define CAMERA_NODE_H
 
-#include <camera/Camera.h>
-#include <scene/SceneNode.h>
+#include <gyo/internal/camera/Camera.h>
+#include <gyo/internal/scene/SceneNode.h>
 #include <math/Frustum.h>
 
 namespace gyo {

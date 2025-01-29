@@ -1,8 +1,8 @@
 
-#include <shading/UnlitMaterial.h>
-#include <shading/Shader.h>
-#include <shading/Texture2D.h>
-#include <resources/Resources.h>
+#include <gyo/shading/UnlitMaterial.h>
+#include <gyo/internal/shading/Shader.h>
+#include <gyo/internal/shading/Texture2D.h>
+#include <gyo/resources/Resources.h>
 
 namespace gyo {
 

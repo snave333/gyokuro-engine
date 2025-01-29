@@ -1,7 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <mesh/Mesh.h>
+#include <gyo/mesh/Mesh.h>
 
 #include <glm/glm.hpp>
 

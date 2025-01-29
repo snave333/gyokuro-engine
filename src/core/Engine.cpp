@@ -4,10 +4,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <core/Engine.h>
-#include <renderer/Renderer.h>
-#include <scene/SceneController.h>
-#include <resources/Resources.h>
+#include <gyo/core/Engine.h>
+#include <gyo/internal/renderer/Renderer.h>
+#include <gyo/scene/SceneController.h>
+#include <gyo/resources/Resources.h>
 
 namespace gyo {
 

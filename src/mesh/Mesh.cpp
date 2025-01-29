@@ -1,9 +1,9 @@
 
 #include <map>
 
-#include <mesh/Mesh.h>
-#include <mesh/Geometry.h>
-#include <shading/Material.h>
+#include <gyo/mesh/Mesh.h>
+#include <gyo/internal/mesh/Geometry.h>
+#include <gyo/internal/shading/Material.h>
 
 #include <glad/glad.h>
 

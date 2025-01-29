@@ -1,9 +1,10 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include <vector>
 #include <glm/glm.hpp>
 
-#include <renderer/RenderState.h>
+#include <gyo/internal/renderer/RenderState.h>
 
 namespace gyo {
 

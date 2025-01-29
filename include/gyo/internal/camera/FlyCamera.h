@@ -1,7 +1,7 @@
 #ifndef FLY_CAMERA_H
 #define FLY_CAMERA_H
 
-#include <camera/CameraNode.h>
+#include <gyo/internal/camera/CameraNode.h>
 
 namespace gyo {
 
