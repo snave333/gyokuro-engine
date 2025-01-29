@@ -17,6 +17,7 @@
 #include <lighting/DirectionalLight.h>
 #include <lighting/PointLight.h>
 #include <lighting/SpotLight.h>
+#include <scene/SceneController.h>
 
 #include <glm/glm.hpp>
 #include <glad/glad.h>
@@ -66,11 +67,11 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
         const PointLight* pLight = dynamic_cast<const PointLight*>(lights[i]->GetLight());
         const SpotLight* sLight = dynamic_cast<const SpotLight*>(lights[i]->GetLight());
 
-        if(pLight) {
+        if(pLight && pointLights.size() < SceneController::MAX_POINT_LIGHTS) {
             pointLights.push_back(pLight);
             pointLightPositions.push_back(lights[i]->GetPosition());
         }
-        else if(sLight) {
+        else if(sLight && spotLights.size() < SceneController::MAX_SPOT_LIGHTS) {
             spotLights.push_back(sLight);
             spotLightPositions.push_back(lights[i]->GetPosition());
             spotLightDirections.push_back(lights[i]->GetForward());

@@ -1,27 +1,12 @@
 #ifndef SCENE_CONTROLLER_H
 #define SCENE_CONTROLLER_H
 
+#include <functional>
 #include <glm/glm.hpp>
 
+#include <utilities/FrameStats.h>
+
 namespace gyo {
-
-struct FrameStats {
-    float geometryMs = 0;
-    float vfcMs = 0;
-    float opaqueMs = 0;
-    float alphaMs = 0;
-    unsigned int drawCalls = 0;
-    unsigned int tris = 0;
-
-    void Reset() {
-        geometryMs = 0;
-        vfcMs = 0;
-        opaqueMs = 0;
-        alphaMs = 0;
-        drawCalls = 0;
-        tris = 0;
-    }
-};
 
 class Renderer;
 class DrawCall;
