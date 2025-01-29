@@ -7,7 +7,6 @@
 
 class Material;
 struct AABB;
-enum RenderType;
 
 class Model {
 private:

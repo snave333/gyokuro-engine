@@ -201,10 +201,10 @@ void Renderer::RenderTransparent(std::vector<DrawCall> drawCalls) {
         shader.SetMat4("normalMatrix", dc.normalMatrix);
 
         // set the proper gl blend mode
-        if(dc.material->renderType == TRANSPARENT) {
+        if(dc.material->renderType == RenderType::TRANSPARENT) {
             state.SetBlendingEnabled(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
-        else if(dc.material->renderType == ADDITIVE) {
+        else if(dc.material->renderType == RenderType::ADDITIVE) {
             state.SetBlendingEnabled(true, GL_SRC_ALPHA, GL_ONE);
         }
 

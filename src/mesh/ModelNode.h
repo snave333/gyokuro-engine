@@ -9,7 +9,6 @@
 class Mesh;
 class Material;
 struct AABB;
-enum RenderType;
 
 class ModelNode : public SceneNode {
 public:

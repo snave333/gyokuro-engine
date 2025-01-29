@@ -8,7 +8,7 @@
 #include <math/AABB.h>
 #include <math/Plane.h>
 
-enum FrustumTestResult {
+enum class FrustumTestResult {
     OUTSIDE,
     INSIDE,
     INTERSECTING
@@ -37,6 +37,7 @@ struct Frustum {
         return LUT;
     }
 
+#if 0
     /**
      * Adapted from https://www.cse.chalmers.se/~uffe/vfc_bbox.pdf
      */
@@ -55,7 +56,7 @@ struct Frustum {
             float a = glm::dot(plane.normal, vn) + plane.distance;
             if (a < 0) {
                 // if the n-vertex is outside, the box is outside
-                return OUTSIDE;
+                return FrustumTestResult::OUTSIDE;
             }
 
             // determine the p-vertex relative to the plane normal
@@ -73,7 +74,7 @@ struct Frustum {
             }
         }
 
-        return intersects ? INTERSECTING : INSIDE;
+        return intersects ? FrustumTestResult::INTERSECTING : FrustumTestResult::INSIDE;
     }
 
     /**
@@ -96,7 +97,7 @@ struct Frustum {
             float a = glm::dot(plane.normal, vn) + plane.distance;
             if (a < 0) {
                 // if the n-vertex is outside, the box is outside
-                return OUTSIDE;
+                return FrustumTestResult::OUTSIDE;
             }
 
             // determine the p-vertex relative to the plane normal
@@ -110,8 +111,9 @@ struct Frustum {
             }
         }
 
-        return intersects ? INTERSECTING : INSIDE;
+        return intersects ? FrustumTestResult::INTERSECTING : FrustumTestResult::INSIDE;
     }
+#endif
 
     /**
      * Same as above, except optimized with plane-coherency
@@ -140,7 +142,7 @@ struct Frustum {
                 *planeFailIdx = d;
 
                 // if the n-vertex is outside, the box is outside
-                return OUTSIDE;
+                return FrustumTestResult::OUTSIDE;
             }
 
             // determine the p-vertex relative to the plane normal
@@ -154,7 +156,7 @@ struct Frustum {
             }
         }
 
-        return intersects ? INTERSECTING : INSIDE;
+        return intersects ? FrustumTestResult::INTERSECTING : FrustumTestResult::INSIDE;
     }
 };
 

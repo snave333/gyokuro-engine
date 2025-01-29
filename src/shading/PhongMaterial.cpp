@@ -47,7 +47,7 @@ PhongMaterial::PhongMaterial(
 
     hasAlpha = hasAlpha || this->diffuseMap->hasAlpha;
     if(hasAlpha) {
-        renderType = TRANSPARENT;
+        renderType = RenderType::TRANSPARENT;
     }
 }
 

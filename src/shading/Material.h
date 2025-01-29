@@ -16,7 +16,7 @@ public:
     
     const Shader& GetShader() const { return *shader; }
 
-    RenderType renderType = OPAQUE;
+    RenderType renderType = RenderType::OPAQUE;
     bool usesDirectLighting = false; // include scene direct lighting
 
 protected:

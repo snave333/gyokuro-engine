@@ -167,7 +167,7 @@ void SceneController::RenderScene() {
     for(const auto& modelNode : visibleModels) {
         const std::vector<Mesh*>& meshes = modelNode->GetModel().GetMeshes();
         for(Mesh* mesh : meshes) {
-            if(mesh->GetRenderType() == OPAQUE) {
+            if(mesh->GetRenderType() == RenderType::OPAQUE) {
                 opaqueDrawCalls.push_back(DrawCall{
                     mesh,
                     mesh->GetMaterial(),
@@ -244,7 +244,7 @@ void SceneController::FrustumCull(
         // FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT);
         FrustumTestResult result = cameraFrustum.TestAABBIntersection(bounds, boundsLUT, frustumLUT, &modelNode->boundsLastFailedFrustumPlane);
 
-        if(result != OUTSIDE) {
+        if(result != FrustumTestResult::OUTSIDE) {
             visibleSceneModels.push_back(modelNode);
         }
     }

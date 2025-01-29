@@ -10,7 +10,7 @@ public:
     static Engine* Instance;
     
 public:
-    Engine(unsigned int width, unsigned int height);
+    Engine(unsigned int ptWidth, unsigned int ptHeight);
     ~Engine();
 
     const bool& IsRunning() const { return isRunning; }

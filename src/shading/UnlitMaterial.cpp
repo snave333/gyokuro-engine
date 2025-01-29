@@ -33,10 +33,10 @@ UnlitMaterial::UnlitMaterial(
     }
 
     if(additive) {
-        renderType = ADDITIVE;
+        renderType = RenderType::ADDITIVE;
     }
     else if(hasAlpha) {
-        renderType = TRANSPARENT;
+        renderType = RenderType::TRANSPARENT;
     }
 }
 

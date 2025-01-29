@@ -10,7 +10,6 @@
 
 class Shader;
 struct Geometry;
-enum RenderType;
 
 class Mesh {
 public:

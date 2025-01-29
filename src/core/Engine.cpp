@@ -11,7 +11,7 @@
 
 Engine* Engine::Instance = nullptr;
 
-Engine::Engine(unsigned int width, unsigned int height) {
+Engine::Engine(unsigned int ptWidth, unsigned int ptHeight) {
     if(Engine::Instance) {
         throw std::runtime_error("Cannot have 2 instances of Engine");
     }
@@ -34,8 +34,8 @@ Engine::Engine(unsigned int width, unsigned int height) {
 #endif
 
     // create the window object, and make the window context the main context
-    window = glfwCreateWindow(width, height, "Gyokuro", NULL, NULL);
-    if (window == NULL) {
+    window = glfwCreateWindow(ptWidth, ptHeight, "Gyokuro", nullptr, nullptr);
+    if (window == nullptr) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         isRunning = true;
@@ -53,9 +53,9 @@ Engine::Engine(unsigned int width, unsigned int height) {
     }
     
     // set our gl window size
-    // int width, height;
-    // glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
+    int pxWidth, pxHeight;
+    glfwGetFramebufferSize(window, &pxWidth, &pxHeight);
+    glViewport(0, 0, pxWidth, pxHeight);
     
     // listen for resize event
     glfwSetFramebufferSizeCallback(window, Engine::glfwOnResize);
@@ -68,8 +68,8 @@ Engine::Engine(unsigned int width, unsigned int height) {
 
     Resources::Initialize();
 
-    renderer = new Renderer(width, height);
-    sceneController = new SceneController(renderer, width, height);
+    renderer = new Renderer(pxWidth, pxHeight);
+    sceneController = new SceneController(renderer, pxWidth, pxHeight);
 
     isRunning = true;
 }
