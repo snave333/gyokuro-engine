@@ -5,14 +5,13 @@
 
 #include <renderer/RenderState.h>
 
-struct GLFWwindow;
 class ScreenQuad;
 class DrawCall;
 class Skybox;
 
 class Renderer {
 public:
-    Renderer(GLFWwindow* window, const int& width, const int& height);
+    Renderer(const int& width, const int& height);
     ~Renderer();
 
     void CreateFrameBuffer();
@@ -27,7 +26,6 @@ public:
     void EndFrame();
 
 private:
-    GLFWwindow* window = nullptr;
     glm::ivec2 size;
 
     RenderState state;

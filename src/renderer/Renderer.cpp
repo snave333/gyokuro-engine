@@ -8,10 +8,8 @@
 #include <mesh/Skybox.h>
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
-Renderer::Renderer(GLFWwindow* window, const int& width, const int& height) {
-    this->window = window;
+Renderer::Renderer(const int& width, const int& height) {
     size = glm::ivec2(width, height);
 
     state = RenderState();
@@ -28,8 +26,6 @@ Renderer::Renderer(GLFWwindow* window, const int& width, const int& height) {
 }
 
 Renderer::~Renderer() {
-    window = nullptr;
-
     delete screenQuad;
     screenQuad = nullptr;
 
@@ -231,6 +227,4 @@ void Renderer::EndGeometryPass() {
 
 void Renderer::EndFrame() {
     // TODO do final tonemapping and gamma correction pass here?
-
-    glfwSwapBuffers(window);
 }

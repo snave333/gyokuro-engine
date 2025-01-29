@@ -3,10 +3,7 @@
 
 #include <glm/glm.hpp>
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
+#include <resources/Resources.h>
 #include <scene/SceneController.h>
 
 #include <mesh/ModelNode.h>
@@ -29,7 +26,7 @@
 #include <lighting/SpotLight.h>
 
 struct SceneLoader {
-    static void LoadVFCScene(SceneController* sc) {
+    static void LoadVFCScene(SceneController& sc) {
         int w = 10;
         int h = 5;
         int d = 10;
@@ -44,13 +41,13 @@ struct SceneLoader {
                     model->SetPosition(x * spacing, y * spacing, z * spacing);
                     model->SetScale(0.5f);
 
-                    sc->AddNode(model);
+                    sc.AddNode(model);
                 }
             }
         }
     }
 
-    static void LoadLightingScene(SceneController* sc) {
+    static void LoadLightingScene(SceneController& sc) {
         // add the lighting first
 
         LightNode* dirLight = new LightNode(new DirectionalLight(glm::vec3(1, 1, 0.8f) * 0.0f)); // disabled for now
@@ -84,16 +81,16 @@ struct SceneLoader {
         spotLight2->Rotate(45, -15, 0);
         spotLight2Model->Rotate(-45, -15, 0);
 
-        sc->AddNode(dirLight);
-        sc->AddNode(pointLight1);
-        sc->AddNode(pointLight2);
-        sc->AddNode(spotLight1);
-        sc->AddNode(spotLight2);
+        sc.AddNode(dirLight);
+        sc.AddNode(pointLight1);
+        sc.AddNode(pointLight2);
+        sc.AddNode(spotLight1);
+        sc.AddNode(spotLight2);
 
-        sc->AddNode(pointLight1Model);
-        sc->AddNode(pointLight2Model);
-        sc->AddNode(spotLight1Model);
-        sc->AddNode(spotLight2Model);
+        sc.AddNode(pointLight1Model);
+        sc.AddNode(pointLight2Model);
+        sc.AddNode(spotLight1Model);
+        sc.AddNode(spotLight2Model);
 
         // skybox
 
@@ -106,7 +103,7 @@ struct SceneLoader {
             "skybox_pz.jpg"
         };
         Skybox* skybox = new Skybox(Resources::GetTextureCube(faces, true));
-        sc->SetSkybox(skybox);
+        sc.SetSkybox(skybox);
 
         // next add the models
 
@@ -149,15 +146,15 @@ struct SceneLoader {
                 Resources::GetTexture("crate_SPEC.jpg", false)))));
         m4->Translate(0, -1, 4);
 
-        sc->AddNode(floor);
-        sc->AddNode(m1);
-        sc->AddNode(m2);
-        sc->AddNode(m3);
-        sc->AddNode(m4);
+        sc.AddNode(floor);
+        sc.AddNode(m1);
+        sc.AddNode(m2);
+        sc.AddNode(m3);
+        sc.AddNode(m4);
 
         // our update function
 
-        sc->AddUpdateFunction([m1, m2, m3, m4](float dt) {
+        sc.AddUpdateFunction([m1, m2, m3, m4](float dt) {
             m1->Rotate(dt * 45, glm::normalize(glm::vec3(0.5f, 1.0, 0.0)));
             m2->Rotate(dt * 60, glm::normalize(glm::vec3(0, 1.0, 0.0)));
             m3->Rotate(0, dt * -15, 0);
@@ -165,7 +162,7 @@ struct SceneLoader {
         });
     }
 
-    static void LoadTransparencyScene(SceneController* sc) {
+    static void LoadTransparencyScene(SceneController& sc) {
         // skybox
 
         std::vector<const char*> faces {
@@ -177,7 +174,7 @@ struct SceneLoader {
             "skybox_pz.jpg"
         };
         Skybox* skybox = new Skybox(Resources::GetTextureCube(faces, true));
-        sc->SetSkybox(skybox);
+        sc.SetSkybox(skybox);
 
         // transparent objects
 
@@ -192,12 +189,12 @@ struct SceneLoader {
         m3->Translate(0, -0.25f, 3);
         m3->Rotate(180, 0, 0);
 
-        sc->AddNode(m1);
-        sc->AddNode(m2);
-        sc->AddNode(m3);
+        sc.AddNode(m1);
+        sc.AddNode(m2);
+        sc.AddNode(m3);
     }
 
-    static void LoadDrawablesScene(SceneController* sc) {
+    static void LoadDrawablesScene(SceneController& sc) {
         // meshes objects
 
         ModelNode* m1 = new ModelNode(new Model({
@@ -210,8 +207,8 @@ struct SceneLoader {
         ModelNode* m2 = new ModelNode(new Model(new Mesh(geo, new UnlitMaterial({ 0, 0.5, 1, 1 }))));
         m2->Translate(-1, 0, 0);
 
-        sc->AddNode(m1);
-        sc->AddNode(m2);
+        sc.AddNode(m1);
+        sc.AddNode(m2);
 
         // utility objects
 
@@ -219,12 +216,12 @@ struct SceneLoader {
 
         TangentsRenderer* tangents = new TangentsRenderer(*geo, 0.05f);
 
-        sc->AddDrawable(aabb);
-        sc->AddDrawable(tangents);
+        sc.AddDrawable(aabb);
+        sc.AddDrawable(tangents);
 
         // our update function
 
-        sc->AddUpdateFunction([m1, m2, aabb, tangents](float dt) {
+        sc.AddUpdateFunction([m1, m2, aabb, tangents](float dt) {
             m1->Rotate(dt * 45, glm::normalize(glm::vec3(0.5f, 1.0, 0.0)));
             m2->Rotate(dt * 15, glm::normalize(glm::vec3(0, 1.0, 0.0)));
 
@@ -233,7 +230,7 @@ struct SceneLoader {
         });
     }
 
-    static void LoadGoochScene(SceneController* sc) {
+    static void LoadGoochScene(SceneController& sc) {
         // light
 
         glm::vec3 pointLight1Color = glm::vec3(1, 1, 1) * 4.0f;
@@ -242,19 +239,19 @@ struct SceneLoader {
         pointLight1->Translate(-3, 1, -2);
         pointLight1Model->Translate(-3, 1, -2);
 
-        sc->AddNode(pointLight1);
+        sc.AddNode(pointLight1);
 
-        sc->AddNode(pointLight1Model);
+        sc.AddNode(pointLight1Model);
 
         // models
 
         ModelNode* m1 = new ModelNode(new Model(new Mesh(new Sphere(), new GoochMaterial())));
         m1->Scale(2);
 
-        sc->AddNode(m1);
+        sc.AddNode(m1);
     }
 
-    static void LoadModelScene(SceneController* sc) {
+    static void LoadModelScene(SceneController& sc) {
         // some lighting
 
         glm::vec3 pointLight1Color = glm::vec3(0.8f, 0.8f, 1);
@@ -271,11 +268,11 @@ struct SceneLoader {
         pointLight2->Translate(p2Position);
         pointLight2Model->Translate(p2Position);
 
-        sc->AddNode(pointLight1);
-        sc->AddNode(pointLight2);
+        sc.AddNode(pointLight1);
+        sc.AddNode(pointLight2);
 
-        sc->AddNode(pointLight1Model);
-        sc->AddNode(pointLight2Model);
+        sc.AddNode(pointLight1Model);
+        sc.AddNode(pointLight2Model);
 
         // the models we're loading
 
@@ -294,10 +291,10 @@ struct SceneLoader {
         dice->Translate(1, 0, 0);
         dice->Scale(0.5f);
 
-        sc->AddNode(helmet);
-        sc->AddNode(dice);
+        sc.AddNode(helmet);
+        sc.AddNode(dice);
 
-        sc->AddUpdateFunction([helmet, dice](float dt) {
+        sc.AddUpdateFunction([helmet, dice](float dt) {
             helmet->Rotate(0, dt * -15, 0);
             dice->Rotate(0, dt * -15, 0);
         });

@@ -59,6 +59,7 @@ set(CMAKE_BUILD_TYPE Debug)
 # add the executable
 add_executable(Gyokuro
     src/main.cpp
+    src/core/Engine.cpp
     src/renderer/Renderer.cpp
     src/renderer/ScreenQuad.cpp
     src/renderer/RenderState.cpp
