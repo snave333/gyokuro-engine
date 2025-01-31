@@ -172,22 +172,6 @@ target_link_libraries(gyokuro
         freetype
 )
 
-# ----- Copy our resources -----
-
-# set shader source and build directories
-set(RESOURCES_SRC_DIR "${CMAKE_SOURCE_DIR}/resources")
-set(RESOURCES_DST_DIR "${CMAKE_BINARY_DIR}/resources")
-
-# add a custom target to copy resources
-add_custom_target(copy_resources ALL
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${RESOURCES_SRC_DIR} ${RESOURCES_DST_DIR}
-    COMMENT "Copying resources to build directory"
-)
-
-# ensure Gyokuro depends on the copy_resources target
-add_dependencies(gyokuro copy_resources)
-
 # ----- Build our samples -----
 
 # build the samples (conditionally)

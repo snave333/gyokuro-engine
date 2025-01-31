@@ -1,7 +1,18 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(vfc LANGUAGES CXX)
+set(SAMPLE_NAME "vfc")
 
-add_executable(vfc MACOSX_BUNDLE main.cpp)
+project(${SAMPLE_NAME} LANGUAGES CXX)
 
-target_link_libraries(vfc PUBLIC gyokuro)
+add_executable(${SAMPLE_NAME} main.cpp)
+
+target_link_libraries(${SAMPLE_NAME} PUBLIC gyokuro)
+
+add_custom_target(copy_resources ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${gyokuro_SOURCE_DIR}/resources
+    ${CMAKE_CURRENT_BINARY_DIR}/resources
+    COMMENT "Copying resources to binary directory"
+)
+
+add_dependencies(${SAMPLE_NAME} copy_resources)

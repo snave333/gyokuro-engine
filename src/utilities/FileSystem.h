@@ -5,6 +5,7 @@
 
 #ifdef __APPLE__
 #include <mach-o/dyld.h>
+#include <stdlib.h>
 #else
 #include <windows.h>
 #endif
@@ -20,6 +21,25 @@ private:
     static const char PATH_SEPARATOR = '\\';
 #endif
 
+    static std::string RealPath(const std::string& path) {
+        return RealPath(std::string(path.c_str()));
+    }
+
+    static std::string RealPath(const char* path) {
+#ifdef __APPLE__
+        // resolves all symbolic links, extra ``/'' characters, and references
+        // to /./ and /../ in buffer
+        char resolved[PATH_MAX];
+        if(!realpath(path, resolved)) {
+            throw std::runtime_error(
+                std::string("Failed to resolve path at") + std::string(resolved));
+        }
+        return std::string(resolved);
+#else
+        // TODO
+#endif
+    }
+
 public:
     static std::string GetCurrentWorkingDirectory() {
 #ifdef __APPLE__
@@ -28,7 +48,7 @@ public:
         if (_NSGetExecutablePath(buffer, &size) != 0) {
             throw std::runtime_error("Failed to retrieve executable path");
         }
-        std::string fullPath(buffer);
+        std::string fullPath = RealPath(buffer);
         return fullPath.substr(0, fullPath.find_last_of("/")); // Remove executable name
 #else
         char buffer[MAX_PATH];
