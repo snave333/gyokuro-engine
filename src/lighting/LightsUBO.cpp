@@ -12,7 +12,7 @@
  * }; // total size with std140 layout: 576 bytes
  */
 
-#include <gyo/internal/lighting/LightsUBO.h>
+#include <lighting/LightsUBO.h>
 #include <gyo/lighting/LightNode.h>
 #include <gyo/lighting/DirectionalLight.h>
 #include <gyo/lighting/PointLight.h>

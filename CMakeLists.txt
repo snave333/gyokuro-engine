@@ -10,9 +10,114 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # require the OpenGL framework
 find_package(OpenGL REQUIRED)
 
+# compile with debug symbols and without optimization so we hit breakpoints
+set(CMAKE_BUILD_TYPE Debug)
+
+# ----- List our header and source files -----
+
+set(PUBLIC_HEADERS
+        include/gyo/core/Engine.h
+        include/gyo/drawable/AABBWireframe.h
+        include/gyo/drawable/TangentsRenderer.h
+        include/gyo/lighting/DirectionalLight.h
+        include/gyo/lighting/LightNode.h
+        include/gyo/lighting/PointLight.h
+        include/gyo/lighting/SpotLight.h
+        include/gyo/mesh/Cube.h
+        include/gyo/mesh/Mesh.h
+        include/gyo/mesh/Model.h
+        include/gyo/mesh/ModelNode.h
+        include/gyo/mesh/Pyramid.h
+        include/gyo/mesh/Quad.h
+        include/gyo/mesh/Skybox.h
+        include/gyo/mesh/Sphere.h
+        include/gyo/mesh/Torus.h
+        include/gyo/resources/Resources.h
+        include/gyo/scene/SceneController.h
+        include/gyo/shading/GoochMaterial.h
+        include/gyo/shading/PhongMaterial.h
+        include/gyo/shading/UnlitMaterial.h
+        include/gyo/gyo.h
+)
+
+set(PRIVATE_HEADERS
+        include/gyo/internal/drawable/IDrawable.h
+        include/gyo/internal/lighting/Light.h
+        include/gyo/internal/mesh/Geometry.h
+        include/gyo/internal/renderer/RenderType.h
+        include/gyo/internal/scene/SceneNode.h
+        include/gyo/internal/shading/Material.h
+        include/gyo/internal/shading/Shader.h
+        include/gyo/internal/shading/Texture2D.h
+        include/gyo/internal/shading/TextureCube.h
+        include/gyo/internal/ui/Font.h
+        include/gyo/internal/ui/Text.h
+        src/camera/Camera.h
+        src/camera/CameraNode.h
+        src/camera/FlyCamera.h
+        src/glad/glad.h
+        src/glad/khrplatform.h
+        src/math/AABB.h
+        src/math/Frustum.h
+        src/math/Plane.h
+        src/math/Sphere.h
+        src/glad/LightsUBO.h
+        src/renderer/DrawCall.h
+        src/renderer/Renderer.h
+        src/renderer/RenderState.h
+        src/renderer/ScreenQuad.h
+        src/resources/FontLoader.h
+        src/resources/ShaderLoader.h
+        src/resources/TextureLoader.h
+        src/resources/ModelLoader.h
+        src/stb_image/stb_image.h
+        src/utilities/Clock.h
+        src/utilities/FileSystem.h
+        src/utilities/FrameStats.h
+        src/utilities/Hash.h
+)
+
+set(SOURCES
+        src/camera/Camera.cpp
+        src/camera/CameraNode.cpp
+        src/camera/FlyCamera.cpp
+        src/core/Engine.cpp
+        src/drawable/AABBWireframe.cpp
+        src/drawable/TangentsRenderer.cpp
+        src/glad/glad.c
+        src/lighting/LightNode.cpp
+        src/lighting/LightsUBO.cpp
+        src/mesh/Mesh.cpp
+        src/mesh/Model.cpp
+        src/mesh/ModelNode.cpp
+        src/mesh/Skybox.cpp
+        src/renderer/Renderer.cpp
+        src/renderer/RenderState.cpp
+        src/renderer/ScreenQuad.cpp
+        src/resources/FontLoader.cpp
+        src/resources/ModelLoader.cpp
+        src/resources/Resources.cpp
+        src/resources/ShaderLoader.cpp
+        src/resources/TextureLoader.cpp
+        src/scene/SceneController.cpp
+        src/scene/SceneNode.cpp
+        src/shading/GoochMaterial.cpp
+        src/shading/PhongMaterial.cpp
+        src/shading/Shader.cpp
+        src/shading/Texture2D.cpp
+        src/shading/TextureCube.cpp
+        src/shading/UnlitMaterial.cpp
+        src/stb_image/stb_image.c
+        src/ui/Font.cpp
+        src/ui/Text.cpp
+)
+
+# ---- Add our dependencies -----
+
 # configure and add glfw
 set( GLFW_BUILD_DOCS OFF CACHE BOOL "GLFW lib only" )
 set( GLFW_INSTALL OFF CACHE BOOL "GLFW lib only" )
+set( GLFW_BUILD_EXAMPLES ON CACHE BOOL "Build example executables" )
 add_subdirectory( deps/glfw )
 
 # add glm and freetype
@@ -45,72 +150,29 @@ ExternalProject_Get_Property(jpeglib install_dir)
 set(JPEGLIB_INCLUDE_DIR ${install_dir}/include)
 set(JPEGLIB_LIBRARY ${install_dir}/lib/libjpeg.a)
 
-# compile with debug symbols and without optimization so we hit breakpoints
-set(CMAKE_BUILD_TYPE Debug)
+# ----- Add and link our library -----
 
 # add the library
-add_library(gyokuro)
-
-# add the executable
-target_sources(gyokuro
-    PRIVATE
-        src/core/Engine.cpp
-        src/renderer/Renderer.cpp
-        src/renderer/ScreenQuad.cpp
-        src/renderer/RenderState.cpp
-        src/shading/UnlitMaterial.cpp
-        src/shading/PhongMaterial.cpp
-        src/shading/GoochMaterial.cpp
-        src/shading/Shader.cpp
-        src/shading/Texture2D.cpp
-        src/shading/TextureCube.cpp
-        src/lighting/LightNode.cpp
-        src/lighting/LightsUBO.cpp
-        src/mesh/Mesh.cpp
-        src/mesh/Model.cpp
-        src/mesh/ModelNode.cpp
-        src/mesh/Skybox.cpp
-        src/drawable/AABBWireframe.cpp
-        src/drawable/TangentsRenderer.cpp
-        src/camera/Camera.cpp
-        src/camera/CameraNode.cpp
-        src/camera/FlyCamera.cpp
-        src/scene/SceneNode.cpp
-        src/scene/SceneController.cpp
-        src/resources/Resources.cpp
-        src/resources/ModelLoader.cpp
-        src/resources/ShaderLoader.cpp
-        src/resources/TextureLoader.cpp
-        src/resources/FontLoader.cpp
-        src/ui/Font.cpp
-        src/ui/Text.cpp
-        src/glad/glad.c
-        src/stb_image/stb_image.c
-)
-
+add_library(gyokuro STATIC ${SOURCES})
 
 # include headers
-target_include_directories(gyokuro
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  # Public API
-        $<INSTALL_INTERFACE:include>
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/gyo/internal  # Internal headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/src  # Allow inclusion of headers from /src
-)
+include_directories(include)
+include_directories(src)
+target_include_directories(gyokuro PUBLIC ${PUBLIC_HEADERS} PRIVATE ${PRIVATE_HEADERS})
 target_include_directories(gyokuro PRIVATE ${JPEGLIB_INCLUDE_DIR})
 
 # link with our dependencies
 target_link_libraries(gyokuro
+    PUBLIC
+        glm
     PRIVATE
-        glad
         glfw
-        stb_image
         ${JPEGLIB_LIBRARY}
         assimp
-        glm
         freetype
 )
+
+# ----- Copy our resources -----
 
 # set shader source and build directories
 set(RESOURCES_SRC_DIR "${CMAKE_SOURCE_DIR}/resources")
@@ -125,3 +187,11 @@ add_custom_target(copy_resources ALL
 
 # ensure Gyokuro depends on the copy_resources target
 add_dependencies(gyokuro copy_resources)
+
+# ----- Build our samples -----
+
+# build the samples (conditionally)
+option(GYO_BUILD_SAMPLES "Build sample executables" ON)
+if(GYO_BUILD_SAMPLES)
+    add_subdirectory(samples)
+endif()

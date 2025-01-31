@@ -1,5 +1,5 @@
 
-#include <gyo/internal/renderer/ScreenQuad.h>
+#include <renderer/ScreenQuad.h>
 #include <gyo/internal/shading/Shader.h>
 #include <gyo/resources/Resources.h>
 

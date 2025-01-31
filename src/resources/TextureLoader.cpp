@@ -1,5 +1,5 @@
 
-#include <gyo/internal/resources/TextureLoader.h>
+#include <resources/TextureLoader.h>
 #include <gyo/internal/shading/Texture2D.h>
 #include <gyo/internal/shading/TextureCube.h>
 #include <utilities/FileSystem.h>

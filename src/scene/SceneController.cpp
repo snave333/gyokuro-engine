@@ -6,16 +6,16 @@
 
 #include <gyo/scene/SceneController.h>
 #include <gyo/internal/scene/SceneNode.h>
-#include <gyo/internal/renderer/Renderer.h>
-#include <gyo/internal/renderer/DrawCall.h>
+#include <renderer/Renderer.h>
+#include <renderer/DrawCall.h>
 #include <gyo/internal/drawable/IDrawable.h>
 #include <gyo/resources/Resources.h>
 #include <gyo/internal/shading/Shader.h>
 #include <gyo/lighting/LightNode.h>
-#include <gyo/internal/lighting/LightsUBO.h>
+#include <lighting/LightsUBO.h>
 #include <gyo/mesh/ModelNode.h>
 #include <gyo/mesh/Skybox.h>
-#include <gyo/internal/camera/FlyCamera.h>
+#include <camera/FlyCamera.h>
 #include <gyo/internal/ui/Text.h>
 #include <utilities/Clock.h>
 
@@ -133,6 +133,10 @@ void SceneController::Render() {
         return;
     }
 
+    visibleModels.clear();
+    opaqueDrawCalls.clear();
+    alphaDrawCalls.clear();
+
     renderer->BeginFrame(); // set frame buffer, clear
     
     RenderScene(); // opaque geometry, skybox, and transparent geometry passes
@@ -145,19 +149,14 @@ void SceneController::Render() {
     RenderStats();
 
     renderer->EndFrame(); // final tonemapping / gamma correction, swap buffers
-
-    stats.Reset();
-    visibleModels.clear();
-    opaqueDrawCalls.clear();
-    alphaDrawCalls.clear();
 }
 
 void SceneController::RenderScene() {
-    CLOCKT(geometry_pass, &stats.geometryMs);
+    CLOCKT(geometry_pass, &renderer->stats.geometryMs);
     
     // view frustum culling
     {
-        CLOCKT(frustum_culling, &stats.vfcMs);
+        CLOCKT(frustum_culling, &renderer->stats.vfcMs);
 
         FrustumCull(camera->GetFrustum(), models, visibleModels);
     }
@@ -186,32 +185,32 @@ void SceneController::RenderScene() {
                 });
             }
 
-            stats.drawCalls++;
-            stats.tris += mesh->GetNumTris();
+            renderer->stats.drawCalls++;
+            renderer->stats.tris += mesh->GetNumTris();
         }
     }
 
     // opaque pass
     {
-        CLOCKT(render_opaque, &stats.opaqueMs);
+        CLOCKT(render_opaque, &renderer->stats.opaqueMs);
 
         renderer->RenderOpaque(opaqueDrawCalls);
 
         if(skybox != nullptr) {
             renderer->RenderSkybox(skybox, camera->GetView(), camera->GetProjection());
-            stats.drawCalls++;
-            stats.tris += 12;
+            renderer->stats.drawCalls++;
+            renderer->stats.tris += 12;
         }
     }
 
     for(IDrawable* drawable : drawables) {
         drawable->Draw();
-        stats.drawCalls++;
+        renderer->stats.drawCalls++;
     }
 
     // transparency pass
     {
-        CLOCKT(render_alpha, &stats.alphaMs);
+        CLOCKT(render_alpha, &renderer->stats.alphaMs);
 
         // sort furthest to closest length squared from camera position
         // NOTE this doesn't take rotation or scale into account
@@ -259,33 +258,40 @@ void SceneController::RenderStats() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     std::vector<std::string> strings = {};
+    std::ostringstream stream;
+    stream.precision(2);
+
+    // fps
+
+    stream << std::fixed << renderer->stats.fps;
+    strings.push_back(stream.str() + std::string(" fps"));
 
     // view frustum culling
 
-    std::ostringstream stream;
-    stream.precision(2);
-    stream << std::fixed << stats.vfcMs;
+    stream.str("");
+    stream.clear();
+    stream << std::fixed << renderer->stats.vfcMs;
     strings.push_back(std::string("vfc: ") + stream.str() + std::string(" ms"));
 
     // opaque pass
 
     stream.str("");
     stream.clear();
-    stream << std::fixed << stats.opaqueMs;
+    stream << std::fixed << renderer->stats.opaqueMs;
     strings.push_back(std::string("opaque pass: ") + stream.str() + std::string(" ms"));
 
     // alpha pass
 
     stream.str("");
     stream.clear();
-    stream << std::fixed << stats.alphaMs;
+    stream << std::fixed << renderer->stats.alphaMs;
     strings.push_back(std::string("alpha pass: ") + stream.str() + std::string(" ms"));
 
     // total geometry pass
 
     stream.str("");
     stream.clear();
-    stream << std::fixed << stats.geometryMs;
+    stream << std::fixed << renderer->stats.geometryMs;
     strings.push_back(std::string("total: ") + stream.str() + std::string(" ms"));
 
     // now draw the stats
@@ -302,11 +308,11 @@ void SceneController::RenderStats() {
 
     // number of draw calls
 
-    textRenderer->RenderText(std::string("draw calls: ") + std::to_string(stats.drawCalls), 180, edgeBuffer + fontSize + spacing);
+    textRenderer->RenderText(std::string("draw calls: ") + std::to_string(renderer->stats.drawCalls), 180, edgeBuffer + fontSize + spacing);
 
     // number of tris
 
-    textRenderer->RenderText(std::string("tris: ") + std::to_string(stats.tris), 180, edgeBuffer);
+    textRenderer->RenderText(std::string("tris: ") + std::to_string(renderer->stats.tris), 180, edgeBuffer);
 
     glDisable(GL_BLEND);
 }

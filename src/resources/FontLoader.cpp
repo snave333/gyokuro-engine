@@ -1,5 +1,5 @@
 
-#include <gyo/internal/resources/FontLoader.h>
+#include <resources/FontLoader.h>
 #include <gyo/internal/ui/Font.h>
 #include <utilities/FileSystem.h>
 

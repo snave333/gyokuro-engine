@@ -1,5 +1,5 @@
 
-#include <gyo/internal/renderer/RenderState.h>
+#include <renderer/RenderState.h>
 
 namespace gyo {
 

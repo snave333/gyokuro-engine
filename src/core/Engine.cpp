@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include <gyo/core/Engine.h>
-#include <gyo/internal/renderer/Renderer.h>
+#include <renderer/Renderer.h>
 #include <gyo/scene/SceneController.h>
 #include <gyo/resources/Resources.h>
 
@@ -90,6 +90,8 @@ Engine::~Engine() {
 }
 
 void Engine::Frame() {
+    renderer->stats.Reset();
+
     if(glfwWindowShouldClose(window)) {
         isRunning = false;
         return;
@@ -103,7 +105,7 @@ void Engine::Frame() {
     dt = currentTime - lastUpdateTime;
     lastUpdateTime = currentTime;
     if(dt > 0.0f) {
-        fps = 1.0f / dt;
+        renderer->stats.fps = 1.0f / dt;
     }
     // std::cout << (int)(dt * 1000) << " ms, " << (int)fps << " fps" << std::endl;
 

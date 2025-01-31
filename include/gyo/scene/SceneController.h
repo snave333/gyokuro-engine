@@ -4,8 +4,6 @@
 #include <functional>
 #include <glm/glm.hpp>
 
-#include <utilities/FrameStats.h>
-
 namespace gyo {
 
 class Renderer;
@@ -66,7 +64,6 @@ private:
     float lastMouseY;
 
     // per-frame
-    FrameStats stats;
     std::vector<ModelNode*> visibleModels = {};
     std::vector<DrawCall> opaqueDrawCalls = {};
     std::vector<DrawCall> alphaDrawCalls = {};

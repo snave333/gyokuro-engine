@@ -1,7 +1,7 @@
 
-#include <gyo/internal/resources/ModelLoader.h>
+#include <resources/ModelLoader.h>
 #include <gyo/resources/Resources.h>
-#include <gyo/internal/resources/TextureLoader.h>
+#include <resources/TextureLoader.h>
 #include <utilities/FileSystem.h>
 #include <gyo/mesh/Model.h>
 #include <gyo/mesh/Mesh.h>

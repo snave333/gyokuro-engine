@@ -1,5 +1,5 @@
 
-#include <gyo/internal/resources/ShaderLoader.h>
+#include <resources/ShaderLoader.h>
 #include <gyo/internal/shading/Shader.h>
 #include <utilities/FileSystem.h>
 

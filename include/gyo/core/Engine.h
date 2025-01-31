@@ -18,6 +18,7 @@ public:
 
     const bool& IsRunning() const { return isRunning; }
     void Frame();
+    void ShutDown() { isRunning = false; }
 
     SceneController& sc() { return *sceneController; }
 

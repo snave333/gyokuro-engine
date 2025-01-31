@@ -1,8 +1,15 @@
 #ifndef Model_LOADER_H
 #define Model_LOADER_H
 
+#include <string>
+#include <vector>
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
+#include <assimp/material.h>
+
+struct aiScene;
+struct aiNode;
+struct aiMesh;
+struct aiMaterial;
 
 namespace gyo {
 

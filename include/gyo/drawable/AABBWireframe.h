@@ -5,11 +5,11 @@
 #include <glm/glm.hpp>
 
 #include <gyo/internal/drawable/IDrawable.h>
-#include <math/AABB.h>
 
 namespace gyo {
 
 class Shader;
+struct AABB;
 
 class AABBWireframe : public IDrawable {
 public:

@@ -4,7 +4,8 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include <gyo/internal/renderer/RenderState.h>
+#include <renderer/RenderState.h>
+#include <utilities/FrameStats.h>
 
 namespace gyo {
 
@@ -14,6 +15,8 @@ class Skybox;
 
 class Renderer {
 public:
+    FrameStats stats;
+
     Renderer(const int& width, const int& height);
     ~Renderer();
 

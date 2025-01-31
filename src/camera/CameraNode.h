@@ -1,13 +1,11 @@
 #ifndef CAMERA_NODE_H
 #define CAMERA_NODE_H
 
-#include <gyo/internal/camera/Camera.h>
+#include <camera/Camera.h>
 #include <gyo/internal/scene/SceneNode.h>
 #include <math/Frustum.h>
 
 namespace gyo {
-
-struct Frustum;
 
 class CameraNode : public SceneNode {
 public:

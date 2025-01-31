@@ -1,9 +1,9 @@
 
 #include <gyo/resources/Resources.h>
-#include <gyo/internal/resources/ModelLoader.h>
-#include <gyo/internal/resources/ShaderLoader.h>
-#include <gyo/internal/resources/TextureLoader.h>
-#include <gyo/internal/resources/FontLoader.h>
+#include <resources/ModelLoader.h>
+#include <resources/ShaderLoader.h>
+#include <resources/TextureLoader.h>
+#include <resources/FontLoader.h>
 #include <utilities/FileSystem.h>
 #include <utilities/Hash.h>
 
