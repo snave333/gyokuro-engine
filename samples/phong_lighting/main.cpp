@@ -32,20 +32,21 @@ int main(int argc, const char * argv[]) {
 void loadScene(SceneController& sc) {
     // add the lights first
 
-    LightNode* dirLight = new LightNode(new DirectionalLight(glm::vec3(1, 1, 0.8f) * 0.0f)); // disabled for now
-    dirLight->Rotate(45, 60, 0);
-
     glm::vec3 pointLight1Color = glm::vec3(0.2f, 0.6f, 1);
     LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color, 10));
     ModelNode* pointLight1Model = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f)))));
     pointLight1->Translate(3, -1, 4);
     pointLight1Model->Translate(3, -1, 4);
+    sc.AddNode(pointLight1);
+    sc.AddNode(pointLight1Model);
 
     glm::vec3 pointLight2Color = glm::vec3(1, 0.6f, 0.2f);
     LightNode* pointLight2 = new LightNode(new PointLight(pointLight2Color * 10.0f, 10));
     ModelNode* pointLight2Model = new ModelNode(new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(glm::vec4(pointLight2Color, 1.0f)))));
     pointLight2->Translate(-3, -1, 4);
     pointLight2Model->Translate(-3, -1, 4);
+    sc.AddNode(pointLight2);
+    sc.AddNode(pointLight2Model);
 
     glm::vec3 spotLight1Color = glm::vec3(0.6f, 0.2f, 1.0f);
     LightNode* spotLight1 = new LightNode(new SpotLight(spotLight1Color * 6.0f, 20.0f, 10));
@@ -54,6 +55,8 @@ void loadScene(SceneController& sc) {
     spotLight1Model->Translate(4, 1, -5);
     spotLight1->Rotate(45, 0, 0);
     spotLight1Model->Rotate(-45, 0, 0);
+    sc.AddNode(spotLight1);
+    sc.AddNode(spotLight1Model);
 
     glm::vec3 spotLight2Color = glm::vec3(1.0f, 0.2f, 0.2f);
     LightNode* spotLight2 = new LightNode(new SpotLight(spotLight2Color * 6.0f, 40.0f, 10));
@@ -62,16 +65,7 @@ void loadScene(SceneController& sc) {
     spotLight2Model->Translate(2, 1, -5);
     spotLight2->Rotate(45, -15, 0);
     spotLight2Model->Rotate(-45, -15, 0);
-
-    sc.AddNode(dirLight);
-    sc.AddNode(pointLight1);
-    sc.AddNode(pointLight2);
-    sc.AddNode(spotLight1);
     sc.AddNode(spotLight2);
-
-    sc.AddNode(pointLight1Model);
-    sc.AddNode(pointLight2Model);
-    sc.AddNode(spotLight1Model);
     sc.AddNode(spotLight2Model);
 
     // next add the models
@@ -85,6 +79,7 @@ void loadScene(SceneController& sc) {
     floor->Translate(0, -2, 0);
     floor->Rotate(-90, 0, 0);
     floor->Scale(10);
+    sc.AddNode(floor);
 
     ModelNode* crate = new ModelNode(new Model(new Mesh(new Cube(),
         new PhongMaterial(
@@ -94,8 +89,6 @@ void loadScene(SceneController& sc) {
             Resources::GetTexture("crate_DIFF.jpg", true),
             Resources::GetTexture("crate_SPEC.jpg", false)))));
     crate->Translate(0, -1, 4);
-
-    sc.AddNode(floor);
     sc.AddNode(crate);
 
     // our update function
