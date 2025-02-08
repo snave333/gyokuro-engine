@@ -194,6 +194,32 @@ void Renderer::RenderTransparent(std::vector<DrawCall> drawCalls) {
     state.SetDepthTestingEnabled(true);
     state.SetBlendingEnabled(true);
 
+    // TODO first render back faces, then front faces?
+    /*
+    state.SetFaceCullingEnabled(true, GL_FRONT);
+
+    for(const DrawCall& dc : drawCalls) {
+        // only render the backfaces of transparent types
+        if(dc.material->renderType == RenderType::ADDITIVE) {
+            continue;
+        }
+        
+        dc.material->Queue();
+        const Shader& shader = dc.material->GetShader();
+
+        // set any shader uniforms
+        shader.SetMat4("model", dc.transform);
+        shader.SetMat4("normalMatrix", dc.normalMatrix);
+
+        // set the proper gl blend mode (no-op if already set)
+        state.SetBlendingEnabled(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        dc.mesh->Draw();
+    }
+
+    state.SetFaceCullingEnabled(true, GL_BACK);
+    */
+
     for(const DrawCall& dc : drawCalls) {
         dc.material->Queue();
         const Shader& shader = dc.material->GetShader();
