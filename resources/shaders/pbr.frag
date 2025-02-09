@@ -10,18 +10,22 @@ in VS_OUT {
 } fs_in;
 
 #include "camera.glsl"
-#include "lights.glsl"
-#include "pbr.glsl"
-
-// material
-uniform vec3 albedo;
-uniform float metallic;
-uniform float roughness;
-uniform float ao;
+#include "physical_lighting.glsl"
 
 void main()
 {
-    vec3 a = albedo;
-    vec3 mra = vec3(metallic, roughness, ao);
-    FragColor = vec4(1, 0.5, 0, 1);
+    vec3 V = normalize(viewPos.xyz - fs_in.fragPos);
+    vec3 N = normalize(fs_in.normal);
+    vec3 P = fs_in.fragPos;
+
+    vec3 Lo = calcIrradiance(V, P, N);
+
+    vec3 ambient = globalAmbient.rgb * albedo * ao;
+    vec3 color = ambient + Lo;
+
+    // gamma correct?
+    // color = color / (color + vec3(1.0));
+    // color = pow(color, vec3(1.0 / 2.2));
+
+    FragColor = vec4(color, 1.0);
 }

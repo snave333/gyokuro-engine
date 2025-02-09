@@ -85,7 +85,11 @@ void loadScene(SceneController& sc) {
 
             // std::cout << std::to_string(metalness) << ", " << std::to_string(roughness) << std::endl;
 
-            ModelNode* model = new ModelNode(new Model(new Mesh(new Sphere(), new PBRMaterial())));
+            ModelNode* model = new ModelNode(new Model(new Mesh(new Sphere(), new PBRMaterial(
+                { 1, 1, 1 },
+                metalness,
+                roughness
+            ))));
             model->SetPosition(x * spacing, y * spacing, z);
             model->SetScale(0.5f);
             sc.AddNode(model);

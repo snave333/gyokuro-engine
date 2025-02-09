@@ -1,4 +1,4 @@
-#include "material.glsl"
+#include "phong_material.glsl"
 #include "lights.glsl"
 
 struct LightingResult {

@@ -11,7 +11,7 @@ in VS_OUT {
 
 #include "normal.glsl"
 #include "camera.glsl"
-#include "lighting.glsl"
+#include "phong_lighting.glsl"
 
 void main()
 {
