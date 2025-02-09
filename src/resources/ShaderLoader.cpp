@@ -16,6 +16,8 @@ std::string ShaderLoader::ResourceDir = "";
 std::string ShaderLoader::IncludesDir = "";
 
 Shader ShaderLoader::LoadShader(const char* vertFileName, const char* fragFileName) {
+    std::cout << "Compiling shaders " << vertFileName << " & " << fragFileName << std::endl;
+
     // read the base file contents
     std::string vShaderCodeStr = ReadFile(vertFileName, false);
     std::string fShaderCodeStr = ReadFile(fragFileName, false);
@@ -88,6 +90,8 @@ Shader ShaderLoader::LoadShader(
     const char* geomFileName,
     const char* fragFileName)
 {
+    std::cout << "Compiling shaders " << vertFileName << ", " << geomFileName << ", & " << fragFileName << std::endl;
+    
     // read the base file contents
     std::string vShaderCodeStr = ReadFile(vertFileName, false);
     std::string gShaderCodeStr = ReadFile(geomFileName, false);
@@ -258,6 +262,8 @@ void ShaderLoader::GetUniformLocations(unsigned int id, std::map<std::string, in
     int numUniforms;
     glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &numUniforms);
 
+    std::cout << "Found " << std::to_string(numUniforms) << " uniforms:" << std::endl;
+
     int maxUniformNameLength;
     glGetProgramiv(id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformNameLength);
 
@@ -271,6 +277,8 @@ void ShaderLoader::GetUniformLocations(unsigned int id, std::map<std::string, in
         glGetActiveUniform(id, i, maxUniformNameLength, &length, &size, &type, nameBuffer);
 
         int location = glGetUniformLocation(id, nameBuffer);
+
+        std::cout << "- " << std::string(nameBuffer, length) << std::endl;
 
         uniforms[std::string(nameBuffer, length)] = location;
     }

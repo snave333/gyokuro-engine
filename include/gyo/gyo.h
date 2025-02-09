@@ -24,5 +24,6 @@
 #include <gyo/scene/SceneController.h>
 
 #include <gyo/shading/GoochMaterial.h>
+#include <gyo/shading/PBRMaterial.h>
 #include <gyo/shading/PhongMaterial.h>
 #include <gyo/shading/UnlitMaterial.h>

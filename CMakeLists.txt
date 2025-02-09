@@ -35,6 +35,7 @@ set(PUBLIC_HEADERS
         include/gyo/resources/Resources.h
         include/gyo/scene/SceneController.h
         include/gyo/shading/GoochMaterial.h
+        include/gyo/shading/PBRMaterial.h
         include/gyo/shading/PhongMaterial.h
         include/gyo/shading/UnlitMaterial.h
         include/gyo/gyo.h
@@ -102,6 +103,7 @@ set(SOURCES
         src/scene/SceneController.cpp
         src/scene/SceneNode.cpp
         src/shading/GoochMaterial.cpp
+        src/shading/PBRMaterial.cpp
         src/shading/PhongMaterial.cpp
         src/shading/Shader.cpp
         src/shading/Texture2D.cpp

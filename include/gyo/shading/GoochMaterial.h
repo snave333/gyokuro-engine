@@ -7,8 +7,6 @@
 
 namespace gyo {
 
-class Texture2D;
-
 class GoochMaterial : public Material {
 public:
     GoochMaterial(
