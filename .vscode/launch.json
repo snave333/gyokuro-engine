@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "targetArchitecture": "arm64",
-            "program": "${workspaceFolder}/build/samples/phong_lighting/phong_lighting",
+            "program": "${workspaceFolder}/build/samples/pbr/pbr",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
