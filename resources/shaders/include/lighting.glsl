@@ -32,13 +32,6 @@ float calcSpecular(vec3 V, vec3 L, vec3 N, float a) {
     return pow(NdotH, a);
 }
 
-float calcAttenuation(float c, float l, float q, float distance) {
-    return 1.0 / (
-        c +
-        l * distance +
-        q * (distance * distance));
-}
-
 // technique taken from https://www.3dgep.com/texturing-lighting-directx-11/#Spotlight_Cone
 float calcSpotCone(SpotLight light, vec3 L) {
     float minCos = light.cosAngle;
@@ -66,12 +59,7 @@ LightingResult calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N) {
     float distance = length(L);
     L = L / distance; // normalize
 
-    // attenuation
-    float attenuation = calcAttenuation(
-        light.attenuation.r,
-        light.attenuation.g,
-        light.attenuation.b,
-        distance);
+    float attenuation = 1.0 / (distance * distance);
 
     result.diffuse = light.color.rgb * calcDiffuse(L, N) * attenuation;
     result.specular = light.color.rgb * calcSpecular(V, L, N, material.shininess) * attenuation;
@@ -93,12 +81,7 @@ LightingResult calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N) {
         return result;
     }
 
-    // attenuation
-    float attenuation = calcAttenuation(
-        light.attenuation.r,
-        light.attenuation.g,
-        light.attenuation.b,
-        distance);
+    float attenuation = 1.0 / (distance * distance);
 
     result.diffuse = light.color.rgb * calcDiffuse(L, N) * attenuation * spotlightFactor;
     result.specular = light.color.rgb * calcSpecular(V, L, N, material.shininess) * attenuation * spotlightFactor;

@@ -37,28 +37,28 @@ void loadScene(SceneController& sc) {
     float lz = -3;
     glm::vec3 lColor = glm::vec3(1, 1, 1) * 2.0f;
 
-    LightNode* p1 = new LightNode(new PointLight(lColor, 15));
+    LightNode* p1 = new LightNode(new PointLight(lColor));
     ModelNode* p1M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
     p1->Translate(dist, dist, lz);
     p1M->Translate(dist, dist, lz);
     sc.AddNode(p1);
     sc.AddNode(p1M);
 
-    LightNode* p2 = new LightNode(new PointLight(lColor, 15));
+    LightNode* p2 = new LightNode(new PointLight(lColor));
     ModelNode* p2M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
     p2->Translate(-dist, dist, lz);
     p2M->Translate(-dist, dist, lz);
     sc.AddNode(p2);
     sc.AddNode(p2M);
 
-    LightNode* p3 = new LightNode(new PointLight(lColor, 15));
+    LightNode* p3 = new LightNode(new PointLight(lColor));
     ModelNode* p3M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
     p3->Translate(dist, -dist, lz);
     p3M->Translate(dist, -dist, lz);
     sc.AddNode(p3);
     sc.AddNode(p3M);
 
-    LightNode* p4 = new LightNode(new PointLight(lColor, 15));
+    LightNode* p4 = new LightNode(new PointLight(lColor));
     ModelNode* p4M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
     p4->Translate(-dist, -dist, lz);
     p4M->Translate(-dist, -dist, lz);

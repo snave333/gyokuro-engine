@@ -33,7 +33,7 @@ void loadScene(SceneController& sc) {
     // light
 
     glm::vec3 pointLight1Color = glm::vec3(1, 1, 1) * 4.0f;
-    LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color, 10));
+    LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color));
     ModelNode* pointLight1Model = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f)))));
     pointLight1->Translate(-3, 1, -2);
     pointLight1Model->Translate(-3, 1, -2);

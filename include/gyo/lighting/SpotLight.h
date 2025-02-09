@@ -7,14 +7,9 @@ namespace gyo {
 
 struct SpotLight : public Light {
     float cosAngle;
-    // attenuation
-    float constant;
-    float linear;
-    float quadratic;
 
-    SpotLight(glm::vec3 color, float angleDeg, float range) : Light(color) {
+    SpotLight(glm::vec3 color, float angleDeg) : Light(color) {
         cosAngle = glm::cos(glm::radians(angleDeg));
-        GetAttenuation(range, constant, linear, quadratic);
     }
 };
 

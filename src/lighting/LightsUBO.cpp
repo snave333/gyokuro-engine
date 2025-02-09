@@ -4,12 +4,12 @@
  * layout (std140) uniform Lights {
  *     vec4 globalAmbient;                         // .rgb: ambient light color, .a: 0 [unused]
  *     DirectionalLight dirLight;                  // 32 bytes
- *     PointLight pointLights[MAX_POINT_LIGHTS];   // 192 bytes (48 * 4)
- *     SpotLight spotLights[MAX_SPOT_LIGHTS];      // 320 bytes (80 * 4)
+ *     PointLight pointLights[MAX_POINT_LIGHTS];   // 128 bytes (32 * 4)
+ *     SpotLight spotLights[MAX_SPOT_LIGHTS];      // 256 bytes (64 * 4)
  *     int numPointLights;                         // 4 bytes
  *     int numSpotLights;                          // 4 bytes
- *     // 8 bytes of padding
- * }; // total size with std140 layout: 576 bytes
+ *     // 8 bytes padding
+ * }; // total size with std140 layout: 464 bytes
  */
 
 #include <lighting/LightsUBO.h>
@@ -31,7 +31,7 @@ LightsUBO::LightsUBO() {
     glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
 
     // the size of our ubo
-    unsigned long size = 576;
+    unsigned long size = 464;
     
     // allocate enough memory for all of the light uniform values
     glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW);
@@ -112,8 +112,7 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
         struct PointLight {
             vec4 position;                              // .xyz: light world-space position, .w: 0 [unused]
             vec4 color;                                 // .rgb: light color, .a: 0 [unused]
-            vec4 attenuation;                           // .r: constant, .g: linear, .b: quadratic, .a: 0 [unused]
-        }; // total size with std140 layout: 48 bytes
+        }; // total size with std140 layout: 32 bytes
      */
     for(int i = 0; i < numPointLights; i++) {
         const PointLight* light = pointLights[i];
@@ -123,23 +122,17 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
         offset += 16;
         glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(light->color, 0)));
         offset += 16;
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(
-            light->constant,
-            light->linear,
-            light->quadratic,
-            0)));
-        offset += 16;
     }
-    offset = 240; // 16 + 32 + 192
+    offset = 176; // 16 + 32 + 128
 
     /**
         struct SpotLight {
             vec4 position;                              // .xyz: light world-space position, .w: 0 [unused]
             vec4 direction;                             // .xyz: normalized light direction, .w: 0 [unused]
             vec4 color;                                 // .rgb: light color, .a: 0 [unused]
-            vec4 attenuation;                           // .r: constant, .g: linear, .b: quadratic, .a: 0 [unused]
-            float cosAngle;
-        }; // total size with std140 layout: 80 bytes
+            float cosAngle;                             // 4 bytes
+            // 12 bytes padding
+        }; // total size with std140 layout: 64 bytes
      */
     for(int i = 0; i < numSpotLights; i++) {
         const SpotLight* light = spotLights[i];
@@ -152,19 +145,10 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
         offset += 16;
         glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(light->color, 0)));
         offset += 16;
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(
-            light->constant,
-            light->linear,
-            light->quadratic,
-            0)));
-        offset += 16;
         glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(float), &light->cosAngle);
-        offset += 4;
-
-        // padding
-        offset += 12;
+        offset += 4 + 12; // 4, plus 12 bytes padding
     }
-    offset = 560; // 16 + 32 + 192 + 320
+    offset = 432; // 16 + 32 + 128 + 256
 
     // counters
 
