@@ -35,8 +35,9 @@ void loadScene(SceneController& sc) {
 
     float dist = 3;
     float lz = -3;
-    glm::vec3 lColor = glm::vec3(1, 1, 1) * 2.0f;
+    glm::vec3 lColor = glm::vec3(1, 1, 1) * 4.0f;
 
+#if 1 // point lights
     LightNode* p1 = new LightNode(new PointLight(lColor));
     ModelNode* p1M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
     p1->Translate(dist, dist, lz);
@@ -64,16 +65,39 @@ void loadScene(SceneController& sc) {
     p4M->Translate(-dist, -dist, lz);
     sc.AddNode(p4);
     sc.AddNode(p4M);
+#elif 1 // directional light
+    LightNode* dirLight = new LightNode(new DirectionalLight(lColor));
+    dirLight->Rotate(45, 60, 0);
+    sc.AddNode(dirLight);
+#elif 1 // spot lights
+    LightNode* spotLight1 = new LightNode(new SpotLight(lColor, 45.0f));
+    ModelNode* spotLight1Model = new ModelNode(new Model(new Mesh(new Pyramid(0.1f, 0.2f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
+    spotLight1->Translate(dist, 0, lz);
+    spotLight1Model->Translate(dist, 0, lz);
+    spotLight1->Rotate(0, -30, 0);
+    spotLight1Model->Rotate(-90, -30, 0);
+    sc.AddNode(spotLight1);
+    sc.AddNode(spotLight1Model);
+
+    LightNode* spotLight2 = new LightNode(new SpotLight(lColor, 30.0f));
+    ModelNode* spotLight2Model = new ModelNode(new Model(new Mesh(new Pyramid(0.15f, 0.2f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
+    spotLight2->Translate(-dist, 0, lz);
+    spotLight2Model->Translate(-dist, 0, lz);
+    spotLight2->Rotate(0, 30, 0);
+    spotLight2Model->Rotate(-90, 30, 0);
+    sc.AddNode(spotLight2);
+    sc.AddNode(spotLight2Model);
+#endif
 
     // spawn our grid of spheres
 
-    float z = 2;
+    float z = 0;
     float spacing = 0.6f;
 
-    int numRows = 7;
-    int numColumns = 7;    
+    int numRows = 5;
+    int numColumns = 5;    
     float metalness = 0;
-    float roughness = 0.05f;
+    float roughness = 0;
 
     for(int i = 0; i < numRows; i++) {
         float y = -floorf(numRows * 0.5f) + i;
@@ -81,12 +105,12 @@ void loadScene(SceneController& sc) {
 
         for(int j = 0; j < numColumns; j++) {
             float x = -floorf(numColumns * 0.5f) + j;
-            roughness = glm::clamp((float)j / (float)(numColumns - 1), 0.05f, 1.0f);
+            roughness = glm::clamp(1.0f - (float)j / (float)(numColumns - 1), 0.05f, 1.0f);
 
             // std::cout << std::to_string(metalness) << ", " << std::to_string(roughness) << std::endl;
 
             ModelNode* model = new ModelNode(new Model(new Mesh(new Sphere(), new PBRMaterial(
-                { 1, 1, 1 },
+                { 0, 0.8f, 1 },
                 metalness,
                 roughness
             ))));

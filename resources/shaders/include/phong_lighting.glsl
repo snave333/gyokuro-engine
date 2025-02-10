@@ -7,12 +7,13 @@ struct LightingResult {
 };
 
 /*
-  Direct lighting function definitions:
+    Analytic lighting function definitions:
 
-  P - the fragment position
-  N - the surface normal
-  L - the normalized direction from P to the light source
-  V - the normalized direction from P to the eye (camera position)
+    P - the fragment position
+    N - the surface normal
+    L - the normalized direction from P to the light source
+    V - the normalized direction from P to the eye (camera position)
+    H - halfway vector (between L and V)
 */
 
 float calcDiffuse(vec3 L, vec3 N) {
@@ -22,8 +23,8 @@ float calcDiffuse(vec3 L, vec3 N) {
 
 float calcSpecular(vec3 V, vec3 L, vec3 N, float a) {
     // specular (Phong)
-    vec3 R = reflect(-L, N);
-    float RdotV = max(dot(R, V), 0.0);
+    // vec3 R = reflect(-L, N);
+    // float RdotV = max(dot(R, V), 0.0);
 
     // specular (Blinn-Phong)
     vec3 H = normalize(L + V);
