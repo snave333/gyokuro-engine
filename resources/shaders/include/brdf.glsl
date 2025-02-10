@@ -11,7 +11,7 @@
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
     float a = roughness * roughness;
     float a2 = a * a;
-    float NdotH  = max(dot(N, H), 0.0);
+    float NdotH  = max(0.0, dot(N, H));
     float NdotH2 = NdotH * NdotH;
 	
     float num = a2;
@@ -24,7 +24,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness) {
 // Schlick-Beckmann geometry function to approximate the amount of light that
 // is shadowed or masked by microfacets on a rough surface
 float GeometrySchlickGGX(float NdotV, float roughness) {
-    float r = (roughness + 1.0);
+    float r = roughness + 1.0;
     float k = (r * r) / 8.0;
 
     float num = NdotV;
@@ -37,8 +37,8 @@ float GeometrySchlickGGX(float NdotV, float roughness) {
 // account both the view direction (geometry obstruction) and light direction
 // vector (geometry shadowing)
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
+    float NdotV = max(0.0, dot(N, V));
+    float NdotL = max(0.0, dot(N, L));
     float ggx2 = GeometrySchlickGGX(NdotV, roughness);
     float ggx1 = GeometrySchlickGGX(NdotL, roughness);
 	

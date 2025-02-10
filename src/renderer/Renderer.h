@@ -36,7 +36,7 @@ private:
 
     RenderState state;
 
-    const glm::vec3 clearColor = { 0.0f, 0.0f, 0.0f };
+    const glm::vec3 clearColor = { 0.0008f, 0.0008f, 0.0004f };
 
     // frame buffer
     ScreenQuad* screenQuad = nullptr;

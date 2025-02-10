@@ -51,7 +51,7 @@ private:
 
     Skybox* skybox = nullptr;
 
-    const glm::vec3 ambientLight = { 0.001f, 0.001f, 0.0005f };
+    const glm::vec3 ambientLight = { 0, 0, 0 };
     std::vector<LightNode*> lights = {};
     LightsUBO* lightsUBO = nullptr;
 

@@ -36,9 +36,9 @@ float calcSpecular(vec3 V, vec3 L, vec3 N, float a) {
 float calcSpotCone(SpotLight light, vec3 L) {
     float minCos = light.cosAngle;
     float maxCos = (minCos + 1.0f) / 2.0f;
-    float cosAngle = dot(light.direction.xyz, -L );
+    float cosAngle = max(0.0, dot(light.direction.xyz, -L));
 
-    return smoothstep( minCos, maxCos, cosAngle ); 
+    return smoothstep(minCos, maxCos, cosAngle); 
 }
 
 LightingResult calcDirectionalLight(DirectionalLight light, vec3 V, vec3 N) {
