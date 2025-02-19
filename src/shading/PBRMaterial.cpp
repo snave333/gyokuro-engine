@@ -26,10 +26,10 @@ PBRMaterial::~PBRMaterial() {
 void PBRMaterial::Queue() {
     shader->Use();
 
-    shader->SetVec3("albedo", albedo);
-    shader->SetFloat("metallic", metallic);
-    shader->SetFloat("roughness", roughness);
-    shader->SetFloat("ao", ao);
+    shader->SetVec3("material.albedo", albedo);
+    shader->SetFloat("material.metallic", metallic);
+    shader->SetFloat("material.roughness", roughness);
+    shader->SetFloat("material.ao", ao);
 }
 
 } // namespace gyo

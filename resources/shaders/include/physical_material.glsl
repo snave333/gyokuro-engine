@@ -1,4 +1,7 @@
-uniform vec3 albedo;
-uniform float metallic;
-uniform float roughness;
-uniform float ao;
+struct Material {
+    vec3 albedo;
+    float metallic;
+    float roughness;
+    float ao;
+};
+uniform Material material;

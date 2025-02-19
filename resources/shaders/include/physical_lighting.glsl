@@ -17,17 +17,17 @@
 vec3 calcReflectance(vec3 lR, vec3 V, vec3 N, vec3 L, vec3 H) {
     // pre-computed reflection coefficient
     vec3 F0 = vec3(0.04); 
-    F0 = mix(F0, albedo, metallic);
+    F0 = mix(F0, material.albedo, material.metallic);
 
     // our Cook-Torrance specular BRDF term
 
-    float D = DistributionGGX(N, H, roughness);
-    float G = GeometrySmith(N, V, L, roughness);
+    float D = DistributionGGX(N, H, material.roughness);
+    float G = GeometrySmith(N, V, L, material.roughness);
     vec3 F = fresnelSchlick(max(0.0, dot(H, V)), F0);
 
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - metallic;
+    kD *= 1.0 - material.metallic;
 
     vec3 numerator = D * G * F;
     float denominator = 4.0 * max(0.0, dot(N, V)) * max(0.0, dot(N, L)) + 0.0001; // prevent divide by 0
@@ -35,7 +35,7 @@ vec3 calcReflectance(vec3 lR, vec3 V, vec3 N, vec3 L, vec3 H) {
 
     float NdotL = max(0.0, dot(N, L));
 
-    return (kD * albedo / PI + specular) * lR * NdotL;
+    return (kD * material.albedo / PI + specular) * lR * NdotL;
 }
 
 vec3 calcDirectionalLight(DirectionalLight light, vec3 V, vec3 N) {

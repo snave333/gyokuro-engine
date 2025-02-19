@@ -20,7 +20,7 @@ void main()
 
     vec3 Lo = calcIrradiance(V, P, N);
 
-    vec3 ambient = globalAmbient.rgb * albedo * ao;
+    vec3 ambient = globalAmbient.rgb * material.albedo * material.ao;
     vec3 color = ambient + Lo;
 
     FragColor = vec4(color, 1.0);
