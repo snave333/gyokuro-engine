@@ -1,3 +1,3 @@
 #!/bin/zsh
 
-open build/Gyokuro
+open build/samples/phong_lighting/phong_lighting

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_set>
+#include <set>
 #include <map>
 
 namespace gyo {
@@ -18,13 +19,13 @@ public:
     static Shader LoadShader(
         const char* vertFileName,
         const char* fragFileName,
-        const std::unordered_set<std::string>& defines
+        const std::set<std::string>& defines
     );
     static Shader LoadShader(
         const char* vertFileName,
         const char* geomFileName,
         const char* fragFileName,
-        const std::unordered_set<std::string>& defines
+        const std::set<std::string>& defines
     );
 
 private:

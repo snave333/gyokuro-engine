@@ -83,17 +83,21 @@ void loadScene(SceneController& sc) {
 
     ModelNode* crate = new ModelNode(new Model(new Mesh(new Cube(),
         new PhongMaterial(
-            { 1, 1, 1, 1 },
-            { 1, 1, 1 },
-            128,
+            { 1, 1, 1, 1 }, { 1, 1, 1 }, 128,
             Resources::GetTexture("crate_DIFF.jpg", true),
             Resources::GetTexture("crate_SPEC.jpg", false)))));
-    crate->Translate(0, -1, 4);
+    crate->Translate(-1, -1, 3);
     sc.AddNode(crate);
+
+    ModelNode* torus = new ModelNode(new Model(new Mesh(new Torus(),
+        new PhongMaterial({ 1, 1, 1, 1 }, { 1, 1, 1 }, 128))));
+        torus->Translate(1, -1, 3);
+    sc.AddNode(torus);
 
     // our update function
 
-    sc.AddUpdateFunction([crate](float dt) {
+    sc.AddUpdateFunction([crate, torus](float dt) {
         crate->Rotate(dt * -60, glm::normalize(glm::vec3(0.5, 1.0, 0.0)));
+        torus->Rotate(dt * 40, glm::normalize(glm::vec3(1.0, 0.5, 0.0)));
     });
 }

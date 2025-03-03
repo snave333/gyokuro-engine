@@ -29,6 +29,7 @@ private:
     glm::vec4 diffuse;;
     glm::vec3 specular;
     float shininess;
+    bool hasTextures;
     Texture2D* diffuseMap = nullptr;
     Texture2D* specularMap = nullptr;
     Texture2D* normalMap = nullptr;

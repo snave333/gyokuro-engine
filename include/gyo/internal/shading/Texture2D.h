@@ -5,6 +5,9 @@ namespace gyo {
 
 class Texture2D {
 public:
+    static void UnbindTextureSlot(int textureUnit = 0);
+    
+public:
     Texture2D();
     Texture2D(const unsigned int& textureId, bool hasAlpha);
     

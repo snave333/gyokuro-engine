@@ -14,14 +14,14 @@ namespace gyo {
 Renderer::Renderer(const int& width, const int& height) {
     size = glm::ivec2(width, height);
 
+    PrintGLInfo();
+
     state = RenderState();
     state.SetFaceCullingEnabled(true);
     state.SetDepthTestingEnabled(true);
     state.SetBlendingEnabled(false);
 
     CreateFrameBuffer();
-
-    PrintGLInfo();
 
     glPolygonMode(GL_FRONT, GL_FILL);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // uncomment to draw in wireframe

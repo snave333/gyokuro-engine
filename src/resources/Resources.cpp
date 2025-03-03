@@ -16,6 +16,8 @@
 
 #include <glad/glad.h>
 
+#include <numeric>
+
 namespace gyo {
 
 std::map<long, Shader> Resources::shaders = {};
@@ -86,14 +88,31 @@ Model* Resources::GetModel(const char* fileName, bool flipUVs) {
     return ModelLoader::LoadModel(fileName, flipUVs);
 }
 
-Shader* Resources::GetShader(const char* vertFileName, const char* fragFileName, const std::unordered_set<std::string>& defines) {
-    std::string hashKey = std::string(vertFileName) + "|" + std::string(fragFileName);
+Shader* Resources::GetShader(const char* vertFileName, const char* fragFileName, const std::set<std::string>& defines) {
+    // get our hash
+
+    std::string definesStr = "";
+    if(!defines.empty()) {
+        definesStr = std::accumulate(std::next(defines.begin()), defines.end(), *defines.begin(),
+        [](const std::string& a, const std::string& b) {
+            return a + "," + b;
+        });
+    }
+
+    std::string hashKey = 
+        std::string(vertFileName) + "|" +
+        std::string(fragFileName) + "|" +
+        definesStr;
 
     long id = HASH(hashKey);
+
+    // return early if we've already compiled this variant
 
     if(Resources::shaders.find(id) != Resources::shaders.end()) {
         return &Resources::shaders[id];
     }
+
+    // compile and save this variant
 
     Shader shader = ShaderLoader::LoadShader(vertFileName, fragFileName, defines);
 
@@ -102,17 +121,32 @@ Shader* Resources::GetShader(const char* vertFileName, const char* fragFileName,
     return &Resources::shaders[id];
 }
 
-Shader* Resources::GetShader(const char* vertFileName, const char* geomFileName, const char* fragFileName, const std::unordered_set<std::string>& defines) {
+Shader* Resources::GetShader(const char* vertFileName, const char* geomFileName, const char* fragFileName, const std::set<std::string>& defines) {
+    // get our hash
+
+    std::string definesStr = "";
+    if(!defines.empty()) {
+        definesStr = std::accumulate(std::next(defines.begin()), defines.end(), *defines.begin(),
+        [](const std::string& a, const std::string& b) {
+            return a + "," + b;
+        });
+    }
+
     std::string hashKey = 
         std::string(vertFileName) + "|" +
         std::string(geomFileName) + "|" +
-        std::string(fragFileName);
+        std::string(fragFileName) + "|" +
+        definesStr;
 
     long id = HASH(hashKey);
+
+    // return early if we've already compiled this variant
 
     if(Resources::shaders.find(id) != Resources::shaders.end()) {
         return &Resources::shaders[id];
     }
+
+    // compile and save this variant
 
     Shader shader = ShaderLoader::LoadShader(vertFileName, geomFileName, fragFileName, defines);
 

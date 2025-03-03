@@ -29,25 +29,36 @@ PhongMaterial::PhongMaterial(
     bool hasAlpha = false;
     hasAlpha = hasAlpha || diffuse.a < 1.0f;
 
-    shader = Resources::GetShader("default.vert", "phong.frag");
+    hasTextures = diffuseMap != nullptr ||
+        specularMap != nullptr ||
+        normalMap != nullptr;
 
-    // fallback to the built-in white textures from Resources
-    if(diffuseMap == nullptr) {
-        this->diffuseMap = Resources::GetTexture("BUILTIN_white", true);
+    if(hasTextures) {
+        std::set<std::string> defines = { "MATERIAL_TEXTURES" };
+        shader = Resources::GetShader("default.vert", "phong.frag", defines);
+
+        // fallback to the built-in white textures from Resources
+        if(diffuseMap == nullptr) {
+            this->diffuseMap = Resources::GetTexture("BUILTIN_white", true);
+        }
+        if(specularMap == nullptr) {
+            this->specularMap = Resources::GetTexture("BUILTIN_white", false);
+        }
+        if(normalMap == nullptr) {
+            this->normalMap = Resources::GetTexture("BUILTIN_normal", false);
+        }
+        
+        hasAlpha = hasAlpha || this->diffuseMap->hasAlpha;
+    
+        shader->Use();
+        shader->SetInt("material.diffuseMap", 0);
+        shader->SetInt("material.specularMap", 1);
+        shader->SetInt("material.normalMap", 2);
     }
-    if(specularMap == nullptr) {
-        this->specularMap = Resources::GetTexture("BUILTIN_white", false);
-    }
-    if(normalMap == nullptr) {
-        this->normalMap = Resources::GetTexture("BUILTIN_normal", false);
+    else {
+        shader = Resources::GetShader("default.vert", "phong.frag");
     }
 
-    shader->Use();
-    shader->SetInt("material.diffuseMap", 0);
-    shader->SetInt("material.specularMap", 1);
-    shader->SetInt("material.normalMap", 2);
-
-    hasAlpha = hasAlpha || this->diffuseMap->hasAlpha;
     if(hasAlpha) {
         renderType = RenderType::TRANSPARENT;
     }
@@ -62,15 +73,23 @@ PhongMaterial::~PhongMaterial() {
 void PhongMaterial::Queue() {
     shader->Use();
 
-    diffuseMap->Bind(0);
-    specularMap->Bind(1);
-    normalMap->Bind(2);
-
     shader->SetVec4("material.diffuse", diffuse);
     shader->SetVec3("material.specular", specular);
     shader->SetFloat("material.shininess", shininess);
-    shader->SetVec4("uvTilingOffset",
-        glm::vec4(uvTiling.x, uvTiling.y, uvOffset.x, uvOffset.y));
+    
+    if(hasTextures) {
+        diffuseMap->Bind(0);
+        specularMap->Bind(1);
+        normalMap->Bind(2);
+    
+        shader->SetVec4("uvTilingOffset",
+            glm::vec4(uvTiling.x, uvTiling.y, uvOffset.x, uvOffset.y));
+    }
+    else {
+        Texture2D::UnbindTextureSlot(0);
+        Texture2D::UnbindTextureSlot(1);
+        Texture2D::UnbindTextureSlot(2);
+    }
 }
 
 } // namespace gyo

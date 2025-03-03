@@ -21,4 +21,9 @@ void Texture2D::Bind(unsigned int textureUnit) {
     glBindTexture(GL_TEXTURE_2D, ID);
 }
 
+void Texture2D::UnbindTextureSlot(int textureUnit) {
+    glActiveTexture(GL_TEXTURE0 + textureUnit); // activate texture unit 0 before binding
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 } // namespace gyo

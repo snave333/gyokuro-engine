@@ -19,7 +19,7 @@ std::string ShaderLoader::VersionString = "#version 330 core\n";
 Shader ShaderLoader::LoadShader(
     const char* vertFileName,
     const char* fragFileName,
-    const std::unordered_set<std::string>& defines)
+    const std::set<std::string>& defines)
 {
     std::cout << "Compiling shaders " << vertFileName << " & " << fragFileName << std::endl;
 
@@ -59,6 +59,9 @@ Shader ShaderLoader::LoadShader(
     // c strings for glad shader compilation
     const char* vShaderCode = vShaderCodeStr.c_str();
     const char* fShaderCode = fShaderCodeStr.c_str();
+
+    // std::cout << "Final vertex shader code:\n" << vShaderCode << std::endl;
+    // std::cout << "Final fragment shader code:\n" << fShaderCode << std::endl;
 
     // compile shaders
     unsigned int vertex, fragment;
@@ -117,7 +120,7 @@ Shader ShaderLoader::LoadShader(
     const char* vertFileName,
     const char* geomFileName,
     const char* fragFileName,
-    const std::unordered_set<std::string>& defines)
+    const std::set<std::string>& defines)
 {
     std::cout << "Compiling shaders " << vertFileName << ", " << geomFileName << ", & " << fragFileName << std::endl;
     
@@ -164,6 +167,10 @@ Shader ShaderLoader::LoadShader(
     const char* vShaderCode = vShaderCodeStr.c_str();
     const char* gShaderCode = gShaderCodeStr.c_str();
     const char* fShaderCode = fShaderCodeStr.c_str();
+
+    // std::cout << "Final vertex shader code:\n" << vShaderCode << std::endl;
+    // std::cout << "Final geometry shader code:\n" << gShaderCode << std::endl;
+    // std::cout << "Final fragment shader code:\n" << fShaderCode << std::endl;
 
     // compile shaders
     unsigned int vertex, geometry, fragment;
