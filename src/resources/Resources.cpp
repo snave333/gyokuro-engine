@@ -86,7 +86,7 @@ Model* Resources::GetModel(const char* fileName, bool flipUVs) {
     return ModelLoader::LoadModel(fileName, flipUVs);
 }
 
-Shader* Resources::GetShader(const char* vertFileName, const char* fragFileName) {
+Shader* Resources::GetShader(const char* vertFileName, const char* fragFileName, const std::unordered_set<std::string>& defines) {
     std::string hashKey = std::string(vertFileName) + "|" + std::string(fragFileName);
 
     long id = HASH(hashKey);
@@ -95,14 +95,14 @@ Shader* Resources::GetShader(const char* vertFileName, const char* fragFileName)
         return &Resources::shaders[id];
     }
 
-    Shader shader = ShaderLoader::LoadShader(vertFileName, fragFileName);
+    Shader shader = ShaderLoader::LoadShader(vertFileName, fragFileName, defines);
 
     Resources::shaders[id] = shader;
 
     return &Resources::shaders[id];
 }
 
-Shader* Resources::GetShader(const char* vertFileName, const char* geomFileName, const char* fragFileName) {
+Shader* Resources::GetShader(const char* vertFileName, const char* geomFileName, const char* fragFileName, const std::unordered_set<std::string>& defines) {
     std::string hashKey = 
         std::string(vertFileName) + "|" +
         std::string(geomFileName) + "|" +
@@ -114,7 +114,7 @@ Shader* Resources::GetShader(const char* vertFileName, const char* geomFileName,
         return &Resources::shaders[id];
     }
 
-    Shader shader = ShaderLoader::LoadShader(vertFileName, geomFileName, fragFileName);
+    Shader shader = ShaderLoader::LoadShader(vertFileName, geomFileName, fragFileName, defines);
 
     Resources::shaders[id] = shader;
 

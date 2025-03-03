@@ -13,12 +13,19 @@ class ShaderLoader {
 public:
     static std::string ResourceDir;
     static std::string IncludesDir;
+    static std::string VersionString;
 
-    static Shader LoadShader(const char* vertFileName, const char* fragFileName);
+    static Shader LoadShader(
+        const char* vertFileName,
+        const char* fragFileName,
+        const std::unordered_set<std::string>& defines
+    );
     static Shader LoadShader(
         const char* vertFileName,
         const char* geomFileName,
-        const char* fragFileName);
+        const char* fragFileName,
+        const std::unordered_set<std::string>& defines
+    );
 
 private:
     static std::string ResolveIncludes(

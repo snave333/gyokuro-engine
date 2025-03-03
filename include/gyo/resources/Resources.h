@@ -2,6 +2,7 @@
 #define RESOURCES_H
 
 #include <map>
+#include <unordered_set>
 
 #include <glm/glm.hpp>
 
@@ -19,8 +20,8 @@ public:
     static void Dispose();
 
     static Model* GetModel(const char* fileName, bool flipUVs);
-    static Shader* GetShader(const char* vertFileName, const char* fragFileName);
-    static Shader* GetShader(const char* vertFileName, const char* geomFileName, const char* fragFileName);
+    static Shader* GetShader(const char* vertFileName, const char* fragFileName, const std::unordered_set<std::string>& defines = {});
+    static Shader* GetShader(const char* vertFileName, const char* geomFileName, const char* fragFileName, const std::unordered_set<std::string>& defines = { });
     static Texture2D* GetTexture(const char* imageFileName, bool srgb);
     static TextureCube* GetTextureCube(std::vector<const char*> faceFileNames, bool srgb);
     static Font* GetFont(const char* fontFileName, unsigned int fontSize);

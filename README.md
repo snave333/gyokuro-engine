@@ -17,6 +17,7 @@ A C++ OpenGL rendering library – pronounced "gee-o-kuh-roo". Uses the forward 
 * [x] Shaders
   * [x] GLSL file loading
   * [x] #include "<filename>.glsl" support
+  * [x] #define injection
   * [x] Camera matrices UBO
   * [x] Scene lighting UBO
 * [x] 2D Texture Loading

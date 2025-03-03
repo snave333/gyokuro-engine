@@ -14,13 +14,41 @@ namespace gyo {
 
 std::string ShaderLoader::ResourceDir = "";
 std::string ShaderLoader::IncludesDir = "";
+std::string ShaderLoader::VersionString = "#version 330 core\n";
 
-Shader ShaderLoader::LoadShader(const char* vertFileName, const char* fragFileName) {
+Shader ShaderLoader::LoadShader(
+    const char* vertFileName,
+    const char* fragFileName,
+    const std::unordered_set<std::string>& defines)
+{
     std::cout << "Compiling shaders " << vertFileName << " & " << fragFileName << std::endl;
 
     // read the base file contents
     std::string vShaderCodeStr = ReadFile(vertFileName, false);
     std::string fShaderCodeStr = ReadFile(fragFileName, false);
+
+    // ensure there is no match for '#version', followed by number and optional profile
+    std::regex versionPattern(R"(#version\s+\d+\s+\w*)");
+    if(std::regex_search(vShaderCodeStr, versionPattern) ||
+        std::regex_search(fShaderCodeStr, versionPattern))
+    {
+        std::cout << "ERROR: '#version ...' should not be included in your glsl code" << std::endl;
+    }
+
+    // prepend the defines
+    if(!defines.empty()) {
+        std::string definesString = "";
+        for(const std::string& define : defines) {
+            definesString = definesString + std::string("#define ") + define + "\n";
+        }
+        
+        vShaderCodeStr = definesString + vShaderCodeStr;
+        fShaderCodeStr = definesString + fShaderCodeStr;
+    }
+
+    // prepend the #version
+    vShaderCodeStr = VersionString + vShaderCodeStr;
+    fShaderCodeStr = VersionString + fShaderCodeStr;
 
     // recursively resolve any #include instances, avoiding circular includes
     std::unordered_set<std::string> includedFiles;
@@ -88,7 +116,8 @@ Shader ShaderLoader::LoadShader(const char* vertFileName, const char* fragFileNa
 Shader ShaderLoader::LoadShader(
     const char* vertFileName,
     const char* geomFileName,
-    const char* fragFileName)
+    const char* fragFileName,
+    const std::unordered_set<std::string>& defines)
 {
     std::cout << "Compiling shaders " << vertFileName << ", " << geomFileName << ", & " << fragFileName << std::endl;
     
@@ -96,6 +125,32 @@ Shader ShaderLoader::LoadShader(
     std::string vShaderCodeStr = ReadFile(vertFileName, false);
     std::string gShaderCodeStr = ReadFile(geomFileName, false);
     std::string fShaderCodeStr = ReadFile(fragFileName, false);
+
+    // ensure there is no match for '#version', followed by number and optional profile
+    std::regex versionPattern(R"(#version\s+\d+\s+\w*)");
+    if(std::regex_search(vShaderCodeStr, versionPattern) ||
+        std::regex_search(gShaderCodeStr, versionPattern) ||
+        std::regex_search(fShaderCodeStr, versionPattern))
+    {
+        std::cout << "ERROR: '#version ...' should not be included in your glsl code" << std::endl;
+    }
+
+    // prepend the defines
+    if(!defines.empty()) {
+        std::string definesString = "";
+        for(const std::string& define : defines) {
+            definesString = definesString + std::string("#define ") + define + "\n";
+        }
+        
+        vShaderCodeStr = definesString + vShaderCodeStr;
+        gShaderCodeStr = definesString + gShaderCodeStr;
+        fShaderCodeStr = definesString + fShaderCodeStr;
+    }
+
+    // prepend the #version
+    vShaderCodeStr = VersionString + vShaderCodeStr;
+    gShaderCodeStr = VersionString + gShaderCodeStr;
+    fShaderCodeStr = VersionString + fShaderCodeStr;
 
     // recursively resolve any #include instances, avoiding circular includes
     std::unordered_set<std::string> includedFiles;
