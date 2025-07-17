@@ -15,7 +15,7 @@ For a full feature list and roadmap of planned features, see [the list below](#r
 
 ## Example Usage
 
-```
+```cpp
 // start the rendering engine
 
 gyo::Engine* engine = new gyo::Engine(1920, 1080);
