@@ -1,6 +1,66 @@
 # Gyokuro Rendering Library
 
-A C++ OpenGL rendering library – pronounced "gee-o-kuh-roo". Uses the forward shading technique. Targets the OpenGL 3.3 Core profile.
+A C++ OpenGL rendering library – pronounced "gee-o-kuh-ro". Uses the forward shading technique and targets the OpenGL 3.3 Core profile.
+
+This project is my journey following the tutorials and guides from [Learn OpenGL](https://learnopengl.com/), and creating a high-level wrapper around the rendering software.
+
+## Key Features
+
+ - Model Loading
+ - PBR Materials
+ - HDR Pipeline
+ - Fast View Frustum Culling
+
+For a full feature list and roadmap of planned features, see [the list below](#roadmap).
+
+## Example Usage
+
+```
+// start the rendering engine
+
+gyo::Engine* engine = new gyo::Engine(1920, 1080);
+if(!engine->IsRunning()) {
+    std::cerr << "Gyokuro failed to start!" << std::endl;
+    return 1;
+}
+
+// create our scene
+
+SceneController& sc = engine->sc();
+
+std::vector<const char*> faces {
+    "skybox_px.jpg",
+    "skybox_nx.jpg",
+    "skybox_py.jpg",
+    "skybox_ny.jpg",
+    "skybox_nz.jpg",
+    "skybox_pz.jpg"
+};
+Skybox* skybox = new Skybox(Resources::GetTextureCube(faces, true));
+sc.SetSkybox(skybox);
+
+glm::vec3 spotLightColor = { 1.0f, 0.2f, 0.2f };
+LightNode* spotLight = new LightNode(new SpotLight(spotLightColor * 6.0f, 40.0f));
+spotLight->Translate(2, 1, -5);
+spotLight->Rotate(45, -15, 0);
+sc.AddNode(spotLight);
+
+ModelNode* helmet = new ModelNode(Resources::GetModel("DamagedHelmet.glb", true));
+sc.AddNode(helmet);
+glm::vec3 rotationAxis = { 0.0f, 1.0f, 0.0f };
+
+sc.AddUpdateFunction([helmet, rotationAxis](float dt) {
+    helmet->Rotate(dt * 15, rotationAxis);
+});
+
+// render the scene to the window
+
+while(engine->IsRunning()) {
+    engine->Frame();
+}
+```
+
+For more examples, see the runnable projects in the [samples](samples) folder.
 
 ## Roadmap
 
