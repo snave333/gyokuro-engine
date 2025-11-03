@@ -121,6 +121,9 @@ For more examples, see the runnable projects in the [samples](samples) folder.
   * [x] Separate model/texture file loading
   * [x] Embedded texture support (glb)
 * [ ] PBR
+  * [ ] Material (supports albedo, normal, metallic/roughness, and ao map)
+  * [x] Analytic lights
+  * [ ] IBL
 * [ ] Image effects
 * [ ] Shadows
 

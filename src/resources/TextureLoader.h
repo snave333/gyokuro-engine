@@ -2,6 +2,7 @@
 #define TEXTURE_LOADER_H
 
 #include <string>
+#include <vector>
 
 struct aiTexture;
 struct aiTexel;
