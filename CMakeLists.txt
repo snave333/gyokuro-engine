@@ -119,7 +119,7 @@ set(SOURCES
 # configure and add glfw
 set( GLFW_BUILD_DOCS OFF CACHE BOOL "GLFW lib only" )
 set( GLFW_INSTALL OFF CACHE BOOL "GLFW lib only" )
-set( GLFW_BUILD_EXAMPLES ON CACHE BOOL "Build example executables" )
+set( GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build example executables" )
 add_subdirectory( deps/glfw )
 
 # add glm and freetype

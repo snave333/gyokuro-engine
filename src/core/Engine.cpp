@@ -20,7 +20,7 @@ Engine::Engine(unsigned int ptWidth, unsigned int ptHeight) {
     Engine::Instance = this;
 
     glfwSetErrorCallback(Engine::glfwOnError);
-    
+
     if (!glfwInit()) {
         std::cout << "GLFW initialization failed" << std::endl;
         isRunning = true;
@@ -35,8 +35,23 @@ Engine::Engine(unsigned int ptWidth, unsigned int ptHeight) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    // create the window object, and make the window context the main context
-    window = glfwCreateWindow(ptWidth, ptHeight, "Gyokuro", nullptr, nullptr);
+    // create the window object; if no dimensions are specified, go full screen
+    if(ptWidth == 0 || ptHeight == 0) {
+        GLFWmonitor* primaryMoniter = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(primaryMoniter);
+
+        glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
+        window = glfwCreateWindow(mode->width, mode->height, "Gyokuro", primaryMoniter, nullptr);
+    }
+    else {
+        window = glfwCreateWindow(ptWidth, ptHeight, "Gyokuro", nullptr, nullptr);
+    }
+
+    // make the window context the main context
     if (window == nullptr) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -107,7 +122,7 @@ void Engine::Frame() {
     if(dt > 0.0f) {
         renderer->stats.fps = 1.0f / dt;
     }
-    // std::cout << (int)(dt * 1000) << " ms, " << (int)fps << " fps" << std::endl;
+    // std::cout << (int)(dt * 1000) << " ms, " << (int)renderer->stats.fps << " fps" << std::endl;
 
     // update and render our scene
     sceneController->Update(dt);

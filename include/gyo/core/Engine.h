@@ -13,7 +13,7 @@ public:
     static Engine* Instance;
     
 public:
-    Engine(unsigned int ptWidth, unsigned int ptHeight);
+    Engine(unsigned int ptWidth = 0, unsigned int ptHeight = 0);
     ~Engine();
 
     const bool& IsRunning() const { return isRunning; }
@@ -31,7 +31,6 @@ private:
 
     // timing
     float dt;
-    float fps;
     float currentTime;
     float lastUpdateTime;
 

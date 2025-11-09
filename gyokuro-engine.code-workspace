@@ -72,7 +72,8 @@
 			"cinttypes": "cpp",
 			"condition_variable": "cpp",
 			"list": "cpp",
-			"set": "cpp"
+			"set": "cpp",
+			"span": "cpp"
 		}
 	}
 }
