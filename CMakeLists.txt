@@ -75,6 +75,7 @@ set(PRIVATE_HEADERS
         src/utilities/Clock.h
         src/utilities/FileSystem.h
         src/utilities/FrameStats.h
+        src/utilities/GetError.h
         src/utilities/Hash.h
 )
 
