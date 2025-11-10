@@ -113,8 +113,8 @@ void Engine::Frame() {
     renderer->stats.Reset();
 
     // update our delta time
-    currentTime = glfwGetTime();
-    dt = currentTime - lastUpdateTime;
+    double currentTime = glfwGetTime();
+    double dt = currentTime - lastUpdateTime;
     lastUpdateTime = currentTime;
     if(dt > 0.0f) {
         renderer->stats.fps = 1.0f / dt;

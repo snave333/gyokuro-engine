@@ -30,9 +30,7 @@ private:
     bool isRunning = false;
 
     // timing
-    float dt;
-    float currentTime;
-    float lastUpdateTime;
+    double lastUpdateTime;
 
     // our glfw callbacks
     static void glfwOnError(int error, const char* description);
