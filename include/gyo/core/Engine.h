@@ -40,7 +40,6 @@ private:
     static void glfwOnMouseMove(GLFWwindow* window, double xpos, double ypos);
 
     void processInput(GLFWwindow *window, float dt);
-    void checkShouldExit(GLFWwindow *window);
 };
 
 } // namespace gyo

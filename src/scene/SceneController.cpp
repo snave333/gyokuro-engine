@@ -252,14 +252,14 @@ void SceneController::FrustumCull(
 }
 
 void SceneController::RenderStats() {
-    // CLOCK(render_ui);
+    CLOCKT(render_ui, &renderer->stats.uiMs);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     std::vector<std::string> strings = {};
     std::ostringstream stream;
-    stream.precision(2);
+    stream.precision(1);
 
     // fps
 
@@ -293,7 +293,14 @@ void SceneController::RenderStats() {
     stream.clear();
     stream << std::fixed << renderer->stats.geometryMs;
     strings.push_back(std::string("total: ") + stream.str() + std::string(" ms"));
+    
+    // total ui pass
 
+    stream.str("");
+    stream.clear();
+    stream << std::fixed << renderer->stats.uiMs;
+    strings.push_back(std::string("UI: ") + stream.str() + std::string(" ms"));
+    
     // now draw the stats
 
     unsigned int edgeBuffer = 8;

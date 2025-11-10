@@ -10,7 +10,8 @@ struct FrameStats {
     float vfcMs = 0;
     float opaqueMs = 0;
     float alphaMs = 0;
-
+    float uiMs = 0; // previous frame
+    
     unsigned int drawCalls = 0;
     unsigned int tris = 0;
 

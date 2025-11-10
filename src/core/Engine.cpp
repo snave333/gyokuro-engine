@@ -105,15 +105,12 @@ Engine::~Engine() {
 }
 
 void Engine::Frame() {
-    renderer->stats.Reset();
-
     if(glfwWindowShouldClose(window)) {
         isRunning = false;
         return;
     }
-
-    // input
-    processInput(window, dt);
+    
+    renderer->stats.Reset();
 
     // update our delta time
     currentTime = glfwGetTime();
@@ -124,16 +121,16 @@ void Engine::Frame() {
     }
     // std::cout << (int)(dt * 1000) << " ms, " << (int)renderer->stats.fps << " fps" << std::endl;
 
+    // input
+    processInput(window, dt);
+
     // update and render our scene
     sceneController->Update(dt);
     sceneController->Render();
 
+    // swap the buffers and poll IO events
     glfwSwapBuffers(window);
-    
-    // check and call events and swap the buffers
     glfwPollEvents();
-
-    checkShouldExit(window);
 }
 
 void Engine::glfwOnError(int error, const char* description) {
@@ -155,6 +152,10 @@ void Engine::glfwOnMouseMove(GLFWwindow* window, double xpos, double ypos) {
 }
 
 void Engine::processInput(GLFWwindow *window, float dt) {
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+
     // TODO a better solution for passing input to the scene controller
 
     if(sceneController == nullptr) {
@@ -178,12 +179,6 @@ void Engine::processInput(GLFWwindow *window, float dt) {
     }
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
         sceneController->OnKeyPressed(GLFW_KEY_Q, dt);
-    }
-}
-
-void Engine::checkShouldExit(GLFWwindow *window) {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
 }
 

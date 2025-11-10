@@ -24,8 +24,7 @@ public:
     ~Clock() {
         auto end = std::chrono::high_resolution_clock::now();
 
-        auto elapsedNs = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-        float ms = (float)elapsedNs / 1e+6;
+        float ms = std::chrono::duration<float, std::milli>(end - start).count();
 
         if(timeMs != nullptr) {
             *timeMs = ms;
