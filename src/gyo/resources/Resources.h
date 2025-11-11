@@ -5,6 +5,7 @@
 #include <set>
 
 #include <glm/glm.hpp>
+#include <glad/glad.h>
 
 namespace gyo {
 
@@ -13,6 +14,9 @@ class Shader;
 class Texture2D;
 class TextureCube;
 class Font;
+class SDFFont;
+
+typedef std::vector<std::vector<std::string>> CSVData;
 
 class Resources {
 public:
@@ -22,9 +26,11 @@ public:
     static Model* GetModel(const char* fileName, bool flipUVs);
     static Shader* GetShader(const char* vertFileName, const char* fragFileName, const std::set<std::string>& defines = {});
     static Shader* GetShader(const char* vertFileName, const char* geomFileName, const char* fragFileName, const std::set<std::string>& defines = { });
-    static Texture2D* GetTexture(const char* imageFileName, bool srgb);
+    static Texture2D* GetTexture(const char* imageFileName, bool srgb, int wrapMode = GL_REPEAT, bool useMipmaps = true);
     static TextureCube* GetTextureCube(std::vector<const char*> faceFileNames, bool srgb);
     static Font* GetFont(const char* fontFileName, unsigned int fontSize);
+    static SDFFont* GetSDFFont(const char* fontName);
+    static CSVData GetCSV(const char* filePath);
 
 private:
     // our cached resources
@@ -32,6 +38,7 @@ private:
     static std::map<long, Texture2D> textures;
     static std::map<long, TextureCube> cubeMaps;
     static std::map<long, Font> fonts;
+    static std::map<long, SDFFont> sdfFonts;
 
     static Texture2D GenerateBuiltInTexture(glm::vec4 color);
 };

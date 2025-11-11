@@ -1,6 +1,9 @@
 
 #include <gyo/resources/FontLoader.h>
+#include <gyo/resources/Resources.h>
+#include <gyo/shading/Texture2D.h>
 #include <gyo/ui/Font.h>
+#include <gyo/ui/SDFFont.h>
 #include <gyo/utilities/FileSystem.h>
 
 #include <iostream>
@@ -15,6 +18,7 @@ namespace gyo {
 
 std::string FontLoader::ResourceDir = "";
 
+// Uses Freetype to load a .ttf font file, creating separate textures for each glyph
 Font FontLoader::LoadFont(const char* fontFileName, unsigned int fontSize) {
     std::string fontFilePath = FileSystem::CombinePath(ResourceDir, fontFileName);
     
@@ -85,6 +89,24 @@ Font FontLoader::LoadFont(const char* fontFileName, unsigned int fontSize) {
     FT_Done_FreeType(ft);
 
     return Font(characters);
+}
+
+// loads a SDF texture atlas and glyph data csv file
+SDFFont FontLoader::LoadSDFFont(const char* fontName) {
+    // get texture name
+    std::string textureFileName = std::string(fontName) + std::string("-Atlas.png");
+    Texture2D* fontAtlas = Resources::GetTexture(textureFileName.c_str(), false, GL_CLAMP_TO_EDGE, false);
+    
+    // get the csv file
+    std::string csvFilePath = FileSystem::CombinePath(
+        ResourceDir, std::string(fontName) + std::string("-Layout.csv"));
+    CSVData glyphData = Resources::GetCSV(csvFilePath.c_str());
+    
+    std::map<char, SDFCharacter> characters;
+
+    // TODO parse the glyphData, and create the characters
+
+    return SDFFont(fontAtlas, characters);
 }
 
 } // namespace gyo

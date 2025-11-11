@@ -7,7 +7,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include <glad/glad.h>
+// #include <glad/glad.h>
 #include <stb_image/stb_image.h>
 #include <assimp/texture.h>
 #include <jpeglib.h>
@@ -16,7 +16,7 @@ namespace gyo {
 
 std::string TextureLoader::ResourceDir = "";
 
-Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb) {
+Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb, int wrapMode, bool useMipmaps) {
     // get the full file path
     std::string imageFilePath = FileSystem::CombinePath(ResourceDir, imageFileName);
 
@@ -37,7 +37,9 @@ Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb) {
         GetTextureFormat(srgb, numChannels, &format, &internalFormat);
         
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        if (useMipmaps) {
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
     }
     else {
         throw std::runtime_error("Failed to load texture");
@@ -47,9 +49,9 @@ Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb) {
     stbi_image_free(data);
 
     // set the texture wrapping/filtering options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, useMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glBindTexture(GL_TEXTURE_2D, 0);

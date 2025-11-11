@@ -73,6 +73,12 @@ void Text::RenderText(std::string text, unsigned int x, unsigned int y, float sc
     for (c = text.begin(); c != text.end(); c++) {
         Character ch = font->GetCharacter(*c);
 
+        // skip the space character because it causes a texture error
+        if(*c == 32) {
+            x += (ch.advance >> 6) * scale;
+            continue;
+        }
+
         float xpos = x + ch.bearing.x * scale;
         float ypos = y - (ch.size.y - ch.bearing.y) * scale;
 
@@ -90,18 +96,12 @@ void Text::RenderText(std::string text, unsigned int x, unsigned int y, float sc
             { xpos + w, ypos + h,   1.0f, 0.0f }           
         };
 
-        // skip the space character because it causes a texture error
-        if(*c == 32) {
-            x += (ch.advance >> 6) * scale;
-            continue;
-        }
-
         // render glyph texture over quad
         glBindTexture(GL_TEXTURE_2D, ch.textureID);
 
         // update content of VBO memory
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); 
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         // render quad

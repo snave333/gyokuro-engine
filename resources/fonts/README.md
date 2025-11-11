@@ -1,6 +1,8 @@
 # Font Generation
 
-The `-Atlas.png` and `-Layout.csv` files were generated using [msdf-atlas-gen](https://github.com/Chlumsky/msdf-atlas-gen), and Adobe's [Source Code Pro](https://fonts.adobe.com/fonts/source-code-pro) font. These files are used to render text using the multi-channel signed distance field (MSDF) technique.
+The `-Layout.csv` files were generated using [msdf-atlas-gen](https://github.com/Chlumsky/msdf-atlas-gen), and Adobe's [Source Code Pro](https://fonts.adobe.com/fonts/source-code-pro) font. These files are used to render text using the multi-channel signed distance field (MSDF) technique.
+
+The corresponding `-Atlas.png` files are located in the `resources/textures` directory.
 
 The following command was run in the msdf-atlas-gen repo to generate the files (after building with cmake).
 

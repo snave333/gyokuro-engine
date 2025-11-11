@@ -4,6 +4,7 @@
 #include <gyo/resources/ShaderLoader.h>
 #include <gyo/resources/TextureLoader.h>
 #include <gyo/resources/FontLoader.h>
+#include <gyo/resources/DataLoader.h>
 #include <gyo/utilities/FileSystem.h>
 #include <gyo/utilities/Hash.h>
 
@@ -13,6 +14,7 @@
 #include <gyo/shading/Texture2D.h>
 #include <gyo/shading/TextureCube.h>
 #include <gyo/ui/Font.h>
+#include <gyo/ui/SDFFont.h>
 
 #include <glad/glad.h>
 
@@ -24,6 +26,7 @@ std::map<long, Shader> Resources::shaders = {};
 std::map<long, Texture2D> Resources::textures = {};
 std::map<long, TextureCube> Resources::cubeMaps = {};
 std::map<long, Font> Resources::fonts = {};
+std::map<long, SDFFont> Resources::sdfFonts = {};
 
 void Resources::Initialize() {
     // set the directory paths of our resource loaders
@@ -82,6 +85,11 @@ void Resources::Dispose() {
         font.second.Dispose();
     }
     Resources::fonts.clear();
+
+    for (auto& sdfFont : Resources::sdfFonts) {
+        sdfFont.second.Dispose();
+    }
+    Resources::sdfFonts.clear();
 }
 
 Model* Resources::GetModel(const char* fileName, bool flipUVs) {
@@ -155,7 +163,7 @@ Shader* Resources::GetShader(const char* vertFileName, const char* geomFileName,
     return &Resources::shaders[id];
 }
 
-Texture2D* Resources::GetTexture(const char* imageFileName, bool srgb) {
+Texture2D* Resources::GetTexture(const char* imageFileName, bool srgb, int wrapMode, bool useMipmaps) {
     long id = HASH(imageFileName);
 
     if (Resources::textures.find(id) != Resources::textures.end()) {
@@ -188,7 +196,9 @@ TextureCube* Resources::GetTextureCube(std::vector<const char*> faceFileNames, b
 }
 
 Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {
-    long id = HASH(fontFileName);
+    std::string hashKey = std::string(fontFileName) + std::to_string(fontSize);
+
+    long id = HASH(hashKey);
 
     if(Resources::fonts.find(id) != Resources::fonts.end()) {
         return &Resources::fonts[id];
@@ -199,6 +209,26 @@ Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {
     Resources::fonts[id] = font;
 
     return &Resources::fonts[id];
+}
+
+SDFFont* Resources::GetSDFFont(const char* fontName) {
+    long id = HASH(fontName);
+
+    if(Resources::sdfFonts.find(id) != Resources::sdfFonts.end()) {
+        return &Resources::sdfFonts[id];
+    }
+
+    SDFFont font = FontLoader::LoadSDFFont(fontName);
+
+    Resources::sdfFonts[id] = font;
+
+    return &Resources::sdfFonts[id];
+}
+
+CSVData Resources::GetCSV(const char* filePath) {
+    CSVData data = DataLoader::LoadCSV(filePath);
+
+    return data;
 }
 
 } // namespace gyo

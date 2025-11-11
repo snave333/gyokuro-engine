@@ -60,6 +60,7 @@ set(PRIVATE_HEADERS
     src/gyo/renderer/RenderState.h
     src/gyo/renderer/RenderType.h
     src/gyo/renderer/ScreenQuad.h
+    src/gyo/resources/DataLoader.h
     src/gyo/resources/FontLoader.h
     src/gyo/resources/ShaderLoader.h
     src/gyo/resources/TextureLoader.h
@@ -70,6 +71,8 @@ set(PRIVATE_HEADERS
     src/gyo/shading/Texture2D.h
     src/gyo/shading/TextureCube.h
     src/gyo/ui/Font.h
+    src/gyo/ui/SDFFont.h
+    src/gyo/ui/SDFText.h
     src/gyo/ui/Text.h
     src/gyo/utilities/Clock.h
     src/gyo/utilities/FileSystem.h
@@ -96,6 +99,7 @@ set(SOURCES
     src/gyo/renderer/Renderer.cpp
     src/gyo/renderer/RenderState.cpp
     src/gyo/renderer/ScreenQuad.cpp
+    src/gyo/resources/DataLoader.cpp
     src/gyo/resources/FontLoader.cpp
     src/gyo/resources/ModelLoader.cpp
     src/gyo/resources/Resources.cpp
@@ -111,6 +115,8 @@ set(SOURCES
     src/gyo/shading/TextureCube.cpp
     src/gyo/shading/UnlitMaterial.cpp
     src/gyo/ui/Font.cpp
+    src/gyo/ui/SDFFont.cpp
+    src/gyo/ui/SDFText.cpp
     src/gyo/ui/Text.cpp
     src/stb_image/stb_image.c
 )

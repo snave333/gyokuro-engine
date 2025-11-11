@@ -22,7 +22,7 @@ public:
     const Character& GetCharacter(char c) { return characters[c]; }
 
 private:
-    std::map<char, Character> characters;
+    std::map<char, Character> characters = {};
 };
   
 } // namespace gyo
