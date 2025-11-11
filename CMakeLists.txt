@@ -16,103 +16,103 @@ set(CMAKE_BUILD_TYPE Debug)
 # ----- List our header and source files -----
 
 set(PUBLIC_HEADERS
-        include/gyo/core/Engine.h
-        include/gyo/drawable/AABBWireframe.h
-        include/gyo/drawable/TangentsRenderer.h
-        include/gyo/lighting/DirectionalLight.h
-        include/gyo/lighting/LightNode.h
-        include/gyo/lighting/PointLight.h
-        include/gyo/lighting/SpotLight.h
-        include/gyo/mesh/Cube.h
-        include/gyo/mesh/Mesh.h
-        include/gyo/mesh/Model.h
-        include/gyo/mesh/ModelNode.h
-        include/gyo/mesh/Pyramid.h
-        include/gyo/mesh/Quad.h
-        include/gyo/mesh/Skybox.h
-        include/gyo/mesh/Sphere.h
-        include/gyo/mesh/Torus.h
-        include/gyo/resources/Resources.h
-        include/gyo/scene/SceneController.h
-        include/gyo/shading/GoochMaterial.h
-        include/gyo/shading/PBRMaterial.h
-        include/gyo/shading/PhongMaterial.h
-        include/gyo/shading/UnlitMaterial.h
-        include/gyo/gyo.h
+    src/gyo/core/Engine.h
+    src/gyo/drawable/AABBWireframe.h
+    src/gyo/drawable/TangentsRenderer.h
+    src/gyo/lighting/DirectionalLight.h
+    src/gyo/lighting/LightNode.h
+    src/gyo/lighting/PointLight.h
+    src/gyo/lighting/SpotLight.h
+    src/gyo/mesh/Cube.h
+    src/gyo/mesh/Mesh.h
+    src/gyo/mesh/Model.h
+    src/gyo/mesh/ModelNode.h
+    src/gyo/mesh/Pyramid.h
+    src/gyo/mesh/Quad.h
+    src/gyo/mesh/Skybox.h
+    src/gyo/mesh/Sphere.h
+    src/gyo/mesh/Torus.h
+    src/gyo/resources/Resources.h
+    src/gyo/scene/SceneController.h
+    src/gyo/shading/GoochMaterial.h
+    src/gyo/shading/PBRMaterial.h
+    src/gyo/shading/PhongMaterial.h
+    src/gyo/shading/UnlitMaterial.h
+    src/gyo/gyo.h
 )
 
 set(PRIVATE_HEADERS
-        include/gyo/internal/drawable/IDrawable.h
-        include/gyo/internal/lighting/Light.h
-        include/gyo/internal/mesh/Geometry.h
-        include/gyo/internal/renderer/RenderType.h
-        include/gyo/internal/scene/SceneNode.h
-        include/gyo/internal/shading/Material.h
-        include/gyo/internal/shading/Shader.h
-        include/gyo/internal/shading/Texture2D.h
-        include/gyo/internal/shading/TextureCube.h
-        include/gyo/internal/ui/Font.h
-        include/gyo/internal/ui/Text.h
-        src/camera/Camera.h
-        src/camera/CameraNode.h
-        src/camera/FlyCamera.h
-        src/glad/glad.h
-        src/glad/khrplatform.h
-        src/math/AABB.h
-        src/math/Frustum.h
-        src/math/Plane.h
-        src/math/Sphere.h
-        src/glad/LightsUBO.h
-        src/renderer/DrawCall.h
-        src/renderer/Renderer.h
-        src/renderer/RenderState.h
-        src/renderer/ScreenQuad.h
-        src/resources/FontLoader.h
-        src/resources/ShaderLoader.h
-        src/resources/TextureLoader.h
-        src/resources/ModelLoader.h
-        src/stb_image/stb_image.h
-        src/utilities/Clock.h
-        src/utilities/FileSystem.h
-        src/utilities/FrameStats.h
-        src/utilities/GetError.h
-        src/utilities/Hash.h
+    src/glad/glad.h
+    src/glad/khrplatform.h
+    src/gyo/camera/Camera.h
+    src/gyo/camera/CameraNode.h
+    src/gyo/camera/FlyCamera.h
+    src/gyo/drawable/IDrawable.h
+    src/gyo/lighting/Light.h
+    src/gyo/lighting/LightsUBO.h
+    src/gyo/math/AABB.h
+    src/gyo/math/Frustum.h
+    src/gyo/math/Plane.h
+    src/gyo/math/Sphere.h
+    src/gyo/mesh/Geometry.h
+    src/gyo/renderer/DrawCall.h
+    src/gyo/renderer/Renderer.h
+    src/gyo/renderer/RenderState.h
+    src/gyo/renderer/RenderType.h
+    src/gyo/renderer/ScreenQuad.h
+    src/gyo/resources/FontLoader.h
+    src/gyo/resources/ShaderLoader.h
+    src/gyo/resources/TextureLoader.h
+    src/gyo/resources/ModelLoader.h
+    src/gyo/scene/SceneNode.h
+    src/gyo/shading/Material.h
+    src/gyo/shading/Shader.h
+    src/gyo/shading/Texture2D.h
+    src/gyo/shading/TextureCube.h
+    src/gyo/ui/Font.h
+    src/gyo/ui/Text.h
+    src/gyo/utilities/Clock.h
+    src/gyo/utilities/FileSystem.h
+    src/gyo/utilities/FrameStats.h
+    src/gyo/utilities/GetError.h
+    src/gyo/utilities/Hash.h
+    src/stb_image/stb_image.h
 )
 
 set(SOURCES
-        src/camera/Camera.cpp
-        src/camera/CameraNode.cpp
-        src/camera/FlyCamera.cpp
-        src/core/Engine.cpp
-        src/drawable/AABBWireframe.cpp
-        src/drawable/TangentsRenderer.cpp
-        src/glad/glad.c
-        src/lighting/LightNode.cpp
-        src/lighting/LightsUBO.cpp
-        src/mesh/Mesh.cpp
-        src/mesh/Model.cpp
-        src/mesh/ModelNode.cpp
-        src/mesh/Skybox.cpp
-        src/renderer/Renderer.cpp
-        src/renderer/RenderState.cpp
-        src/renderer/ScreenQuad.cpp
-        src/resources/FontLoader.cpp
-        src/resources/ModelLoader.cpp
-        src/resources/Resources.cpp
-        src/resources/ShaderLoader.cpp
-        src/resources/TextureLoader.cpp
-        src/scene/SceneController.cpp
-        src/scene/SceneNode.cpp
-        src/shading/GoochMaterial.cpp
-        src/shading/PBRMaterial.cpp
-        src/shading/PhongMaterial.cpp
-        src/shading/Shader.cpp
-        src/shading/Texture2D.cpp
-        src/shading/TextureCube.cpp
-        src/shading/UnlitMaterial.cpp
-        src/stb_image/stb_image.c
-        src/ui/Font.cpp
-        src/ui/Text.cpp
+    src/glad/glad.c
+    src/gyo/camera/Camera.cpp
+    src/gyo/camera/CameraNode.cpp
+    src/gyo/camera/FlyCamera.cpp
+    src/gyo/core/Engine.cpp
+    src/gyo/drawable/AABBWireframe.cpp
+    src/gyo/drawable/TangentsRenderer.cpp
+    src/gyo/lighting/LightNode.cpp
+    src/gyo/lighting/LightsUBO.cpp
+    src/gyo/mesh/Mesh.cpp
+    src/gyo/mesh/Model.cpp
+    src/gyo/mesh/ModelNode.cpp
+    src/gyo/mesh/Skybox.cpp
+    src/gyo/renderer/Renderer.cpp
+    src/gyo/renderer/RenderState.cpp
+    src/gyo/renderer/ScreenQuad.cpp
+    src/gyo/resources/FontLoader.cpp
+    src/gyo/resources/ModelLoader.cpp
+    src/gyo/resources/Resources.cpp
+    src/gyo/resources/ShaderLoader.cpp
+    src/gyo/resources/TextureLoader.cpp
+    src/gyo/scene/SceneController.cpp
+    src/gyo/scene/SceneNode.cpp
+    src/gyo/shading/GoochMaterial.cpp
+    src/gyo/shading/PBRMaterial.cpp
+    src/gyo/shading/PhongMaterial.cpp
+    src/gyo/shading/Shader.cpp
+    src/gyo/shading/Texture2D.cpp
+    src/gyo/shading/TextureCube.cpp
+    src/gyo/shading/UnlitMaterial.cpp
+    src/gyo/ui/Font.cpp
+    src/gyo/ui/Text.cpp
+    src/stb_image/stb_image.c
 )
 
 # ---- Add our dependencies -----
@@ -159,7 +159,6 @@ set(JPEGLIB_LIBRARY ${install_dir}/lib/libjpeg.a)
 add_library(gyokuro STATIC ${SOURCES})
 
 # include headers
-include_directories(include)
 include_directories(src)
 target_include_directories(gyokuro PUBLIC ${PUBLIC_HEADERS} PRIVATE ${PRIVATE_HEADERS})
 target_include_directories(gyokuro PRIVATE ${JPEGLIB_INCLUDE_DIR})
