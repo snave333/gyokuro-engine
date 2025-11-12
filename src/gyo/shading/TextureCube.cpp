@@ -5,6 +5,13 @@
 
 namespace gyo {
 
+TextureCube::TextureCube() {
+}
+
+TextureCube::TextureCube(const unsigned int& textureId, unsigned int width, unsigned int height)
+    : ID(textureId), width(width), height(height)
+{}
+
 void TextureCube::Dispose() {
     glDeleteTextures(1, &ID);
 }

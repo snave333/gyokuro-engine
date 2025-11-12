@@ -9,12 +9,14 @@ public:
     
 public:
     Texture2D();
-    Texture2D(const unsigned int& textureId, bool hasAlpha);
+    Texture2D(const unsigned int& textureId, unsigned int width, unsigned int height, bool hasAlpha);
     
     void Dispose();
 
     void Bind(unsigned int textureUnit = 0);
 
+    unsigned int width;
+    unsigned int height;
     bool hasAlpha = false;
 
 private:

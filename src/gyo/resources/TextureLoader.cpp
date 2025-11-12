@@ -56,7 +56,7 @@ Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb, int w
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    return Texture2D(id, numChannels == 4);
+    return Texture2D(id, width, height, numChannels == 4);
 }
 
 Texture2D* TextureLoader::LoadEmbeddedTexture(const aiTexture* texture, bool srgb) {
@@ -115,7 +115,7 @@ Texture2D* TextureLoader::LoadEmbeddedTexture(const aiTexture* texture, bool srg
     // free the image data after uploading it to the GPU
     free(imageData);
 
-    return new Texture2D(id, numChannels == 4);
+    return new Texture2D(id, width, height, numChannels == 4);
 }
 
 TextureCube TextureLoader::LoadTextureCube(std::vector<const char*> faceFileNames, bool srgb) {
@@ -160,7 +160,7 @@ TextureCube TextureLoader::LoadTextureCube(std::vector<const char*> faceFileName
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-    return TextureCube(id);
+    return TextureCube(id, width, height);
 }
 
 Texture2D TextureLoader::GenerateTexture2D(int width, int height, unsigned int format, const unsigned char* pixels) {
@@ -182,7 +182,7 @@ Texture2D TextureLoader::GenerateTexture2D(int width, int height, unsigned int f
 
     bool hasAlpha = format == GL_RGBA || format == GL_SRGB_ALPHA;
 
-    return Texture2D(id, hasAlpha);
+    return Texture2D(id, width, height, hasAlpha);
 }
 
 void TextureLoader::DecompressJpegData(
