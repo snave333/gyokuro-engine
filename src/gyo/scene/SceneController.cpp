@@ -255,9 +255,6 @@ void SceneController::FrustumCull(
 void SceneController::RenderStats() {
     CLOCKT(render_ui, &renderer->stats.uiMs);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     std::vector<std::string> strings = {};
     std::ostringstream stream;
     stream.precision(1);
@@ -310,17 +307,24 @@ void SceneController::RenderStats() {
 
     unsigned int y = edgeBuffer;
     for(int i = strings.size() - 1; i >= 0; i--) {
-        textRenderer->RenderText(strings[i], edgeBuffer, y);
+        textRenderer->QueueStringRender(strings[i], edgeBuffer, y);
         y += fontSize + spacing;
     }
 
     // number of draw calls
 
-    textRenderer->RenderText(std::string("draw calls: ") + std::to_string(renderer->stats.drawCalls), 180, edgeBuffer + fontSize + spacing);
+    textRenderer->QueueStringRender(std::string("draw calls: ") + std::to_string(renderer->stats.drawCalls), 180, edgeBuffer + fontSize + spacing);
 
     // number of tris
 
-    textRenderer->RenderText(std::string("tris: ") + std::to_string(renderer->stats.tris), 180, edgeBuffer);
+    textRenderer->QueueStringRender(std::string("tris: ") + std::to_string(renderer->stats.tris), 180, edgeBuffer);
+
+    // finally, execute the render
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    textRenderer->ExecuteRender();
 
     glDisable(GL_BLEND);
 }

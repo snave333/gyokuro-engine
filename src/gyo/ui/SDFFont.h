@@ -11,7 +11,11 @@ class Texture2D;
 struct SDFCharacter {
     glm::dvec4   bounds;     // glyph quad's bounds in em's relative to the baseline and cursor – left, bottom, right, & top
     // glm::ivec2   bearing;    // offset from baseline to left/top of glyph
-    glm::dvec4   texCoords;  // glyph's bounds in the atlas in normalized coords [0, 1] – left, bottom, right, & top
+    glm::dvec4   texCoord;  // glyph's bounds in the atlas in normalized coords [0, 1] – left, bottom, right, & top
+
+    glm::ivec2   bearing;
+    glm::ivec2   size;
+
     unsigned int advance;    // offset to advance to next glyph
 };
 
@@ -25,6 +29,7 @@ public:
     
     void Dispose();
 
+    void BindTexture();
     const SDFCharacter& GetCharacter(char c) { return characters[c]; }
 
 private:

@@ -1,11 +1,18 @@
-layout (location = 0) in vec4 vertex; // <vec2 pos, vec2 tex>
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec2 aTexCoord;
+layout (location = 2) in vec4 color;
 
-out vec2 texCoord;
+out VS_OUT {
+    vec2 texCoord;
+    vec4 color;
+} vs_out;
 
 uniform mat4 projection;
 
 void main()
 {
-    gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);
-    texCoord = vertex.zw;
+    gl_Position = projection * vec4(aPos, 0.0, 1.0);
+    
+    vs_out.texCoord = aTexCoord;
+    vs_out.color = color;
 }
