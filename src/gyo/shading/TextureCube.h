@@ -5,12 +5,15 @@ namespace gyo {
 
 class TextureCube {
 public:
-    TextureCube() {}
-    TextureCube(const unsigned int& textureId) : ID(textureId) {}
+    TextureCube();
+    TextureCube(const unsigned int& textureId, unsigned int width, unsigned int height);
     
     void Dispose();
 
     void Bind(unsigned int textureUnit = 0);
+
+    unsigned int width;
+    unsigned int height;
 
 private:
     // the texture id

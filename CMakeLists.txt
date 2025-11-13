@@ -60,6 +60,7 @@ set(PRIVATE_HEADERS
     src/gyo/renderer/RenderState.h
     src/gyo/renderer/RenderType.h
     src/gyo/renderer/ScreenQuad.h
+    src/gyo/resources/DataLoader.h
     src/gyo/resources/FontLoader.h
     src/gyo/resources/ShaderLoader.h
     src/gyo/resources/TextureLoader.h
@@ -96,6 +97,7 @@ set(SOURCES
     src/gyo/renderer/Renderer.cpp
     src/gyo/renderer/RenderState.cpp
     src/gyo/renderer/ScreenQuad.cpp
+    src/gyo/resources/DataLoader.cpp
     src/gyo/resources/FontLoader.cpp
     src/gyo/resources/ModelLoader.cpp
     src/gyo/resources/Resources.cpp
@@ -123,9 +125,8 @@ set( GLFW_INSTALL OFF CACHE BOOL "GLFW lib only" )
 set( GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build example executables" )
 add_subdirectory( deps/glfw )
 
-# add glm and freetype
+# add glm
 add_subdirectory( deps/glm )
-add_subdirectory( deps/freetype )
 
 # configure and add assimp asset importer
 set( ASSIMP_NO_EXPORT ON CACHE BOOL "Importers only" )
@@ -171,7 +172,6 @@ target_link_libraries(gyokuro
         glfw
         ${JPEGLIB_LIBRARY}
         assimp
-        freetype
 )
 
 # ----- Build our samples -----

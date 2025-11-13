@@ -8,8 +8,8 @@ namespace gyo {
 Texture2D::Texture2D() {
 }
 
-Texture2D::Texture2D(const unsigned int& textureId, bool hasAlpha)
-    : ID(textureId), hasAlpha(hasAlpha)
+Texture2D::Texture2D(const unsigned int& textureId, unsigned int width, unsigned int height, bool hasAlpha)
+    : ID(textureId), width(width), height(height), hasAlpha(hasAlpha)
 {}
 
 void Texture2D::Dispose() {

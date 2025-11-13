@@ -4,6 +4,7 @@
 #include <gyo/resources/ShaderLoader.h>
 #include <gyo/resources/TextureLoader.h>
 #include <gyo/resources/FontLoader.h>
+#include <gyo/resources/DataLoader.h>
 #include <gyo/utilities/FileSystem.h>
 #include <gyo/utilities/Hash.h>
 
@@ -155,14 +156,14 @@ Shader* Resources::GetShader(const char* vertFileName, const char* geomFileName,
     return &Resources::shaders[id];
 }
 
-Texture2D* Resources::GetTexture(const char* imageFileName, bool srgb) {
+Texture2D* Resources::GetTexture(const char* imageFileName, bool srgb, int wrapMode, bool useMipmaps) {
     long id = HASH(imageFileName);
 
     if (Resources::textures.find(id) != Resources::textures.end()) {
         return &Resources::textures[id];
     }
 
-    Texture2D texture = TextureLoader::LoadTexture(imageFileName, srgb);
+    Texture2D texture = TextureLoader::LoadTexture(imageFileName, srgb, wrapMode, useMipmaps);
 
     Resources::textures[id] = texture;
 
@@ -187,18 +188,25 @@ TextureCube* Resources::GetTextureCube(std::vector<const char*> faceFileNames, b
     return &Resources::cubeMaps[id];
 }
 
-Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {
-    long id = HASH(fontFileName);
+Font* Resources::GetFont(const char* fontName, const float& pixelsPerEm, const float& pixelRange) {
+    std::string hashKey = std::string(fontName) + std::to_string(pixelsPerEm) + std::to_string(pixelRange);
+    long id = HASH(hashKey);
 
     if(Resources::fonts.find(id) != Resources::fonts.end()) {
         return &Resources::fonts[id];
     }
 
-    Font font = FontLoader::LoadFont(fontFileName, fontSize);
+    Font font = FontLoader::LoadFont(fontName, pixelsPerEm);
 
     Resources::fonts[id] = font;
 
     return &Resources::fonts[id];
+}
+
+CSVData Resources::GetCSV(const char* filePath) {
+    CSVData data = DataLoader::LoadCSV(filePath);
+
+    return data;
 }
 
 } // namespace gyo

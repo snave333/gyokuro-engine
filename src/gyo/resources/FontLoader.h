@@ -11,7 +11,7 @@ class FontLoader {
 public:
     static std::string ResourceDir;
     
-    static Font LoadFont(const char* fontFileName, unsigned int fontSize);
+    static Font LoadFont(const char* fontName, const float& pixelsPerEm);
 };
   
 } // namespace gyo

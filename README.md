@@ -109,10 +109,9 @@ For more examples, see the runnable projects in the [samples](samples) folder.
   * [x] Textures
   * [x] Cubemaps
   * [x] Fonts
-* [ ] Screen text rendering
-  * [x] .ttf file parsing
-  * [x] Glyph rendering
-  * [ ] SDF-based text rendering
+* [ ] UI
+  * [x] MSDF-based text rendering
+  * [ ] UI images/panels
 * [x] HDR
   * [x] Render buffer
   * [x] Reinhard tone mapping
@@ -133,7 +132,6 @@ For more examples, see the runnable projects in the [samples](samples) folder.
 * [glfw](https://github.com/glfw/glfw/)
 * [glm](https://github.com/g-truc/glm/)
 * [stb_image](https://github.com/nothings/stb/)
-* [freetype](https://github.com/freetype/freetype/)
 * [assimp](https://github.com/assimp/assimp/)
 
 ## Acknowledgments
