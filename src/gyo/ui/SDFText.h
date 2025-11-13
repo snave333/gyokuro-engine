@@ -11,13 +11,13 @@ class Shader;
 
 struct TextStringRender {
     std::string text;
-    unsigned int x;
-    unsigned int y;
-    float scale;
+    int x;
+    int y;
+    unsigned int fontSize;
     glm::vec4 color;
 
-    TextStringRender(std::string text, unsigned int x, unsigned int y, float scale, glm::vec4 color) :
-        text(text), x(x), y(y), scale(scale), color(color) {}
+    TextStringRender(std::string text, int x, int y, unsigned int fontSize, glm::vec4 color) :
+        text(text), x(x), y(y), fontSize(fontSize), color(color) {}
 };
 
 struct GlyphVertex {
@@ -31,23 +31,26 @@ struct GlyphVertex {
 
 class SDFText {
 public:
-    SDFText(const char* fontName, const glm::ivec2& viewportSize);
+    SDFText(const char* fontName, const glm::ivec2& viewportSize, const float& pixelsPerEm, const float& pixelRange);
     ~SDFText();
 
     void UpdateViewportSize(const glm::ivec2& size);
-    void QueueStringRender(std::string text, unsigned int x, unsigned int y,
-        float scale = 1.0f, glm::vec4 color = glm::vec4(1));
-
+    void QueueStringRender(
+        std::string text,
+        int x,
+        int y,
+        unsigned int fontSize = 20,
+        glm::vec4 color = glm::vec4(1)
+    );
     void ExecuteRender();
 
-    // TODO remove me; only here while transitioning to SDF text rendering
-    const unsigned int GetFontSize() { return 16; }
-
 private:
+    float pixelsPerEm;
+
     SDFFont* font = nullptr;
     Shader* shader = nullptr;
 
-    std::vector<TextStringRender> renderQueue;
+    std::vector<TextStringRender> renderQueue = {};
     unsigned int pendingGlyphs = 0;
 
     unsigned int VAO;

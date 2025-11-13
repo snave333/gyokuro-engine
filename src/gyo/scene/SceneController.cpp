@@ -40,7 +40,7 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
     // our ui layer
 
-    textRenderer = new SDFText("SourceCodePro-Regular-SDF", size);
+    textRenderer = new SDFText("SourceCodePro-Regular-MSDF", size, 33.9375f, 6);
 
 }
 
@@ -255,6 +255,7 @@ void SceneController::FrustumCull(
 void SceneController::RenderStats() {
     CLOCKT(render_ui, &renderer->stats.uiMs);
 
+    /*
     std::vector<std::string> strings = {};
     std::ostringstream stream;
     stream.precision(1);
@@ -318,6 +319,10 @@ void SceneController::RenderStats() {
     // number of tris
 
     textRenderer->QueueStringRender(std::string("tris: ") + std::to_string(renderer->stats.tris), 180, edgeBuffer);
+    */
+
+    textRenderer->QueueStringRender("A", 10, 10);
+    // textRenderer->QueueStringRender("0", 100, 10);
 
     // finally, execute the render
 

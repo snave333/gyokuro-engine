@@ -197,7 +197,6 @@ TextureCube* Resources::GetTextureCube(std::vector<const char*> faceFileNames, b
 
 Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {
     std::string hashKey = std::string(fontFileName) + std::to_string(fontSize);
-
     long id = HASH(hashKey);
 
     if(Resources::fonts.find(id) != Resources::fonts.end()) {
@@ -211,14 +210,15 @@ Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {
     return &Resources::fonts[id];
 }
 
-SDFFont* Resources::GetSDFFont(const char* fontName) {
-    long id = HASH(fontName);
+SDFFont* Resources::GetSDFFont(const char* fontName, const float& pixelsPerEm, const float& pixelRange) {
+    std::string hashKey = std::string(fontName) + std::to_string(pixelsPerEm) + std::to_string(pixelRange);
+    long id = HASH(hashKey);
 
     if(Resources::sdfFonts.find(id) != Resources::sdfFonts.end()) {
         return &Resources::sdfFonts[id];
     }
 
-    SDFFont font = FontLoader::LoadSDFFont(fontName);
+    SDFFont font = FontLoader::LoadSDFFont(fontName, pixelsPerEm);
 
     Resources::sdfFonts[id] = font;
 

@@ -29,7 +29,7 @@ public:
     static Texture2D* GetTexture(const char* imageFileName, bool srgb, int wrapMode = GL_REPEAT, bool useMipmaps = true);
     static TextureCube* GetTextureCube(std::vector<const char*> faceFileNames, bool srgb);
     static Font* GetFont(const char* fontFileName, unsigned int fontSize);
-    static SDFFont* GetSDFFont(const char* fontName);
+    static SDFFont* GetSDFFont(const char* fontName, const float& pixelsPerEm, const float& pixelRange);
     static CSVData GetCSV(const char* filePath);
 
 private:

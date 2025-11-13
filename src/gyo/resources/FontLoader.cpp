@@ -92,10 +92,12 @@ Font FontLoader::LoadFont(const char* fontFileName, unsigned int fontSize) {
 }
 
 // loads a SDF texture atlas and glyph data csv file
-SDFFont FontLoader::LoadSDFFont(const char* fontName) {
+SDFFont FontLoader::LoadSDFFont(const char* fontName, const float& pixelsPerEm) {
     // get texture name
     std::string textureFileName = std::string(fontName) + std::string("-Atlas.png");
     Texture2D* fontAtlas = Resources::GetTexture(textureFileName.c_str(), false, GL_CLAMP_TO_EDGE, false);
+    unsigned int width = fontAtlas->width;
+    unsigned int height = fontAtlas->height;
     
     // get the csv file
     std::string csvFilePath = FileSystem::CombinePath(
@@ -104,7 +106,42 @@ SDFFont FontLoader::LoadSDFFont(const char* fontName) {
     
     std::map<char, SDFCharacter> characters;
 
-    // TODO parse the glyphData, and create the characters
+    // parse the glyphData and create the characters
+    for(std::vector<std::string> glyph : glyphData) {
+        if(glyph.size() != 10) {
+            std::cerr << "Invalid glyph data for " << fontName << std::endl;
+            continue;
+        }
+
+        // character Unicode value
+        int unicodeValue = std::stoi(glyph[0]);
+
+        // horizontal advance in em's
+        double advance = std::stod(glyph[1]) * pixelsPerEm;
+
+        // the glyph quad's bounds in em's relative to the baseline and cursor - left, bottom, right, top
+        double boundsL = std::stod(glyph[2]) * pixelsPerEm;
+        double boundsB = std::stod(glyph[3]) * pixelsPerEm;
+        double boundsR = std::stod(glyph[4]) * pixelsPerEm;
+        double boundsT = std::stod(glyph[5]) * pixelsPerEm;
+
+        // the glyph's bounds in the atlas in pixels – left, bottom, right, top
+        double uvL = std::stod(glyph[6]) / width;
+        double uvB = std::stod(glyph[7]) / height;
+        double uvR = std::stod(glyph[8]) / width;
+        double uvT = std::stod(glyph[9]) / height;
+
+        char c = static_cast<char>(unicodeValue);
+
+        SDFCharacter character = {
+            glm::dvec2(boundsR - boundsL, boundsT - boundsB),
+            glm::dvec2(boundsL, boundsB),
+            static_cast<unsigned int>(std::round(advance)),
+            glm::dvec4(uvL, uvB, uvR, uvT)
+        };
+
+        characters[c] = character;
+    }
 
     return SDFFont(fontAtlas, characters);
 }
