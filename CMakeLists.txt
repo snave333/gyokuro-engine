@@ -71,8 +71,6 @@ set(PRIVATE_HEADERS
     src/gyo/shading/Texture2D.h
     src/gyo/shading/TextureCube.h
     src/gyo/ui/Font.h
-    src/gyo/ui/SDFFont.h
-    src/gyo/ui/SDFText.h
     src/gyo/ui/Text.h
     src/gyo/utilities/Clock.h
     src/gyo/utilities/FileSystem.h
@@ -115,8 +113,6 @@ set(SOURCES
     src/gyo/shading/TextureCube.cpp
     src/gyo/shading/UnlitMaterial.cpp
     src/gyo/ui/Font.cpp
-    src/gyo/ui/SDFFont.cpp
-    src/gyo/ui/SDFText.cpp
     src/gyo/ui/Text.cpp
     src/stb_image/stb_image.c
 )
@@ -129,9 +125,8 @@ set( GLFW_INSTALL OFF CACHE BOOL "GLFW lib only" )
 set( GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build example executables" )
 add_subdirectory( deps/glfw )
 
-# add glm and freetype
+# add glm
 add_subdirectory( deps/glm )
-add_subdirectory( deps/freetype )
 
 # configure and add assimp asset importer
 set( ASSIMP_NO_EXPORT ON CACHE BOOL "Importers only" )
@@ -177,7 +172,6 @@ target_link_libraries(gyokuro
         glfw
         ${JPEGLIB_LIBRARY}
         assimp
-        freetype
 )
 
 # ----- Build our samples -----

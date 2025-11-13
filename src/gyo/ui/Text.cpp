@@ -1,19 +1,21 @@
 
 #include <gyo/ui/Text.h>
 
+#include <iostream>
+
 #include <gyo/ui/Font.h>
 #include <gyo/shading/Shader.h>
 #include <gyo/resources/Resources.h>
 
-#include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace gyo {
 
-Text::Text(const char* fontName, const glm::ivec2& viewportSize, unsigned int fontSize) {
-    font = Resources::GetFont(fontName, fontSize);
+Text::Text(const char* fontName, const glm::ivec2& viewportSize, const float& _pixelsPerEm, const float& pixelRange) {
+    pixelsPerEm = _pixelsPerEm;
+
+    font = Resources::GetFont(fontName, pixelsPerEm, pixelRange);
     shader = Resources::GetShader("glyph.vert", "glyph.frag");
-    this->fontSize = fontSize;
 
     // generate our vertex array and buffer
     glGenVertexArrays(1, &VAO);
@@ -23,13 +25,21 @@ Text::Text(const char* fontName, const glm::ivec2& viewportSize, unsigned int fo
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     
-    // each 2D quad requires 6 vertices of 4 floats each; for now just reserve 1,
+    // each 2D quad requires 6 vertices of 8 floats each; for now just reserve 1,
     // we'll update the vbo's memory later when rendering characters
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    currentVBOCapacity = 6;
+    glBufferData(GL_ARRAY_BUFFER, currentVBOCapacity * sizeof(GlyphVertex), NULL, GL_DYNAMIC_DRAW);
 
     // link the vertex attribute pointers
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    // screen-space position
+    glEnableVertexAttribArray(0);	
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GlyphVertex), (void*)0);
+    // texture coord
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GlyphVertex), (void*)offsetof(GlyphVertex, texCoord));
+    // vertex color
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(GlyphVertex), (void*)offsetof(GlyphVertex, color));
 
     // unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -37,9 +47,10 @@ Text::Text(const char* fontName, const glm::ivec2& viewportSize, unsigned int fo
 
     // set our shader uniforms
     shader->Use();
-    shader->SetInt("bitmap", 0);
+    shader->SetInt("glyphAtlas", 0);
     glm::mat4 projection = glm::ortho(0.0f, (float)viewportSize.x, 0.0f, (float)viewportSize.y);
     shader->SetMat4("projection", projection);
+    shader->SetFloat("pixelRange", pixelRange);
 }
 
 Text::~Text() {
@@ -57,62 +68,91 @@ void Text::UpdateViewportSize(const glm::ivec2& size) {
     shader->SetMat4("projection", projection);
 }
 
-void Text::RenderText(std::string text, unsigned int x, unsigned int y, float scale, glm::vec3 color) {
-    if(text.empty()) {
+void Text::QueueStringRender(std::string text, int x, int y, unsigned int fontSize, glm::vec4 color) {
+    renderQueue.emplace_back(text, x, y, fontSize, color);
+    pendingGlyphs += text.length();
+}
+
+void Text::ExecuteRender() {
+    if(renderQueue.empty()) {
         return;
     }
 
+    int requiredVertices = 6 * pendingGlyphs;
+
+    // assemble our vertex array with all our queued string renders
+    std::vector<GlyphVertex> vertices;
+    vertices.reserve(requiredVertices);
+
+    EnsureVBOCapacity(requiredVertices);
+    
+    for (TextStringRender render : renderQueue) {
+        int x = render.x;
+        int y = render.y;
+        float scale = static_cast<float>(render.fontSize) / pixelsPerEm;
+        
+        std::string::const_iterator c;
+        for (c = render.text.begin(); c != render.text.end(); c++) {
+            Character ch = font->GetCharacter(*c);
+            float uvLeft = ch.texCoord[0];
+            float uvBottom = ch.texCoord[1];
+            float uvRight = ch.texCoord[2];
+            float uvTop = ch.texCoord[3];
+            
+            float xpos = x + ch.bearing.x * scale;
+            float ypos = y + ch.bearing.y * scale;
+            
+            float w = ch.size.x * scale;
+            float h = ch.size.y * scale;
+            
+            // tri 1
+            vertices.emplace_back(glm::vec2(xpos,     ypos + h), glm::vec2(uvLeft,  uvTop   ), render.color);
+            vertices.emplace_back(glm::vec2(xpos,     ypos    ), glm::vec2(uvLeft,  uvBottom), render.color);
+            vertices.emplace_back(glm::vec2(xpos + w, ypos    ), glm::vec2(uvRight, uvBottom), render.color);
+            // tri 2
+            vertices.emplace_back(glm::vec2(xpos + w, ypos    ), glm::vec2(uvRight, uvBottom), render.color);
+            vertices.emplace_back(glm::vec2(xpos + w, ypos + h), glm::vec2(uvRight, uvTop   ), render.color);
+            vertices.emplace_back(glm::vec2(xpos,     ypos + h), glm::vec2(uvLeft,  uvTop   ), render.color);
+
+            // now advance cursors for next glyph
+            x += ch.advance * scale;
+        }
+    }
+    
     // activate corresponding render state
     shader->Use();
-    shader->SetVec3("color", color);
-    glActiveTexture(GL_TEXTURE0);
+    
+    font->BindTexture();
     glBindVertexArray(VAO);
+    
+    // update content of VBO memory
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(GlyphVertex), &vertices[0]);
 
-    // iterate through all characters
-    std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++) {
-        Character ch = font->GetCharacter(*c);
-
-        // skip the space character because it causes a texture error
-        if(*c == 32) {
-            x += (ch.advance >> 6) * scale;
-            continue;
-        }
-
-        float xpos = x + ch.bearing.x * scale;
-        float ypos = y - (ch.size.y - ch.bearing.y) * scale;
-
-        float w = ch.size.x * scale;
-        float h = ch.size.y * scale;
-
-        // update VBO for each character
-        float vertices[6][4] = {
-            { xpos,     ypos + h,   0.0f, 0.0f },
-            { xpos,     ypos,       0.0f, 1.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
-
-            { xpos,     ypos + h,   0.0f, 0.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
-            { xpos + w, ypos + h,   1.0f, 0.0f }
-        };
-
-        // render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.textureID);
-
-        // update content of VBO memory
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        // render quad
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        x += (ch.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
-    }
-
+    // render quad
+    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+    
+    // deactivate our render state
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+    
+    renderQueue.clear();
+    pendingGlyphs = 0;
+}
+
+void Text::EnsureVBOCapacity(int& requiredNumVertices) {
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    if(requiredNumVertices > currentVBOCapacity) {
+        // grow capacity exponentially (like a dynamic array)
+        int newCapacity = std::max(requiredNumVertices, currentVBOCapacity * 2);
+
+        glBufferData(GL_ARRAY_BUFFER, newCapacity * sizeof(GlyphVertex), nullptr, GL_DYNAMIC_DRAW);
+        currentVBOCapacity = newCapacity;
+
+        std::cout << "Resized VBO to " << newCapacity << " vertices" << std::endl;
+    }
 }
 
 } // namespace gyo

@@ -14,7 +14,7 @@ class AABBWireframe;
 class TangentsRenderer;
 class FlyCamera;
 class Skybox;
-class SDFText;
+class Text;
 class LightsUBO;
 struct Frustum;
 struct LightNode;
@@ -58,7 +58,7 @@ private:
     std::vector<ModelNode*> models = {};
     std::vector<IDrawable*> drawables = {};
 
-    SDFText* textRenderer;
+    Text* textRenderer;
 
     float lastMouseX;
     float lastMouseY;

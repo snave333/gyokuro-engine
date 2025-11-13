@@ -16,7 +16,7 @@
 #include <gyo/mesh/ModelNode.h>
 #include <gyo/mesh/Skybox.h>
 #include <gyo/camera/FlyCamera.h>
-#include <gyo/ui/SDFText.h>
+#include <gyo/ui/Text.h>
 #include <gyo/utilities/Clock.h>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -40,8 +40,8 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
     // our ui layer
 
-    // textRenderer = new SDFText("SourceCodePro-Regular-MSDF", size, 33.9375f, 6);
-    textRenderer = new SDFText("Ubuntu-Regular-MSDF", size, 33.125f, 6);
+    // textRenderer = new Text("SourceCodePro-Regular-MSDF", size, 33.9375f, 6);
+    textRenderer = new Text("Ubuntu-Regular-MSDF", size, 33.125f, 6);
 }
 
 SceneController::~SceneController() {

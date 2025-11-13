@@ -1,15 +1,26 @@
 
 #include <gyo/ui/Font.h>
 
-#include <glad/glad.h>
+#include <iostream>
+
+#include <gyo/shading/Texture2D.h>
 
 namespace gyo {
 
 void Font::Dispose() {
-    for (const auto& character : characters) {
-        glDeleteTextures(1, &character.second.textureID);
-    }
+    // no need to delete the texture; it is handled in Resources
+    textureAtlas = nullptr;
+    
     characters.clear();
+}
+
+void Font::BindTexture() {
+    if(textureAtlas == nullptr) {
+        std::cerr << "SDF Font missing texture atlas" << std::endl;
+        return;
+    }
+
+    textureAtlas->Bind();
 }
 
 } // namespace gyo

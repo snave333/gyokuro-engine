@@ -6,14 +6,12 @@
 namespace gyo {
 
 class Font;
-class SDFFont;
 
 class FontLoader {
 public:
     static std::string ResourceDir;
     
-    static Font LoadFont(const char* fontFileName, unsigned int fontSize);
-    static SDFFont LoadSDFFont(const char* fontName, const float& pixelsPerEm);
+    static Font LoadFont(const char* fontName, const float& pixelsPerEm);
 };
   
 } // namespace gyo

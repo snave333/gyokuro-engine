@@ -14,7 +14,6 @@
 #include <gyo/shading/Texture2D.h>
 #include <gyo/shading/TextureCube.h>
 #include <gyo/ui/Font.h>
-#include <gyo/ui/SDFFont.h>
 
 #include <glad/glad.h>
 
@@ -26,7 +25,6 @@ std::map<long, Shader> Resources::shaders = {};
 std::map<long, Texture2D> Resources::textures = {};
 std::map<long, TextureCube> Resources::cubeMaps = {};
 std::map<long, Font> Resources::fonts = {};
-std::map<long, SDFFont> Resources::sdfFonts = {};
 
 void Resources::Initialize() {
     // set the directory paths of our resource loaders
@@ -85,11 +83,6 @@ void Resources::Dispose() {
         font.second.Dispose();
     }
     Resources::fonts.clear();
-
-    for (auto& sdfFont : Resources::sdfFonts) {
-        sdfFont.second.Dispose();
-    }
-    Resources::sdfFonts.clear();
 }
 
 Model* Resources::GetModel(const char* fileName, bool flipUVs) {
@@ -195,34 +188,19 @@ TextureCube* Resources::GetTextureCube(std::vector<const char*> faceFileNames, b
     return &Resources::cubeMaps[id];
 }
 
-Font* Resources::GetFont(const char* fontFileName, unsigned int fontSize) {
-    std::string hashKey = std::string(fontFileName) + std::to_string(fontSize);
+Font* Resources::GetFont(const char* fontName, const float& pixelsPerEm, const float& pixelRange) {
+    std::string hashKey = std::string(fontName) + std::to_string(pixelsPerEm) + std::to_string(pixelRange);
     long id = HASH(hashKey);
 
     if(Resources::fonts.find(id) != Resources::fonts.end()) {
         return &Resources::fonts[id];
     }
 
-    Font font = FontLoader::LoadFont(fontFileName, fontSize);
+    Font font = FontLoader::LoadFont(fontName, pixelsPerEm);
 
     Resources::fonts[id] = font;
 
     return &Resources::fonts[id];
-}
-
-SDFFont* Resources::GetSDFFont(const char* fontName, const float& pixelsPerEm, const float& pixelRange) {
-    std::string hashKey = std::string(fontName) + std::to_string(pixelsPerEm) + std::to_string(pixelRange);
-    long id = HASH(hashKey);
-
-    if(Resources::sdfFonts.find(id) != Resources::sdfFonts.end()) {
-        return &Resources::sdfFonts[id];
-    }
-
-    SDFFont font = FontLoader::LoadSDFFont(fontName, pixelsPerEm);
-
-    Resources::sdfFonts[id] = font;
-
-    return &Resources::sdfFonts[id];
 }
 
 CSVData Resources::GetCSV(const char* filePath) {
