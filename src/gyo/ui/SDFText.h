@@ -55,6 +55,10 @@ private:
 
     unsigned int VAO;
     unsigned int VBO;
+
+    int currentVBOCapacity; // current number of verts supported by vbo
+
+    void EnsureVBOCapacity(int& requiredNumVertices);
 };
   
 } // namespace gyo

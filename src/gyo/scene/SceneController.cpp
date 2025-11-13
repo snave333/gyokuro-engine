@@ -255,10 +255,9 @@ void SceneController::FrustumCull(
 void SceneController::RenderStats() {
     CLOCKT(render_ui, &renderer->stats.uiMs);
 
-    /*
     std::vector<std::string> strings = {};
     std::ostringstream stream;
-    stream.precision(1);
+    stream.precision(0);
 
     // fps
 
@@ -303,7 +302,7 @@ void SceneController::RenderStats() {
     // now draw the stats
 
     unsigned int edgeBuffer = 8;
-    unsigned int fontSize = textRenderer->GetFontSize();
+    unsigned int fontSize = 20;
     unsigned int spacing = 2;
 
     unsigned int y = edgeBuffer;
@@ -319,9 +318,8 @@ void SceneController::RenderStats() {
     // number of tris
 
     textRenderer->QueueStringRender(std::string("tris: ") + std::to_string(renderer->stats.tris), 180, edgeBuffer);
-    */
 
-    textRenderer->QueueStringRender("A", 10, 10);
+    // textRenderer->QueueStringRender("AB", 10, 10);
     // textRenderer->QueueStringRender("0", 100, 10);
 
     // finally, execute the render
