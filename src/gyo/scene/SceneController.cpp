@@ -40,8 +40,8 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
     // our ui layer
 
-    textRenderer = new SDFText("SourceCodePro-Regular-MSDF", size, 33.9375f, 6);
-
+    // textRenderer = new SDFText("SourceCodePro-Regular-MSDF", size, 33.9375f, 6);
+    textRenderer = new SDFText("Ubuntu-Regular-MSDF", size, 33.125f, 6);
 }
 
 SceneController::~SceneController() {
@@ -257,7 +257,7 @@ void SceneController::RenderStats() {
 
     std::vector<std::string> strings = {};
     std::ostringstream stream;
-    stream.precision(0);
+    stream.precision(1);
 
     // fps
 

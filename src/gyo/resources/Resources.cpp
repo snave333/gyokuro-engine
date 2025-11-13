@@ -170,7 +170,7 @@ Texture2D* Resources::GetTexture(const char* imageFileName, bool srgb, int wrapM
         return &Resources::textures[id];
     }
 
-    Texture2D texture = TextureLoader::LoadTexture(imageFileName, srgb);
+    Texture2D texture = TextureLoader::LoadTexture(imageFileName, srgb, wrapMode, useMipmaps);
 
     Resources::textures[id] = texture;
 

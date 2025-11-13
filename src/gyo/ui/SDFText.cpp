@@ -1,6 +1,8 @@
 
 #include <gyo/ui/SDFText.h>
 
+#include <iostream>
+
 #include <gyo/ui/SDFFont.h>
 #include <gyo/shading/Shader.h>
 #include <gyo/resources/Resources.h>
