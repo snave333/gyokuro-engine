@@ -319,9 +319,6 @@ void SceneController::RenderStats() {
 
     textRenderer->QueueStringRender(std::string("tris: ") + std::to_string(renderer->stats.tris), 180, edgeBuffer);
 
-    // textRenderer->QueueStringRender("AB", 10, 10);
-    // textRenderer->QueueStringRender("0", 100, 10);
-
     // finally, execute the render
 
     glEnable(GL_BLEND);

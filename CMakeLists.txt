@@ -114,6 +114,7 @@ set(SOURCES
     src/gyo/shading/UnlitMaterial.cpp
     src/gyo/ui/Font.cpp
     src/gyo/ui/Text.cpp
+    src/gyo/utilities/GetError.cpp
     src/stb_image/stb_image.c
 )
 

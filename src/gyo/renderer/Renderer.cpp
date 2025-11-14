@@ -23,7 +23,7 @@ Renderer::Renderer(const int& width, const int& height) {
 
     CreateFrameBuffer();
 
-    glPolygonMode(GL_FRONT, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // uncomment to draw in wireframe
 }
 
@@ -99,8 +99,9 @@ void Renderer::PrintGLInfo() {
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &value);
     std::cout << "- Max Combined Texture Image Units: " << value << "\n";
 
-    glGetIntegerv(GL_MAX_VARYING_COMPONENTS, &value);
-    std::cout << "- Max Varying Components: " << value << "\n";
+    // this triggers a INVALID_ENUM for some reason
+    // glGetIntegerv(GL_MAX_VARYING_COMPONENTS, &value);
+    // std::cout << "- Max Varying Components: " << value << "\n";
 
     glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &value);
     std::cout << "- Max Uniform Block Size: " << value << " bytes\n";
@@ -148,9 +149,15 @@ void Renderer::PrintGLInfo() {
     std::cout << "- Max Clip Distances: " << value << "\n";
 
     // Extensions
-    const GLubyte* extensions = glGetString(GL_EXTENSIONS);
-    if(extensions != 0) {
-        std::cout << "- Extensions:\n" << extensions << "\n";
+    glGetIntegerv(GL_NUM_EXTENSIONS, &value);
+    std::cout << "- Number of Extensions: " << value << "\n";
+    if(value != 0) {
+        for (GLint i = 0; i < value; i++) {
+            const char* extensionName = (const char*)glGetStringi(GL_EXTENSIONS, i);
+            if (extensionName) {
+                std::cout << "  " << i << ": " << extensionName << std::endl;
+            }
+        }
     }
 }
 
