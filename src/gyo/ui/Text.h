@@ -39,7 +39,7 @@ public:
         std::string text,
         int x,
         int y,
-        unsigned int fontSize = 20,
+        unsigned int fontSize = 16U,
         glm::vec4 color = glm::vec4(1)
     );
     void ExecuteRender();

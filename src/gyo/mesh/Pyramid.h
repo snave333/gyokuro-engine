@@ -15,11 +15,11 @@ struct Pyramid : public Geometry {
         glm::vec3 base4(-halfBase, 0.0f, -halfBase);    // 4
 
         // calculate normals for each face
-        glm::vec3 normal0 = glm::normalize(glm::cross(base2 - top0, base1 - top0)); // front face
-        glm::vec3 normal1 = glm::normalize(glm::cross(base3 - top0, base2 - top0)); // right face
-        glm::vec3 normal2 = glm::normalize(glm::cross(base4 - top0, base3 - top0)); // back face
-        glm::vec3 normal3 = glm::normalize(glm::cross(base1 - top0, base4 - top0)); // left face
-        glm::vec3 baseNormal(0.0f, -1.0f, 0.0f);                                    // base face
+        glm::vec3 normal0 = glm::normalize(-glm::cross(base2 - top0, base1 - top0)); // front face
+        glm::vec3 normal1 = glm::normalize(-glm::cross(base3 - top0, base2 - top0)); // right face
+        glm::vec3 normal2 = glm::normalize(-glm::cross(base4 - top0, base3 - top0)); // back face
+        glm::vec3 normal3 = glm::normalize(-glm::cross(base1 - top0, base4 - top0)); // left face
+        glm::vec3 baseNormal(0.0f, -1.0f, 0.0f);                                     // base face
 
         // uv coordinates
         glm::vec2 uvTop(0.5f, 1.0f);

@@ -258,7 +258,7 @@ void SceneController::RenderStats() {
 
     std::vector<std::string> strings = {};
     std::ostringstream stream;
-    stream.precision(1);
+    stream.precision(0);
 
     // fps
 
