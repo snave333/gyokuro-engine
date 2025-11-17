@@ -8,6 +8,7 @@
 #include <gyo/renderer/Renderer.h>
 #include <gyo/scene/SceneController.h>
 #include <gyo/resources/Resources.h>
+#include <gyo/utilities/GetError.h>
 
 namespace gyo {
 
@@ -73,6 +74,7 @@ Engine::Engine(unsigned int ptWidth, unsigned int ptHeight) {
     int pxWidth, pxHeight;
     glfwGetFramebufferSize(window, &pxWidth, &pxHeight);
     glViewport(0, 0, pxWidth, pxHeight);
+    glCheckError();
     
     // listen for resize event
     glfwSetFramebufferSizeCallback(window, Engine::glfwOnResize);
@@ -139,6 +141,7 @@ void Engine::glfwOnError(int error, const char* description) {
 
 void Engine::glfwOnResize(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    glCheckError();
 
     // TODO call a Resize(width, height) function on sceneController and renderer
 }

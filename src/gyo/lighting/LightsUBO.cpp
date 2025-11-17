@@ -22,31 +22,38 @@
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <gyo/utilities/GetError.h>
 
 namespace gyo {
 
 LightsUBO::LightsUBO() {
     // create our lights uniform buffer object, and bind for initialization
     glGenBuffers(1, &uboLights);
+    glCheckError();
     glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
+    glCheckError();
 
     // the size of our ubo
     unsigned long size = 464;
     
     // allocate enough memory for all of the light uniform values
     glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW);
+    glCheckError();
 
     // link the range of the entire buffer to binding point 0
     glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboLights, 0, size);
+    glCheckError();
 
     // store the first part of the uniform buffer with the projection matrix
     // glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glCheckError();
 }
 
 LightsUBO::~LightsUBO() {
     glDeleteBuffers(1, &uboLights);
+    glCheckError();
 }
 
 void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) {
@@ -91,9 +98,11 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
     // use sub data to set all of the values
 
     glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
+    glCheckError();
     unsigned int offset = 0;
 
     glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(ambient, 0)));
+    glCheckError();
     offset += 16;
 
     /**
@@ -104,8 +113,10 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
 
      */
     glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(directionalLightDirection, 0)));
+    glCheckError();
     offset += 16;
     glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(directionalLight->color, 0)));
+    glCheckError();
     offset += 16;
 
     /**
@@ -119,8 +130,10 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
         glm::vec3 position = pointLightPositions[i];
 
         glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(position, 0)));
+        glCheckError();
         offset += 16;
         glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(light->color, 0)));
+        glCheckError();
         offset += 16;
     }
     offset = 176; // 16 + 32 + 128
@@ -140,12 +153,16 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
         glm::vec3 direction = spotLightDirections[i];
 
         glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(position, 0)));
+        glCheckError();
         offset += 16;
         glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(direction, 0)));
+        glCheckError();
         offset += 16;
         glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(light->color, 0)));
+        glCheckError();
         offset += 16;
         glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(float), &light->cosAngle);
+        glCheckError();
         offset += 4 + 12; // 4, plus 12 bytes padding
     }
     offset = 432; // 16 + 32 + 128 + 256
@@ -153,14 +170,17 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
     // counters
 
     glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(int), &numPointLights);
+    glCheckError();
     offset += 4;
     glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(int), &numSpotLights);
+    glCheckError();
     offset += 4;
 
     // padding
     offset += 8;
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glCheckError();
 }
 
 } // namespace gyo

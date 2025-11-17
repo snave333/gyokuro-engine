@@ -6,6 +6,7 @@
 #include <gyo/ui/Font.h>
 #include <gyo/shading/Shader.h>
 #include <gyo/resources/Resources.h>
+#include <gyo/utilities/GetError.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -19,31 +20,44 @@ Text::Text(const char* fontName, const glm::ivec2& viewportSize, const float& _p
 
     // generate our vertex array and buffer
     glGenVertexArrays(1, &VAO);
+    glCheckError();
     glGenBuffers(1, &VBO);
+    glCheckError();
 
     // bind
     glBindVertexArray(VAO);
+    glCheckError();
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glCheckError();
     
     // each 2D quad requires 6 vertices of 8 floats each; for now just reserve 1,
     // we'll update the vbo's memory later when rendering characters
     currentVBOCapacity = 6;
     glBufferData(GL_ARRAY_BUFFER, currentVBOCapacity * sizeof(GlyphVertex), NULL, GL_DYNAMIC_DRAW);
+    glCheckError();
 
     // link the vertex attribute pointers
     // screen-space position
     glEnableVertexAttribArray(0);	
+    glCheckError();
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GlyphVertex), (void*)0);
+    glCheckError();
     // texture coord
     glEnableVertexAttribArray(1);
+    glCheckError();
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GlyphVertex), (void*)offsetof(GlyphVertex, texCoord));
+    glCheckError();
     // vertex color
     glEnableVertexAttribArray(2);
+    glCheckError();
     glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(GlyphVertex), (void*)offsetof(GlyphVertex, color));
+    glCheckError();
 
     // unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glCheckError();
     glBindVertexArray(0);
+    glCheckError();
 
     // set our shader uniforms
     shader->Use();
@@ -55,7 +69,9 @@ Text::Text(const char* fontName, const glm::ivec2& viewportSize, const float& _p
 
 Text::~Text() {
     glDeleteVertexArrays(1, &VAO);
+    glCheckError();
     glDeleteBuffers(1, &VBO);
+    glCheckError();
 
     font = nullptr;
     shader = nullptr;
@@ -124,18 +140,25 @@ void Text::ExecuteRender() {
     
     font->BindTexture();
     glBindVertexArray(VAO);
+    glCheckError();
     
     // update content of VBO memory
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glCheckError();
     glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(GlyphVertex), &vertices[0]);
+    glCheckError();
 
     // render quad
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+    glCheckError();
     
     // deactivate our render state
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glCheckError();
     glBindVertexArray(0);
+    glCheckError();
     glBindTexture(GL_TEXTURE_2D, 0);
+    glCheckError();
     
     renderQueue.clear();
     pendingGlyphs = 0;
@@ -143,12 +166,14 @@ void Text::ExecuteRender() {
 
 void Text::EnsureVBOCapacity(int& requiredNumVertices) {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glCheckError();
 
     if(requiredNumVertices > currentVBOCapacity) {
         // grow capacity exponentially (like a dynamic array)
         int newCapacity = std::max(requiredNumVertices, currentVBOCapacity * 2);
 
         glBufferData(GL_ARRAY_BUFFER, newCapacity * sizeof(GlyphVertex), nullptr, GL_DYNAMIC_DRAW);
+        glCheckError();
         currentVBOCapacity = newCapacity;
 
         std::cout << "Resized VBO to " << newCapacity << " vertices" << std::endl;

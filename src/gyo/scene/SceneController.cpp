@@ -18,6 +18,7 @@
 #include <gyo/camera/FlyCamera.h>
 #include <gyo/ui/Text.h>
 #include <gyo/utilities/Clock.h>
+#include <gyo/utilities/GetError.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
@@ -322,11 +323,14 @@ void SceneController::RenderStats() {
     // finally, execute the render
 
     glEnable(GL_BLEND);
+    glCheckError();
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glCheckError();
 
     textRenderer->ExecuteRender();
 
     glDisable(GL_BLEND);
+    glCheckError();
 }
 
 void SceneController::OnKeyPressed(int key, float dt) {

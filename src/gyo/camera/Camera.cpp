@@ -13,6 +13,7 @@
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <gyo/utilities/GetError.h>
 
 namespace gyo {
 
@@ -34,35 +35,46 @@ Camera::Camera(glm::mat4 projection) {
 
     // create our matrices uniform buffer object, and bind for initialization
     glGenBuffers(1, &uboMatrices);
+    glCheckError();
     glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+    glCheckError();
 
     // the size of our ubo
     unsigned long size = 144;
     
     // allocate enough memory for the 2 matrices and position
     glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW);
+    glCheckError();
 
     // link the range of the entire buffer to binding point 0
     glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, size);
+    glCheckError();
 
     // store the first part of the uniform buffer with the projection matrix
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+    glCheckError();
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glCheckError();
 }
 
 Camera::~Camera() {
     glDeleteBuffers(1, &uboMatrices);
+    glCheckError();
 }
 
 void Camera::UpdateViewMatrixUniform(const glm::mat4& view, const glm::vec3& viewPos) {
     glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+    glCheckError();
 
     // update the view matrix and view position in our uniform buffer
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+    glCheckError();
     glBufferSubData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), sizeof(glm::vec4), glm::value_ptr(glm::vec4(viewPos, 0)));
+    glCheckError();
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glCheckError();
 }
 
 } // namespace gyo

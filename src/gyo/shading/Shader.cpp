@@ -1,10 +1,11 @@
 
 #include <gyo/shading/Shader.h>
+#include <gyo/utilities/GetError.h>
+
+#include <iostream>
 
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
-
-#include <iostream>
 
 namespace gyo {
 
@@ -15,10 +16,12 @@ Shader::Shader(const unsigned int& shaderProgramId, std::map<std::string, int>& 
 
 void Shader::Dispose() {
     glDeleteProgram(ID);
+    glCheckError();
 }
 
 void Shader::Use() const {
     glUseProgram(ID);
+    glCheckError();
 }
 
 void Shader::SetBool(const char* name, bool value) const {
@@ -28,6 +31,7 @@ void Shader::SetBool(const char* name, bool value) const {
         return;
     }
     glUniform1i(location, (int)value);
+    glCheckError();
 }
 
 void Shader::SetInt(const char* name, int value) const {
@@ -37,6 +41,7 @@ void Shader::SetInt(const char* name, int value) const {
         return;
     }
     glUniform1i(location, value);
+    glCheckError();
 }
 
 void Shader::SetFloat(const char* name, float value) const {
@@ -46,6 +51,7 @@ void Shader::SetFloat(const char* name, float value) const {
         return;
     }
     glUniform1f(location, value);
+    glCheckError();
 }
 
 void Shader::SetVec2(const char* name, glm::vec2 value) const {
@@ -55,6 +61,7 @@ void Shader::SetVec2(const char* name, glm::vec2 value) const {
         return;
     }
     glUniform2f(location, value.x, value.y);
+    glCheckError();
 }
 
 void Shader::SetVec3(const char* name, glm::vec3 value) const {
@@ -64,6 +71,7 @@ void Shader::SetVec3(const char* name, glm::vec3 value) const {
         return;
     }
     glUniform3f(location, value.x, value.y, value.z);
+    glCheckError();
 }
 
 void Shader::SetVec4(const char* name, glm::vec4 value) const {
@@ -73,6 +81,7 @@ void Shader::SetVec4(const char* name, glm::vec4 value) const {
         return;
     }
     glUniform4f(location, value.x, value.y, value.z, value.w);
+    glCheckError();
 }
 
 void Shader::SetMat4(const char* name, glm::mat4 value) const {
@@ -82,6 +91,7 @@ void Shader::SetMat4(const char* name, glm::mat4 value) const {
         return;
     }
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+    glCheckError();
 }
 
 void Shader::SetUniformBlockBinding(const char* name, int bindingPoint) const {
@@ -91,6 +101,7 @@ void Shader::SetUniformBlockBinding(const char* name, int bindingPoint) const {
         return;
     }
     glUniformBlockBinding(ID, index, bindingPoint);
+    glCheckError();
 }
 
 bool Shader::HasUniform(const char* name) const {

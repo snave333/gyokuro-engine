@@ -6,6 +6,7 @@
 #include <gyo/renderer/DrawCall.h>
 #include <gyo/mesh/Mesh.h>
 #include <gyo/mesh/Skybox.h>
+#include <gyo/utilities/GetError.h>
 
 #include <glad/glad.h>
 
@@ -24,6 +25,7 @@ Renderer::Renderer(const int& width, const int& height) {
     CreateFrameBuffer();
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glCheckError();
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // uncomment to draw in wireframe
 }
 
@@ -32,38 +34,57 @@ Renderer::~Renderer() {
     screenQuad = nullptr;
 
     glDeleteFramebuffers(1, &framebuffer);
+    glCheckError();
     glDeleteTextures(1, &textureColorbuffer);
+    glCheckError();
     glDeleteRenderbuffers(1, &depthRenderbuffer);
+    glCheckError();
 }
 
 void Renderer::CreateFrameBuffer() {
     screenQuad = new ScreenQuad();
     
     glGenFramebuffers(1, &framebuffer);
+    glCheckError();
 
     // generate hdr color texture
     glGenTextures(1, &textureColorbuffer);
+    glCheckError();
     glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+    glCheckError();
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glCheckError();
     glBindTexture(GL_TEXTURE_2D, 0);
+    glCheckError();
 
     // generate render buffer object for depth / stencil
     glGenRenderbuffers(1, &depthRenderbuffer);
+    glCheckError();
     glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer); 
+    glCheckError();
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, size.x, size.y);
+    glCheckError();
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glCheckError();
 
     // attach color and depth/stencil buffers to currently bound framebuffer object
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glCheckError();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+    glCheckError();
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+    glCheckError();
 
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "ERROR::RENDERER::FRAMEBUFFER_NOT_COMPLETE" << std::endl;
     }
+    glCheckError();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);  
+    glCheckError();
 }
 
 void Renderer::PrintGLInfo() {
@@ -71,9 +92,13 @@ void Renderer::PrintGLInfo() {
 
     // Query and print renderer and version information
     const GLubyte* renderer = glGetString(GL_RENDERER);  // GPU name
+    glCheckError();
     const GLubyte* version = glGetString(GL_VERSION);    // OpenGL version
+    glCheckError();
     const GLubyte* vendor = glGetString(GL_VENDOR);      // Vendor name
+    glCheckError();
     const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION); // GLSL version
+    glCheckError();
 
     std::cout << "- Renderer: " << renderer << "\n";
     std::cout << "- OpenGL Version: " << version << "\n";
@@ -85,52 +110,67 @@ void Renderer::PrintGLInfo() {
     
     // Shader and Program Limits
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &value);
+    glCheckError();
     std::cout << "- Max Vertex Attributes: " << value << "\n";
 
     glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &value);
+    glCheckError();
     std::cout << "- Max Vertex Uniform Components: " << value << "\n";
 
     glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &value);
+    glCheckError();
     std::cout << "- Max Fragment Uniform Components: " << value << "\n";
 
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &value);
+    glCheckError();
     std::cout << "- Max Texture Image Units: " << value << "\n";
 
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &value);
+    glCheckError();
     std::cout << "- Max Combined Texture Image Units: " << value << "\n";
 
     // this triggers a INVALID_ENUM for some reason
     // glGetIntegerv(GL_MAX_VARYING_COMPONENTS, &value);
+    // glCheckError();
     // std::cout << "- Max Varying Components: " << value << "\n";
 
     glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &value);
+    glCheckError();
     std::cout << "- Max Uniform Block Size: " << value << " bytes\n";
 
     // Texture Capabilities
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value);
+    glCheckError();
     std::cout << "- Max 2D Texture Size: " << value << "x" << value << "\n";
 
     glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &value);
+    glCheckError();
     std::cout << "- Max 3D Texture Size: " << value << "x" << value << "x" << value << "\n";
 
     glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &value);
+    glCheckError();
     std::cout << "- Max Cube Map Texture Size: " << value << "x" << value << "\n";
 
     glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &value);
+    glCheckError();
     std::cout << "- Max Array Texture Layers: " << value << "\n";
 
     // Framebuffer and Renderbuffer
     glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &value);
+    glCheckError();
     std::cout << "- Max Renderbuffer Size: " << value << "x" << value << "\n";
 
     glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &value);
+    glCheckError();
     std::cout << "- Max Color Attachments: " << value << "\n";
 
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &value);
+    glCheckError();
     std::cout << "- Max Draw Buffers: " << value << "\n";
 
     // MSAA Capabilities
     glGetIntegerv(GL_MAX_SAMPLES, &value);
+    glCheckError();
     std::cout << "- Max MSAA Samples: " << value << "\n";
 #if false
     // Compute Shader Limits (if supported)
@@ -143,9 +183,11 @@ void Renderer::PrintGLInfo() {
     // Viewport and Clipping
     GLint viewportDims[2];
     glGetIntegerv(GL_MAX_VIEWPORT_DIMS, viewportDims);
+    glCheckError();
     std::cout << "- Max Viewport Dimensions: " << viewportDims[0] << "x" << viewportDims[1] << "\n";
 
     glGetIntegerv(GL_MAX_CLIP_DISTANCES, &value);
+    glCheckError();
     std::cout << "- Max Clip Distances: " << value << "\n";
 
     // Extensions
@@ -165,8 +207,11 @@ void Renderer::BeginFrame() {
     // bind and clear our frame buffer
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glCheckError();
     glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
+    glCheckError();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glCheckError();
 }
 
 void Renderer::RenderOpaque(std::vector<DrawCall> drawCalls) {
@@ -254,8 +299,11 @@ void Renderer::EndGeometryPass() {
     // unbind our framebuffer, and render the full screen quad
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+    glCheckError();
     glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
+    glCheckError();
     glClear(GL_COLOR_BUFFER_BIT);
+    glCheckError();
 
     screenQuad->Draw(textureColorbuffer);
 }
