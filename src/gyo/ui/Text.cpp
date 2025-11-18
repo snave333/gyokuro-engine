@@ -176,7 +176,7 @@ void Text::EnsureVBOCapacity(int& requiredNumVertices) {
         glCheckError();
         currentVBOCapacity = newCapacity;
 
-        std::cout << "Resized VBO to " << newCapacity << " vertices" << std::endl;
+        std::cout << "Resized Text VBO to " << newCapacity << " vertices" << std::endl;
     }
 }
 

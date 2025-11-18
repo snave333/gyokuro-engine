@@ -93,9 +93,12 @@ LightingResult calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N) {
 LightingResult calcTotalLighting(vec3 V, vec3 P, vec3 N) {
     LightingResult result = LightingResult(vec3(0.0), vec3(0.0));
 
-    LightingResult directional = calcDirectionalLight(dirLight, V, N);
-    result.diffuse += directional.diffuse;
-    result.specular += directional.specular;
+    // first make sure there is a directional light in the scene
+    if(dot(dirLight.direction.xyz, dirLight.direction.xyz) != 0.0) {
+        LightingResult directional = calcDirectionalLight(dirLight, V, N);
+        result.diffuse += directional.diffuse;
+        result.specular += directional.specular;
+    }
 
     for(int i = 0; i < min(numPointLights, MAX_POINT_LIGHTS); i++) {
         LightingResult point = calcPointLight(pointLights[i], V, P, N);

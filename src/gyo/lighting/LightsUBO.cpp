@@ -2,13 +2,14 @@
 /**
  * Lights uniform buffer object, found in lights.glsl, has the following signature:
  * layout (std140) uniform Lights {
- *     vec4 globalAmbient;                         // .rgb: ambient light color, .a: 0 [unused]
- *     DirectionalLight dirLight;                  // 32 bytes
- *     PointLight pointLights[MAX_POINT_LIGHTS];   // 128 bytes (32 * 4)
- *     SpotLight spotLights[MAX_SPOT_LIGHTS];      // 256 bytes (64 * 4)
- *     int numPointLights;                         // 4 bytes
- *     int numSpotLights;                          // 4 bytes
- *     // 8 bytes padding
+ *      vec4 globalAmbient;                         // .rgb: ambient light color, .a: 0 [unused]
+ *      DirectionalLight dirLight;                  // 32 bytes
+ *      PointLight pointLights[MAX_POINT_LIGHTS];   // 128 bytes (32 * 4)
+ *      SpotLight spotLights[MAX_SPOT_LIGHTS];      // 256 bytes (64 * 4)
+ *      int numPointLights;                         // 4 bytes
+ *      // 12 bytes padding
+ *      int numSpotLights;                          // 4 bytes
+ *      // 12 bytes padding
  * }; // total size with std140 layout: 464 bytes
  */
 
@@ -18,6 +19,8 @@
 #include <gyo/lighting/PointLight.h>
 #include <gyo/lighting/SpotLight.h>
 #include <gyo/scene/SceneController.h>
+
+#include <iostream>
 
 #include <glm/glm.hpp>
 #include <glad/glad.h>
@@ -59,7 +62,7 @@ LightsUBO::~LightsUBO() {
 void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) {
     // separate all of our lights into their respective types
 
-    const DirectionalLight* directionalLight;
+    const DirectionalLight* directionalLight = nullptr;
     glm::vec3 directionalLightDirection;
 
     std::vector<const PointLight*> pointLights;
@@ -83,10 +86,8 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
             spotLightPositions.push_back(lights[i]->GetPosition());
             spotLightDirections.push_back(lights[i]->GetForward());
         }
-        else {
-            if(directionalLight != nullptr) {
-                // error! more than 1 directional light
-            }
+        // note this only takes the first directional light
+        else if(dLight && !directionalLight) {
             directionalLight = dLight;
             directionalLightDirection = lights[i]->GetForward();
         }
@@ -112,12 +113,17 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
         }; // total size with std140 layout: 32 bytes
 
      */
-    glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(directionalLightDirection, 0)));
-    glCheckError();
-    offset += 16;
-    glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(directionalLight->color, 0)));
-    glCheckError();
-    offset += 16;
+    if(directionalLight != nullptr) {
+        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(directionalLightDirection, 0)));
+        glCheckError();
+        offset += 16;
+        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(directionalLight->color, 0)));
+        glCheckError();
+        offset += 16;
+    }
+    else {
+        offset += 32;
+    }
 
     /**
         struct PointLight {
@@ -167,17 +173,16 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
     }
     offset = 432; // 16 + 32 + 128 + 256
 
-    // counters
+    // counters (note these are 16 byte aligned)
 
     glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(int), &numPointLights);
     glCheckError();
-    offset += 4;
+    offset += 16;
     glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(int), &numSpotLights);
     glCheckError();
-    offset += 4;
+    offset += 16;
 
-    // padding
-    offset += 8;
+    std::cout << "Finished update Lights UBO with offset " << offset << std::endl;
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glCheckError();
