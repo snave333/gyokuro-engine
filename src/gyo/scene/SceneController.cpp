@@ -262,43 +262,43 @@ void SceneController::RenderStats() {
 
     // fps
 
-    stream << std::fixed << renderer->stats.fps;
-    strings.push_back(stream.str() + std::string(" fps"));
+    stream << std::fixed << renderer->stats.frame;
+    strings.push_back(std::string("frame: ") + stream.str() + std::string(" ms"));
 
     // view frustum culling
 
     stream.str("");
     stream.clear();
     stream << std::fixed << renderer->stats.vfcMs;
-    strings.push_back(std::string("vfc: ") + stream.str() + std::string(" ms"));
+    strings.push_back(std::string("- vfc: ") + stream.str() + std::string(" ms"));
 
     // opaque pass
 
     stream.str("");
     stream.clear();
     stream << std::fixed << renderer->stats.opaqueMs;
-    strings.push_back(std::string("opaque pass: ") + stream.str() + std::string(" ms"));
+    strings.push_back(std::string("- opaque pass: ") + stream.str() + std::string(" ms"));
 
     // alpha pass
 
     stream.str("");
     stream.clear();
     stream << std::fixed << renderer->stats.alphaMs;
-    strings.push_back(std::string("alpha pass: ") + stream.str() + std::string(" ms"));
+    strings.push_back(std::string("- alpha pass: ") + stream.str() + std::string(" ms"));
 
+    // total ui pass
+
+    stream.str("");
+    stream.clear();
+    stream << std::fixed << renderer->stats.uiMs;
+    strings.push_back(std::string("- ui: ") + stream.str() + std::string(" ms"));
+    
     // total geometry pass
 
     stream.str("");
     stream.clear();
     stream << std::fixed << renderer->stats.geometryMs;
     strings.push_back(std::string("total: ") + stream.str() + std::string(" ms"));
-    
-    // total ui pass
-
-    stream.str("");
-    stream.clear();
-    stream << std::fixed << renderer->stats.uiMs;
-    strings.push_back(std::string("UI: ") + stream.str() + std::string(" ms"));
     
     // now draw the stats
 
@@ -311,6 +311,8 @@ void SceneController::RenderStats() {
         textRenderer->QueueStringRender(strings[i], edgeBuffer, y);
         y += fontSize + spacing;
     }
+    // the ui draw call below
+    renderer->stats.drawCalls++;
 
     // number of draw calls
 

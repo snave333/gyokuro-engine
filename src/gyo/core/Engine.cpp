@@ -118,10 +118,7 @@ void Engine::Frame() {
     double currentTime = glfwGetTime();
     double dt = currentTime - lastUpdateTime;
     lastUpdateTime = currentTime;
-    if(dt > 0.0f) {
-        renderer->stats.fps = 1.0f / dt;
-    }
-    // std::cout << (int)(dt * 1000) << " ms, " << (int)renderer->stats.fps << " fps" << std::endl;
+    renderer->stats.frame = dt * 1000.0;
 
     // input
     processInput(window, dt);
