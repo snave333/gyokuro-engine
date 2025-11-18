@@ -43,9 +43,6 @@ LightsUBO::LightsUBO() {
     glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboLights, 0, bufferSize);
     glCheckError();
 
-    // store the first part of the uniform buffer with the projection matrix
-    // glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
-
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glCheckError();
 }
@@ -95,7 +92,7 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
     // create our cpu-side buffer for mapping directly to gpu memory
 
     std::vector<uint8_t> buffer(bufferSize);
-    size_t offset = 0;
+    size_t offset = 0L;
 
     auto write = [&](const void* data, size_t size) {
         memcpy(buffer.data() + offset, data, size);

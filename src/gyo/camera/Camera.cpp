@@ -40,18 +40,14 @@ Camera::Camera(glm::mat4 projection) {
     glCheckError();
 
     // the size of our ubo
-    unsigned long size = 144;
+    buffer.resize(bufferSize);
     
     // allocate enough memory for the 2 matrices and position
-    glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_STATIC_DRAW);
     glCheckError();
 
     // link the range of the entire buffer to binding point 0
-    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, size);
-    glCheckError();
-
-    // store the first part of the uniform buffer with the projection matrix
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, bufferSize);
     glCheckError();
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -64,14 +60,31 @@ Camera::~Camera() {
 }
 
 void Camera::UpdateViewMatrixUniform(const glm::mat4& view, const glm::vec3& viewPos) {
+    // update the camera properties in our uniform buffer
+
+    size_t offset = 0L;
+
+    memcpy(buffer.data() + offset, glm::value_ptr(projection), sizeof(glm::mat4));
+    offset += sizeof(glm::mat4);
+
+    memcpy(buffer.data() + offset, glm::value_ptr(view), sizeof(glm::mat4));
+    offset += sizeof(glm::mat4);
+
+    memcpy(buffer.data() + offset, glm::value_ptr(glm::vec4(viewPos, 0)), sizeof(glm::vec4));
+    offset += sizeof(glm::vec4);
+
+    // copy the data to the gpu
+
     glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
     glCheckError();
 
-    // update the view matrix and view position in our uniform buffer
-    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+    void* gpuPtr = glMapBufferRange(GL_UNIFORM_BUFFER, 0, buffer.size(), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
     glCheckError();
-    glBufferSubData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), sizeof(glm::vec4), glm::value_ptr(glm::vec4(viewPos, 0)));
-    glCheckError();
+    if (gpuPtr) {
+        memcpy(gpuPtr, buffer.data(), buffer.size());
+        glUnmapBuffer(GL_UNIFORM_BUFFER);
+        glCheckError();
+    }
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glCheckError();
