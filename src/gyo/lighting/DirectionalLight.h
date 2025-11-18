@@ -6,7 +6,7 @@
 namespace gyo {
 
 struct DirectionalLight : public Light {
-    DirectionalLight(glm::vec3 color) : Light(color) {}
+    DirectionalLight(glm::vec3 color = glm::vec3(1)) : Light(color) {}
 };
 
 } // namespace gyo

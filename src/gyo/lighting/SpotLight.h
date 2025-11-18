@@ -8,7 +8,7 @@ namespace gyo {
 struct SpotLight : public Light {
     float cosAngle;
 
-    SpotLight(glm::vec3 color, float angleDeg) : Light(color) {
+    SpotLight(glm::vec3 color = glm::vec3(1), float angleDeg = 45) : Light(color) {
         cosAngle = glm::cos(glm::radians(angleDeg));
     }
 };

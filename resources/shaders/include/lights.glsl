@@ -31,7 +31,6 @@ layout (std140) uniform Lights {
     PointLight pointLights[MAX_POINT_LIGHTS];   // 128 bytes (32 * 4)
     SpotLight spotLights[MAX_SPOT_LIGHTS];      // 256 bytes (64 * 4)
     int numPointLights;                         // 4 bytes
-    // 4 bytes padding
     int numSpotLights;                          // 4 bytes
-    // 4 bytes padding
+    // 8 bytes padding
 }; // total size with std140 layout: 448 bytes

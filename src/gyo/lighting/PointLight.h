@@ -6,7 +6,7 @@
 namespace gyo {
 
 struct PointLight : public Light {
-    PointLight(glm::vec3 color) : Light(color) {}
+    PointLight(glm::vec3 color = glm::vec3(1)) : Light(color) {}
 };
 
 } // namespace gyo

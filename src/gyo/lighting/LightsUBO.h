@@ -15,6 +15,9 @@ public:
 
     void UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights);
 private:
+    // the byte size of our ubo
+    signed long int bufferSize = 448L;
+
     unsigned int uboLights;
 };
 

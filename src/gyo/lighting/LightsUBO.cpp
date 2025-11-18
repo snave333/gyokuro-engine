@@ -7,10 +7,9 @@
  *      PointLight pointLights[MAX_POINT_LIGHTS];   // 128 bytes (32 * 4)
  *      SpotLight spotLights[MAX_SPOT_LIGHTS];      // 256 bytes (64 * 4)
  *      int numPointLights;                         // 4 bytes
- *      // 12 bytes padding
  *      int numSpotLights;                          // 4 bytes
- *      // 12 bytes padding
- * }; // total size with std140 layout: 464 bytes
+ *      // 8 bytes padding
+ * }; // total size with std140 layout: 448 bytes
  */
 
 #include <gyo/lighting/LightsUBO.h>
@@ -36,15 +35,12 @@ LightsUBO::LightsUBO() {
     glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
     glCheckError();
 
-    // the size of our ubo
-    unsigned long size = 448;
-    
     // allocate enough memory for all of the light uniform values
-    glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_STATIC_DRAW);
     glCheckError();
 
     // link the range of the entire buffer to binding point 0
-    glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboLights, 0, size);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboLights, 0, bufferSize);
     glCheckError();
 
     // store the first part of the uniform buffer with the projection matrix
@@ -63,7 +59,7 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
     // separate all of our lights into their respective types
 
     const DirectionalLight* directionalLight = nullptr;
-    glm::vec3 directionalLightDirection;
+    glm::vec3 directionalLightDirection = glm::vec3(0, 0, 1);
 
     std::vector<const PointLight*> pointLights;
     std::vector<glm::vec3> pointLightPositions;
@@ -96,15 +92,20 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
     int numPointLights = pointLights.size();
     int numSpotLights = spotLights.size();
 
-    // use sub data to set all of the values
+    // create our cpu-side buffer for mapping directly to gpu memory
 
-    glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
-    glCheckError();
-    unsigned int offset = 0;
+    std::vector<uint8_t> buffer(bufferSize);
+    size_t offset = 0;
 
-    glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(ambient, 0)));
-    glCheckError();
-    offset += 16;
+    auto write = [&](const void* data, size_t size) {
+        memcpy(buffer.data() + offset, data, size);
+        offset += size;
+    };
+    auto setOffset = [&](size_t size) {
+        offset = size;
+    };
+
+    write(glm::value_ptr(glm::vec4(ambient, 0)), sizeof(glm::vec4));
 
     /**
         struct DirectionalLight {
@@ -113,17 +114,11 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
         }; // total size with std140 layout: 32 bytes
 
      */
-    if(directionalLight != nullptr) {
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(directionalLightDirection, 0)));
-        glCheckError();
-        offset += 16;
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(directionalLight->color, 0)));
-        glCheckError();
-        offset += 16;
-    }
-    else {
-        offset += 32;
-    }
+    write(glm::value_ptr(glm::vec4(directionalLightDirection, 0)), sizeof(glm::vec4));
+    write(
+        glm::value_ptr(directionalLight ? glm::vec4(directionalLight->color, 0) : glm::vec4(0)),
+        sizeof(glm::vec4)
+    );
 
     /**
         struct PointLight {
@@ -135,14 +130,10 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
         const PointLight* light = pointLights[i];
         glm::vec3 position = pointLightPositions[i];
 
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(position, 0)));
-        glCheckError();
-        offset += 16;
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(light->color, 0)));
-        glCheckError();
-        offset += 16;
+        write(glm::value_ptr(glm::vec4(position, 0)), sizeof(glm::vec4));
+        write(glm::value_ptr(glm::vec4(light->color, 0)), sizeof(glm::vec4));
     }
-    offset = 176; // 16 + 32 + 128
+    setOffset(176UL); // 16 + 32 + 128
 
     /**
         struct SpotLight {
@@ -158,29 +149,30 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
         glm::vec3 position = spotLightPositions[i];
         glm::vec3 direction = spotLightDirections[i];
 
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(position, 0)));
-        glCheckError();
-        offset += 16;
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(direction, 0)));
-        glCheckError();
-        offset += 16;
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::vec4), glm::value_ptr(glm::vec4(light->color, 0)));
-        glCheckError();
-        offset += 16;
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(float), &light->cosAngle);
-        glCheckError();
-        offset += 4 + 12; // 4, plus 12 bytes padding
+        write(glm::value_ptr(glm::vec4(position, 0)), sizeof(glm::vec4));
+        write(glm::value_ptr(glm::vec4(direction, 0)), sizeof(glm::vec4));
+        write(glm::value_ptr(glm::vec4(light->color, 0)), sizeof(glm::vec4));
+        write(&light->cosAngle, sizeof(float) + 12); // 4, plus 12 bytes padding
     }
-    offset = 432; // 16 + 32 + 128 + 256
+    setOffset(432UL); // 16 + 32 + 128 + 256
 
     // counters (ints are 8 byte aligned)
 
-    glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(int), &numPointLights);
+    write(&numPointLights, sizeof(int));
+    write(&numSpotLights, sizeof(int));
+
+    // copy the data to the gpu
+
+    glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
     glCheckError();
-    offset += 4;
-    glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(int), &numSpotLights);
+
+    void* gpuPtr = glMapBufferRange(GL_UNIFORM_BUFFER, 0, buffer.size(), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
     glCheckError();
-    offset += 4;
+    if (gpuPtr) {
+        memcpy(gpuPtr, buffer.data(), buffer.size());
+        glUnmapBuffer(GL_UNIFORM_BUFFER);
+        glCheckError();
+    }
 
     std::cout << "Finished update Lights UBO with offset " << offset << std::endl;
 
