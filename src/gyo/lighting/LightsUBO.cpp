@@ -37,7 +37,7 @@ LightsUBO::LightsUBO() {
     glCheckError();
 
     // the size of our ubo
-    unsigned long size = 464;
+    unsigned long size = 448;
     
     // allocate enough memory for all of the light uniform values
     glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW);
@@ -173,14 +173,14 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
     }
     offset = 432; // 16 + 32 + 128 + 256
 
-    // counters (note these are 16 byte aligned)
+    // counters (ints are 8 byte aligned)
 
     glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(int), &numPointLights);
     glCheckError();
-    offset += 16;
+    offset += 4;
     glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(int), &numSpotLights);
     glCheckError();
-    offset += 16;
+    offset += 4;
 
     std::cout << "Finished update Lights UBO with offset " << offset << std::endl;
 
