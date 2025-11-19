@@ -170,6 +170,20 @@ Texture2D* Resources::GetTexture(const char* imageFileName, bool srgb, int wrapM
     return &Resources::textures[id];
 }
 
+Texture2D* Resources::GetHDRTexture(const char* imageFileName) {
+    long id = HASH(imageFileName);
+
+    if (Resources::textures.find(id) != Resources::textures.end()) {
+        return &Resources::textures[id];
+    }
+
+    Texture2D texture = TextureLoader::LoadHDRTexture(imageFileName);
+
+    Resources::textures[id] = texture;
+
+    return &Resources::textures[id];
+}
+
 TextureCube* Resources::GetTextureCube(std::vector<const char*> faceFileNames, bool srgb) {
     if(faceFileNames.size() != 6) {
         throw std::runtime_error("Cannot load cubmap without 6 faces");

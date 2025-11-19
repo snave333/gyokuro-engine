@@ -26,7 +26,6 @@ Renderer::Renderer(const int& width, const int& height) {
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glCheckError();
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // uncomment to draw in wireframe
 }
 
 Renderer::~Renderer() {

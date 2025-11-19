@@ -20,6 +20,7 @@ public:
     
     static Texture2D LoadTexture(const char* imageFileName, bool srgb, int wrapMode = GL_REPEAT, bool useMipmaps = true);
     static Texture2D* LoadEmbeddedTexture(const aiTexture* texture, bool srgb);
+    static Texture2D LoadHDRTexture(const char* imageFileName);
     static TextureCube LoadTextureCube(std::vector<const char*> faceFileNames, bool srgb);
     static Texture2D GenerateTexture2D(int width, int height, unsigned int format, const unsigned char* pixels);
 

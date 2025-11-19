@@ -5,7 +5,7 @@ namespace gyo {
 
 class TextureCube {
 public:
-    TextureCube();
+    TextureCube() {}
     TextureCube(const unsigned int& textureId, unsigned int width, unsigned int height);
     
     void Dispose();
