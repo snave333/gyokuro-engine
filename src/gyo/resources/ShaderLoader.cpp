@@ -41,6 +41,7 @@ Shader ShaderLoader::LoadShader(
         std::string definesString = "";
         for(const std::string& define : defines) {
             definesString = definesString + std::string("#define ") + define + "\n";
+            std::cout << "Setting define \'" << define.c_str() << "\'" << std::endl;
         }
         
         vShaderCodeStr = definesString + vShaderCodeStr;
@@ -162,6 +163,7 @@ Shader ShaderLoader::LoadShader(
         std::string definesString = "";
         for(const std::string& define : defines) {
             definesString = definesString + std::string("#define ") + define + "\n";
+            std::cout << "Setting define \'" << define.c_str() << "\'" << std::endl;
         }
         
         vShaderCodeStr = definesString + vShaderCodeStr;

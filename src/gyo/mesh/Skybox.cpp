@@ -4,6 +4,7 @@
 #include <gyo/resources/Resources.h>
 #include <gyo/shading/Texture2D.h>
 #include <gyo/shading/TextureCube.h>
+#include <gyo/utilities/Clock.h>
 #include <gyo/utilities/GetError.h>
 
 #include <glad/glad.h>
@@ -19,90 +20,37 @@ Skybox::Skybox(TextureCube* cubeMap) {
 }
 
 Skybox::Skybox(Texture2D* hdrTexture) {
+    // creates vertex array object VAO for rendering a cube
     CreateDefaultResources();
 
-    // save our initial viewport size
+    // first render our hdr texture into a cubemap
 
-    GLint vp[4];
-    glGetIntegerv(GL_VIEWPORT, vp);
+    Shader* eqRectToCubemapShader = Resources::GetShader("cubemap.vert", "eqRectToCubemap.frag");
+    eqRectToCubemapShader->Use();
+    eqRectToCubemapShader->SetInt("equirectangularMap", 0);
     
-    // create frame buffer and render buffer objects for rendering the hdr
-    // equirectangular texture into 6 cube faces
+    cubeMap = RenderTexCube(eqRectToCubemapShader, 512, [&]() {
+        hdrTexture->Bind();
+    });
+    shouldDisposeCubemap = true;
 
-    int size = 512;
+    // now convolute our environment map into an irradiance map
 
-    unsigned int captureFBO;
-    unsigned int captureRBO;
+    std::set<std::string> defines = { "SAMPLE_DELTA 0.025" };
+    Shader* irradianceConvolutionShader = Resources::GetShader(
+        "cubemap.vert",
+        "irradianceConvolution.frag",
+        defines
+    );
+    irradianceConvolutionShader->Use();
+    irradianceConvolutionShader->SetInt("environmentMap", 0);
 
-    glGenFramebuffers(1, &captureFBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    
-    glGenRenderbuffers(1, &captureRBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size, size);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-
-    // generate our cubemap color textures
-
-    unsigned int envCubemap;
-    glGenTextures(1, &envCubemap);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-    for(unsigned int i = 0; i < 6; i++) {
-        // store each face with a floating point value
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB32F, size, size, 0, GL_RGB, GL_FLOAT, nullptr);
+    {
+        CLOCK(Irradiance_Convolution);
+        irradianceMap = RenderTexCube(irradianceConvolutionShader, 32, [&]() {
+            cubeMap->Bind();
+        });
     }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // get our shader program for generating the faces
-
-    Shader* equirectangularToCubemapShader = Resources::GetShader("eqRectToCubemap.vert", "eqRectToCubemap.frag");
-
-    // now capture the faces
-
-    glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-    glm::mat4 captureViews[] = {
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-    };
-
-    equirectangularToCubemapShader->Use();
-    equirectangularToCubemapShader->SetInt("equirectangularMap", 0);
-    equirectangularToCubemapShader->SetMat4("projection", captureProjection);
-    
-    hdrTexture->Bind();
-
-    glViewport(0, 0, size, size);
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-
-    for(unsigned int i = 0; i < 6; i++) {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubemap, 0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        equirectangularToCubemapShader->SetMat4("view", captureViews[i]);
-        
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
-
-    // reset
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(vp[0],vp[1], vp[2], vp[3]);
-    
-    // dispose of the resources we no longer need
-    glDeleteFramebuffers(1, &captureFBO);
-    glDeleteRenderbuffers(1, &captureRBO);
-
-    this->cubeMap = new TextureCube(envCubemap, size, size);
-    this->shouldDisposeCubemap = true;
 }
 
 void Skybox::CreateDefaultResources() {
@@ -186,6 +134,112 @@ void Skybox::CreateDefaultResources() {
     shader->SetInt("skybox", 0);
 }
 
+TextureCube* Skybox::RenderTexCube(const Shader* captureShader, unsigned int size, std::function<void()> setUniforms) {
+    // save our initial viewport size
+
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+    glCheckError();
+    
+    // create frame buffer and render buffer objects for rendering the hdr
+    // equirectangular texture into 6 cube faces
+
+    if(!captureFBO) {
+        glGenFramebuffers(1, &captureFBO);
+        glCheckError();
+        glGenRenderbuffers(1, &captureRBO);
+        glCheckError();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+        glCheckError();
+        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+        glCheckError();
+
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size, size);
+        glCheckError();
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+        glCheckError();
+
+        captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+        captureViews[0] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f));
+        captureViews[1] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f));
+        captureViews[2] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f));
+        captureViews[3] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f));
+        captureViews[4] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f));
+        captureViews[5] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f));
+    }
+    else {
+        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+        glCheckError();
+        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+        glCheckError();
+
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size, size);
+        glCheckError();
+    }
+
+    // generate our cubemap color textures
+
+    unsigned int texId;
+    glGenTextures(1, &texId);
+    glCheckError();
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texId);
+    glCheckError();
+    for(unsigned int i = 0; i < 6; i++) {
+        // store each face with a floating point value
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB32F, size, size, 0, GL_RGB, GL_FLOAT, nullptr);
+        glCheckError();
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glCheckError();
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glCheckError();
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glCheckError();
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glCheckError();
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glCheckError();
+
+    // now capture the faces
+
+    captureShader->Use();
+    captureShader->SetMat4("projection", captureProjection);
+    if (setUniforms) {
+        setUniforms();
+    }
+
+    glViewport(0, 0, size, size);
+    glCheckError();
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glCheckError();
+
+    for(unsigned int i = 0; i < 6; i++) {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, texId, 0);
+        glCheckError();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glCheckError();
+        
+        captureShader->SetMat4("view", captureViews[i]);
+        
+        glBindVertexArray(VAO);
+        glCheckError();
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glCheckError();
+        glBindVertexArray(0);
+        glCheckError();
+    }
+
+    // unbind our framebuffer, and restore our initial viewport
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glCheckError();
+    glViewport(vp[0],vp[1], vp[2], vp[3]);
+    glCheckError();
+
+    return new TextureCube(texId, size, size);
+}
+
 Skybox::~Skybox() {
     glDeleteVertexArrays(1, &VAO);
     glCheckError();
@@ -194,10 +248,19 @@ Skybox::~Skybox() {
 
     if(shouldDisposeCubemap) {
         cubeMap->Dispose();
+        irradianceMap->Dispose();
     }
 
     cubeMap = nullptr;
     shader = nullptr;
+
+    if(captureFBO) {
+        // dispose of the resources we no longer need
+        glDeleteFramebuffers(1, &captureFBO);
+        glCheckError();
+        glDeleteRenderbuffers(1, &captureRBO);
+        glCheckError();
+    }
 }
 
 void Skybox::Draw(glm::mat4 view, glm::mat4 projection) {

@@ -31,7 +31,7 @@ public:
         }
         else {
             // std::cout << name << ": " << ms << " ms" << std::endl;
-            printf("%s: %.2f ms\n", name.c_str(), ms);
+            printf("> %s: %.2f ms\n", name.c_str(), ms);
         }
     }
 
