@@ -31,13 +31,15 @@ int main(int argc, const char * argv[]) {
 }
 
 void loadScene(SceneController& sc) {
+    Skybox* skybox = new Skybox(Resources::GetHDRTexture("brown_photostudio_2k.hdr"));
+    sc.SetSkybox(skybox);
+
     // first our lights
 
     float dist = 3;
     float lz = -3;
     glm::vec3 lColor = glm::vec3(1, 1, 1) * 4.0f;
 
-#if 1 // point lights
     LightNode* p1 = new LightNode(new PointLight(lColor));
     ModelNode* p1M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
     p1->Translate(dist, dist, lz);
@@ -65,29 +67,6 @@ void loadScene(SceneController& sc) {
     p4M->Translate(-dist, -dist, lz);
     sc.AddNode(p4);
     sc.AddNode(p4M);
-#elif 1 // directional light
-    LightNode* dirLight = new LightNode(new DirectionalLight(lColor));
-    dirLight->Rotate(45, 60, 0);
-    sc.AddNode(dirLight);
-#elif 1 // spot lights
-    LightNode* spotLight1 = new LightNode(new SpotLight(lColor, 45.0f));
-    ModelNode* spotLight1Model = new ModelNode(new Model(new Mesh(new Pyramid(0.1f, 0.2f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
-    spotLight1->Translate(dist, 0, lz);
-    spotLight1Model->Translate(dist, 0, lz);
-    spotLight1->Rotate(0, -30, 0);
-    spotLight1Model->Rotate(-90, -30, 0);
-    sc.AddNode(spotLight1);
-    sc.AddNode(spotLight1Model);
-
-    LightNode* spotLight2 = new LightNode(new SpotLight(lColor, 30.0f));
-    ModelNode* spotLight2Model = new ModelNode(new Model(new Mesh(new Pyramid(0.15f, 0.2f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
-    spotLight2->Translate(-dist, 0, lz);
-    spotLight2Model->Translate(-dist, 0, lz);
-    spotLight2->Rotate(0, 30, 0);
-    spotLight2Model->Rotate(-90, 30, 0);
-    sc.AddNode(spotLight2);
-    sc.AddNode(spotLight2Model);
-#endif
 
     // spawn our grid of spheres
 
