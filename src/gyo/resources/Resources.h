@@ -26,6 +26,7 @@ public:
     static Shader* GetShader(const char* vertFileName, const char* fragFileName, const std::set<std::string>& defines = {});
     static Shader* GetShader(const char* vertFileName, const char* geomFileName, const char* fragFileName, const std::set<std::string>& defines = { });
     static Texture2D* GetTexture(const char* imageFileName, bool srgb, int wrapMode = GL_REPEAT, bool useMipmaps = true);
+    static Texture2D* GetHDRTexture(const char* imageFileName);
     static TextureCube* GetTextureCube(std::vector<const char*> faceFileNames, bool srgb);
     static Font* GetFont(const char* fontName, const float& pixelsPerEm, const float& pixelRange);
     static CSVData GetCSV(const char* filePath);

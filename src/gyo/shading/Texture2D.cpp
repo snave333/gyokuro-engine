@@ -19,7 +19,7 @@ void Texture2D::Dispose() {
     glCheckError();
 }
 
-void Texture2D::Bind(unsigned int textureUnit) {
+void Texture2D::Bind(unsigned int textureUnit) const {
     glActiveTexture(GL_TEXTURE0 + textureUnit); // activate texture unit 0 before binding
     glCheckError();
     glBindTexture(GL_TEXTURE_2D, ID);

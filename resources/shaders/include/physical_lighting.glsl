@@ -92,8 +92,8 @@ vec3 calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N) {
     return calcReflectance(lR, V, N, L, H);
 }
 
-// compute the irradiance, or total scene lighting
-vec3 calcIrradiance(vec3 V, vec3 P, vec3 N) {
+// compute the radiance, or total outgoing light
+vec3 calcRadiance(vec3 V, vec3 P, vec3 N) {
     vec3 Lo = vec3(0.0);
 
     Lo += calcDirectionalLight(dirLight, V, N);
@@ -107,4 +107,22 @@ vec3 calcIrradiance(vec3 V, vec3 P, vec3 N) {
     }
 
     return Lo;
+}
+
+// compute the irradiance using ibl
+vec3 calcAmbient(vec3 V, vec3 P, vec3 N) {
+    // pre-computed reflection coefficient
+    vec3 F0 = vec3(0.04); 
+    F0 = mix(F0, material.albedo, material.metallic);
+
+    vec3 F = fresnelSchlick(max(0.0, dot(N, V)), F0);
+
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - material.metallic;
+    
+    vec3 irradiance = texture(irradianceMap, N).rgb;
+    vec3 diffuse = irradiance * material.albedo;
+    
+    return (kD * diffuse) * material.ao;
 }

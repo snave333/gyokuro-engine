@@ -16,3 +16,12 @@ add_custom_target(${COPY_ENGINE_RESOURCES_TARGET_NAME} ALL
     COMMENT "Copying engine resources to binary directory"
 )
 add_dependencies(${SAMPLE_NAME} ${COPY_ENGINE_RESOURCES_TARGET_NAME})
+
+set(COPY_RESOURCES_TARGET_NAME "copy_${SAMPLE_NAME}_resources")
+add_custom_target(${COPY_RESOURCES_TARGET_NAME} ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/resources
+    ${CMAKE_CURRENT_BINARY_DIR}/resources
+    COMMENT "Copying sample resources to binary directory"
+)
+add_dependencies(${SAMPLE_NAME} ${COPY_RESOURCES_TARGET_NAME})

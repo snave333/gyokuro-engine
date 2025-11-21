@@ -23,7 +23,7 @@ public:
     void CreateFrameBuffer();
 
     void BeginFrame();
-    void RenderOpaque(std::vector<DrawCall> drawCalls);
+    void RenderOpaque(std::vector<DrawCall> drawCalls, Skybox* skybox);
     void RenderSkybox(Skybox* skybox, glm::mat4 cameraView, glm::mat4 cameraProjection);
     void RenderTransparent(std::vector<DrawCall> drawCalls);
     void EndGeometryPass();

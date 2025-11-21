@@ -6,6 +6,7 @@
 #include <gyo/renderer/DrawCall.h>
 #include <gyo/mesh/Mesh.h>
 #include <gyo/mesh/Skybox.h>
+#include <gyo/shading/TextureCube.h>
 #include <gyo/utilities/GetError.h>
 
 #include <glad/glad.h>
@@ -26,7 +27,6 @@ Renderer::Renderer(const int& width, const int& height) {
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glCheckError();
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // uncomment to draw in wireframe
 }
 
 Renderer::~Renderer() {
@@ -214,15 +214,21 @@ void Renderer::BeginFrame() {
     glCheckError();
 }
 
-void Renderer::RenderOpaque(std::vector<DrawCall> drawCalls) {
+void Renderer::RenderOpaque(std::vector<DrawCall> drawCalls, Skybox* skybox) {
     state.SetDepthTestingEnabled(true);
     state.SetBlendingEnabled(false);
 
     for(const DrawCall& dc : drawCalls) {
         dc.material->Queue();
-        const Shader& shader = dc.material->GetShader();
-
+        
+        // bind the IBL maps for any IBL materials
+        if(skybox != nullptr && dc.material->usesIBL) {
+            const TextureCube& irradianceMap = skybox->GetIrradianceMap();
+            irradianceMap.Bind();
+        }
+        
         // set any shader uniforms
+        const Shader& shader = dc.material->GetShader();
         shader.SetMat4("model", dc.transform);
         shader.SetMat4("normalMatrix", dc.normalMatrix);
 

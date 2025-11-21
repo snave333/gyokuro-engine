@@ -118,6 +118,42 @@ Texture2D* TextureLoader::LoadEmbeddedTexture(const aiTexture* texture, bool srg
     return new Texture2D(id, width, height, numChannels == 4);
 }
 
+Texture2D TextureLoader::LoadHDRTexture(const char* imageFileName) {
+    // get the full file path
+    std::string imageFilePath = FileSystem::CombinePath(ResourceDir, imageFileName);
+
+    // create and bind the texture object
+    unsigned int id;
+    glGenTextures(1, &id);
+    glBindTexture(GL_TEXTURE_2D, id);
+    
+    // flip vertically
+    stbi_set_flip_vertically_on_load(true);
+    
+    // load and generate the texture
+    int width, height, numChannels;
+    float *data = stbi_loadf(imageFilePath.c_str(), &width, &height, &numChannels, 0);
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, data);
+    }
+    else {
+        throw std::runtime_error("Failed to load texture");
+    }
+
+    // free the image memory
+    stbi_image_free(data);
+
+    // set the texture wrapping/filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return Texture2D(id, width, height, false);
+}
+
 TextureCube TextureLoader::LoadTextureCube(std::vector<const char*> faceFileNames, bool srgb) {
     // get the full file paths
     std::vector<std::string> faceFilePaths(6);
