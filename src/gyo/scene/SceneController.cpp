@@ -196,7 +196,7 @@ void SceneController::RenderScene() {
     {
         CLOCKT(render_opaque, &renderer->stats.opaqueMs);
 
-        renderer->RenderOpaque(opaqueDrawCalls);
+        renderer->RenderOpaque(opaqueDrawCalls, this->skybox);
 
         if(skybox != nullptr) {
             renderer->RenderSkybox(skybox, camera->GetView(), camera->GetProjection());
@@ -215,7 +215,9 @@ void SceneController::RenderScene() {
         CLOCKT(render_alpha, &renderer->stats.alphaMs);
 
         // sort furthest to closest length squared from camera position
-        // NOTE this doesn't take rotation or scale into account
+        // NOTE this doesn't take rotation or scale into account, and only uses
+        // the mesh position for comparison
+        // TODO investigate more robust methods for sorting
 
         const glm::vec3& camPosition = camera->GetPosition();
         std::sort(alphaDrawCalls.begin(), alphaDrawCalls.end(), [camPosition](const DrawCall& a, const DrawCall& b) {

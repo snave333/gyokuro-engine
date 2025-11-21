@@ -16,8 +16,11 @@ PBRMaterial::PBRMaterial(
     this->ao = ao;
 
     usesDirectLighting = true;
+    usesIBL = true;
 
-    shader = Resources::GetShader("default.vert", "pbr.frag");
+    // compile a IBL version which includes irradiance sampler
+    std::set<std::string> defines = { "USE_IBL" };
+    shader = Resources::GetShader("default.vert", "pbr.frag", defines);
 }
 
 PBRMaterial::~PBRMaterial() {

@@ -20,6 +20,7 @@ public:
 
     RenderType renderType = RenderType::OPAQUE;
     bool usesDirectLighting = false; // include scene direct lighting
+    bool usesIBL = false; // include diffuse irradiance map
 
 protected:
     Shader* shader = nullptr;

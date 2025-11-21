@@ -3,8 +3,11 @@ struct Material {
     float metallic;
     float roughness;
     float ao;
-    sampler2D diffuseMap;
-    sampler2D specularMap;
-    sampler2D normalMap;
+    // sampler2D diffuseMap;
+    // sampler2D specularMap;
+    // sampler2D normalMap;
 };
 uniform Material material;
+
+// IBL
+uniform samplerCube irradianceMap;

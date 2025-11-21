@@ -10,7 +10,7 @@ public:
     
     void Dispose();
 
-    void Bind(unsigned int textureUnit = 0);
+    void Bind(unsigned int textureUnit = 0) const;
 
     unsigned int width;
     unsigned int height;

@@ -16,6 +16,7 @@ public:
     ~Skybox();
 
     void Draw(glm::mat4 view, glm::mat4 projection);
+    const TextureCube& GetIrradianceMap() const { return *irradianceMap; }
 
 private:
     void CreateDefaultResources();

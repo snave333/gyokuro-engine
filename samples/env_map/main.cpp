@@ -34,6 +34,6 @@ void loadScene(SceneController& sc) {
     sc.SetSkybox(skybox);
 
     ModelNode* torus = new ModelNode(new Model(new Mesh(new Torus(), new PBRMaterial())));
-    torus->Translate(0, 0, 4);
+    torus->Translate(0, 0, 3);
     sc.AddNode(torus);
 }
