@@ -2,7 +2,8 @@
 #include <map>
 
 #include <gyo/mesh/Mesh.h>
-#include <gyo/mesh/Geometry.h>
+#include <gyo/mesh/Vertex.h>
+#include <gyo/geometry/Geometry.h>
 #include <gyo/shading/Material.h>
 #include <gyo/utilities/GetError.h>
 

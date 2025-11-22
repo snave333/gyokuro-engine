@@ -5,7 +5,7 @@
 #include <gyo/utilities/FileSystem.h>
 #include <gyo/mesh/Model.h>
 #include <gyo/mesh/Mesh.h>
-#include <gyo/mesh/Geometry.h>
+#include <gyo/geometry/Geometry.h>
 #include <gyo/shading/Material.h>
 #include <gyo/shading/PhongMaterial.h>
 #include <gyo/shading/Texture2D.h>

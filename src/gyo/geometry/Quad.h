@@ -1,7 +1,7 @@
 #ifndef QUAD_H
 #define QUAD_H
 
-#include <gyo/mesh/Geometry.h>
+#include <gyo/geometry/Geometry.h>
 
 namespace gyo {
 

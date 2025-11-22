@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <gyo/drawable/IDrawable.h>
-#include <gyo/mesh/Geometry.h>
+#include <gyo/geometry/Geometry.h>
 
 namespace gyo {
 

@@ -4,20 +4,21 @@
 #include <gyo/drawable/AABBWireframe.h>
 #include <gyo/drawable/TangentsRenderer.h>
 
+#include <gyo/geometry/Cube.h>
+#include <gyo/geometry/Pyramid.h>
+#include <gyo/geometry/Quad.h>
+#include <gyo/geometry/Sphere.h>
+#include <gyo/geometry/Torus.h>
+
 #include <gyo/lighting/DirectionalLight.h>
 #include <gyo/lighting/LightNode.h>
 #include <gyo/lighting/PointLight.h>
 #include <gyo/lighting/SpotLight.h>
 
-#include <gyo/mesh/Cube.h>
 #include <gyo/mesh/Mesh.h>
 #include <gyo/mesh/Model.h>
 #include <gyo/mesh/ModelNode.h>
-#include <gyo/mesh/Pyramid.h>
-#include <gyo/mesh/Quad.h>
 #include <gyo/mesh/Skybox.h>
-#include <gyo/mesh/Sphere.h>
-#include <gyo/mesh/Torus.h>
 
 #include <gyo/resources/Resources.h>
 
