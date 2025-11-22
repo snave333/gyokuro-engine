@@ -124,8 +124,10 @@ Shader ShaderLoader::LoadShader(
     }
     
     // now save the uniforms for reduced gl calls later
-    std::map<std::string, int> uniforms;
-    GetUniformLocations(id, uniforms);
+    std::map<std::string, AttributeInfo> attributes;
+    std::map<std::string, UniformInfo> uniforms;
+    QueryShaderInfo(id, attributes, uniforms);
+    PrintShaderInfo(attributes, uniforms);
 
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
@@ -133,7 +135,7 @@ Shader ShaderLoader::LoadShader(
     glDeleteShader(fragment);
     glCheckError();
 
-    return Shader(id, uniforms);
+    return Shader(id, defines, attributes, uniforms);
 }
 
 Shader ShaderLoader::LoadShader(
@@ -271,8 +273,10 @@ Shader ShaderLoader::LoadShader(
     }
     
     // now save the uniforms for reduced gl calls later
-    std::map<std::string, int> uniforms;
-    GetUniformLocations(id, uniforms);
+    std::map<std::string, AttributeInfo> attributes;
+    std::map<std::string, UniformInfo> uniforms;
+    QueryShaderInfo(id, attributes, uniforms);
+    PrintShaderInfo(attributes, uniforms);
 
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
@@ -282,7 +286,7 @@ Shader ShaderLoader::LoadShader(
     glDeleteShader(fragment);
     glCheckError();
 
-    return Shader(id, uniforms);
+    return Shader(id, defines, attributes, uniforms);
 }
 
 std::string ShaderLoader::ResolveIncludes(
@@ -366,36 +370,98 @@ std::string ShaderLoader::ReadFilePath(std::string filePath) {
     return result;
 }
 
-void ShaderLoader::GetUniformLocations(unsigned int id, std::map<std::string, int>& uniforms) {
-    int numUniforms;
+void ShaderLoader::QueryShaderInfo(
+    unsigned int id,
+    std::map<std::string, AttributeInfo>& attributes,
+    std::map<std::string, UniformInfo>& uniforms
+) {
+    // query our attributes
+
+    GLint numAttributes;
+    glGetProgramiv(id, GL_ACTIVE_ATTRIBUTES, &numAttributes);
+    glCheckError();
+
+    GLint maxAttributeNameLength;
+    glGetProgramiv(id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttributeNameLength);
+    glCheckError();
+
+    char* nameBuffer = new char[maxAttributeNameLength];
+
+    for (GLint i = 0; i < numAttributes; i++) {
+        GLsizei length = 0;
+        GLint size = 0;
+        GLenum type = 0;
+
+        glGetActiveAttrib(id, i, maxAttributeNameLength, &length, &size, &type, nameBuffer);
+        glCheckError();
+
+        std::string name(nameBuffer, length);
+
+        GLint location = glGetAttribLocation(id, name.c_str());
+        glCheckError();
+
+        attributes[name] = { location, type };
+    }
+
+    delete[] nameBuffer;
+
+    // query our uniforms
+
+    GLint numUniforms;
     glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &numUniforms);
     glCheckError();
 
-    std::cout << "Found " << std::to_string(numUniforms) << " uniforms:" << std::endl;
+    // std::cout << "Found " << std::to_string(numUniforms) << " uniforms:" << std::endl;
 
-    int maxUniformNameLength;
+    GLint maxUniformNameLength;
     glGetProgramiv(id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformNameLength);
     glCheckError();
 
-    char* nameBuffer = new char[maxUniformNameLength];
+    nameBuffer = new char[maxUniformNameLength];
 
-    for(int i = 0; i < numUniforms; i++) {
-        int length;
-        int size;
-        unsigned int type;
+    for(GLint i = 0; i < numUniforms; i++) {
+        GLsizei length;
+        GLint size;
+        GLenum type;
 
         glGetActiveUniform(id, i, maxUniformNameLength, &length, &size, &type, nameBuffer);
         glCheckError();
 
-        int location = glGetUniformLocation(id, nameBuffer);
+        std::string name(nameBuffer, length);
+
+        GLint location = glGetUniformLocation(id, name.c_str());
         glCheckError();
 
-        std::cout << "- " << std::string(nameBuffer, length) << std::endl;
+        // std::cout << "- " << std::string(nameBuffer, length) << std::endl;
 
-        uniforms[std::string(nameBuffer, length)] = location;
+        uniforms[name] = { location, type };
     }
 
     delete[] nameBuffer;
 }
+
+void ShaderLoader::PrintShaderInfo(
+    const std::map<std::string, AttributeInfo>& attributes,
+    const std::map<std::string, UniformInfo>& uniforms
+) {
+    std::cout << "Attributes:" << std::endl;
+    for (const auto& pair : attributes) {
+        std::cout << "Name: " << pair.first
+                  << ", Location: " << pair.second.location
+                  << ", Type: 0x" << std::hex << pair.second.type << std::dec
+                  << std::endl;
+    }
+
+    std::cout << "Uniforms:" << std::endl;
+    for (const auto& pair : uniforms) {
+        std::cout << "Name: " << pair.first
+                  << ", Location: " << pair.second.location
+                  << ", Type: 0x" << std::hex << pair.second.type << std::dec
+                  << std::endl;
+    }
+
+    std::cout << std::endl;
+}
+
 
 } // namespace gyo
