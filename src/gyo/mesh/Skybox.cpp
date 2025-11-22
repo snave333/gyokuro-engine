@@ -23,34 +23,62 @@ Skybox::Skybox(Texture2D* hdrTexture) {
     // creates vertex array object VAO for rendering a cube
     CreateDefaultResources();
 
-    // first render our hdr texture into a cubemap
+    // first render our hdr texture into an environment cubemap
 
+    unsigned int envMapSize = 1024U;
     Shader* eqRectToCubemapShader = Resources::GetShader("cubemap.vert", "eqRectToCubemap.frag");
     eqRectToCubemapShader->Use();
     eqRectToCubemapShader->SetInt("equirectangularMap", 0);
-    
-    cubeMap = RenderTexCube(eqRectToCubemapShader, 512, [&]() {
+    cubeMap = RenderTexCube(eqRectToCubemapShader, envMapSize, [&]() {
         hdrTexture->Bind();
     });
     shouldDisposeCubemap = true;
 
-    // now convolute our environment map into an irradiance map
+    // now generate mipmaps to help reduce artifacts in pre-filter convolution
+    cubeMap->Bind();
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glCheckError();
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    glCheckError();
 
-    std::set<std::string> defines = { "SAMPLE_DELTA 0.025" };
+    // now convolute our environment map into a diffuse irradiance map
+
+    std::set<std::string> irradianceDefines = { "SAMPLE_DELTA 0.025" };
     Shader* irradianceConvolutionShader = Resources::GetShader(
         "cubemap.vert",
         "irradianceConvolution.frag",
-        defines
+        irradianceDefines
     );
     irradianceConvolutionShader->Use();
     irradianceConvolutionShader->SetInt("environmentMap", 0);
-
     {
         CLOCK(Irradiance_Convolution);
-        irradianceMap = RenderTexCube(irradianceConvolutionShader, 32, [&]() {
+        irradianceMap = RenderTexCube(irradianceConvolutionShader, 64, [&]() {
             cubeMap->Bind();
         });
     }
+
+    // next, pre-filter our environment map into different roughness mip levels
+
+    std::set<std::string> prefilterDefines = { 
+        "SAMPLE_COUNT 2048u",
+        "ENV_MAP_RESOLUTION " + std::to_string(envMapSize) + ".0"
+    };
+    Shader* prefilterConvolutionShader = Resources::GetShader(
+        "cubemap.vert",
+        "prefilterConvolution.frag",
+        prefilterDefines
+    );
+    prefilterConvolutionShader->Use();
+    prefilterConvolutionShader->SetInt("environmentMap", 0);
+    {
+        CLOCK(Prefilter_Convolution);
+        prefilteredEnvMap = RenderPrefilteredTexCube(prefilterConvolutionShader, 128, [&]() {
+            cubeMap->Bind();
+        });
+    }
+
+    // TODO finally, pre-compute the BRDF LUT
 }
 
 void Skybox::CreateDefaultResources() {
@@ -134,6 +162,33 @@ void Skybox::CreateDefaultResources() {
     shader->SetInt("skybox", 0);
 }
 
+void Skybox::InitCaptureFramebuffer() {
+    glGenFramebuffers(1, &captureFBO);
+    glCheckError();
+    glGenRenderbuffers(1, &captureRBO);
+    glCheckError();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glCheckError();
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glCheckError();
+
+    // for now just set it to 1x1; it'll have to be resized anyway
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 1, 1);
+    glCheckError();
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+    glCheckError();
+
+    captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+    captureViews[0] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f));
+    captureViews[1] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f));
+    captureViews[2] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f));
+    captureViews[3] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f));
+    captureViews[4] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f));
+    captureViews[5] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f));
+
+}
+
 TextureCube* Skybox::RenderTexCube(const Shader* captureShader, unsigned int size, std::function<void()> setUniforms) {
     // save our initial viewport size
 
@@ -141,42 +196,20 @@ TextureCube* Skybox::RenderTexCube(const Shader* captureShader, unsigned int siz
     glGetIntegerv(GL_VIEWPORT, vp);
     glCheckError();
     
-    // create frame buffer and render buffer objects for rendering the hdr
-    // equirectangular texture into 6 cube faces
-
+    // create frame buffer and render buffer objects for rendering into the cube faces
     if(!captureFBO) {
-        glGenFramebuffers(1, &captureFBO);
-        glCheckError();
-        glGenRenderbuffers(1, &captureRBO);
-        glCheckError();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-        glCheckError();
-        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-        glCheckError();
-
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size, size);
-        glCheckError();
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-        glCheckError();
-
-        captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-        captureViews[0] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f));
-        captureViews[1] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f));
-        captureViews[2] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f));
-        captureViews[3] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f));
-        captureViews[4] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f));
-        captureViews[5] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f));
+        InitCaptureFramebuffer();
     }
-    else {
-        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-        glCheckError();
-        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-        glCheckError();
 
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size, size);
-        glCheckError();
-    }
+    // bind and resize our frame buffer
+
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glCheckError();
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glCheckError();
+
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size, size);
+    glCheckError();
 
     // generate our cubemap color textures
 
@@ -187,7 +220,7 @@ TextureCube* Skybox::RenderTexCube(const Shader* captureShader, unsigned int siz
     glCheckError();
     for(unsigned int i = 0; i < 6; i++) {
         // store each face with a floating point value
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB32F, size, size, 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, size, size, 0, GL_RGB, GL_FLOAT, nullptr);
         glCheckError();
     }
 
@@ -202,26 +235,30 @@ TextureCube* Skybox::RenderTexCube(const Shader* captureShader, unsigned int siz
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glCheckError();
 
-    // now capture the faces
-
+    // prepare the shader and viewport
+    
     captureShader->Use();
     captureShader->SetMat4("projection", captureProjection);
     if (setUniforms) {
         setUniforms();
     }
-
+    
     glViewport(0, 0, size, size);
     glCheckError();
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glCheckError();
 
+    // now capture the faces
+
     for(unsigned int i = 0; i < 6; i++) {
+        captureShader->SetMat4("view", captureViews[i]);
+        
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, texId, 0);
         glCheckError();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glCheckError();
-        
-        captureShader->SetMat4("view", captureViews[i]);
+
+        // finally, render the cube
         
         glBindVertexArray(VAO);
         glCheckError();
@@ -232,12 +269,108 @@ TextureCube* Skybox::RenderTexCube(const Shader* captureShader, unsigned int siz
     }
 
     // unbind our framebuffer, and restore our initial viewport
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glCheckError();
     glViewport(vp[0],vp[1], vp[2], vp[3]);
     glCheckError();
 
     return new TextureCube(texId, size, size);
+}
+
+TextureCube* Skybox::RenderPrefilteredTexCube(const Shader* captureShader, unsigned int size, std::function<void()> setUniforms) {
+    // save our initial viewport size
+
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+    glCheckError();
+    
+    // create frame buffer and render buffer objects for rendering into the cube faces
+    if(!captureFBO) {
+        InitCaptureFramebuffer();
+    }
+
+    // create our float cube texture with mip maps
+
+    unsigned int prefilterMap;
+    glGenTextures(1, &prefilterMap);
+    glCheckError();
+    glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+    glCheckError();
+    for (unsigned int i = 0; i < 6; ++i) {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, size, size, 0, GL_RGB, GL_FLOAT, nullptr);
+        glCheckError();
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glCheckError();
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glCheckError();
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glCheckError();
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+    glCheckError();
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glCheckError();
+
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    glCheckError();
+
+    // prepare the shader and viewport
+
+    captureShader->Use();
+    captureShader->SetMat4("projection", captureProjection);
+    if (setUniforms) {
+        setUniforms();
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glCheckError();
+
+    // now capture the faces
+
+    unsigned int maxMipLevels = 5U;
+    for(unsigned int mip = 0; mip < maxMipLevels; mip++) {
+        // resize our frame buffer and viewport to the mip size
+
+        unsigned int mipSize = size * std::pow(0.5, mip);
+        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+        glCheckError();
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipSize, mipSize);
+        glCheckError();
+        glViewport(0, 0, mipSize, mipSize);
+        glCheckError();
+
+        // set our roughness level, and render all cube faces
+
+        float roughness = (float)mip / (float)(maxMipLevels - 1);
+        captureShader->SetFloat("roughness", roughness);
+        for(unsigned int i = 0; i < 6; i++) {
+            captureShader->SetMat4("view", captureViews[i]);
+
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
+            glCheckError();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glCheckError();
+
+            // finally, render the cube
+
+            glBindVertexArray(VAO);
+            glCheckError();
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            glCheckError();
+            glBindVertexArray(0);
+            glCheckError();
+        }
+    }
+
+    // unbind our framebuffer, and restore our initial viewport
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glCheckError();
+    glViewport(vp[0],vp[1], vp[2], vp[3]);
+    glCheckError();
+
+    return new TextureCube(prefilterMap, size, size);
 }
 
 Skybox::~Skybox() {
@@ -249,6 +382,7 @@ Skybox::~Skybox() {
     if(shouldDisposeCubemap) {
         cubeMap->Dispose();
         irradianceMap->Dispose();
+        prefilteredEnvMap->Dispose();
     }
 
     cubeMap = nullptr;

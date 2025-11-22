@@ -17,10 +17,14 @@ public:
 
     void Draw(glm::mat4 view, glm::mat4 projection);
     const TextureCube& GetIrradianceMap() const { return *irradianceMap; }
+    const TextureCube& GetPrefilteredEnvMap() const { return *prefilteredEnvMap; }
 
 private:
     void CreateDefaultResources();
+
+    void InitCaptureFramebuffer();
     TextureCube* RenderTexCube(const Shader* shader, unsigned int size, std::function<void()> setUniforms);
+    TextureCube* RenderPrefilteredTexCube(const Shader* shader, unsigned int size, std::function<void()> setUniforms);
 
     // render data
     unsigned int VAO;
@@ -34,6 +38,7 @@ private:
 
     TextureCube* cubeMap = nullptr;
     TextureCube* irradianceMap = nullptr;
+    TextureCube* prefilteredEnvMap = nullptr;
     Shader* shader = nullptr;
 
     // normally, disposal is handled by Resources, unless we generated from a

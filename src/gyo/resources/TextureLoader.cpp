@@ -134,7 +134,7 @@ Texture2D TextureLoader::LoadHDRTexture(const char* imageFileName) {
     int width, height, numChannels;
     float *data = stbi_loadf(imageFilePath.c_str(), &width, &height, &numChannels, 0);
     if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
     }
     else {
         throw std::runtime_error("Failed to load texture");
