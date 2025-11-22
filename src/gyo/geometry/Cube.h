@@ -6,8 +6,8 @@
 namespace gyo {
 
 struct Cube : public Geometry {
-    Cube(float halfSize = 0.5f) {
-        glm::vec3 positions[] = {
+    Cube(float halfSize = 1.0f) {
+        positions = {
             // +x
             { halfSize, -halfSize,  halfSize }, // 3
             { halfSize, -halfSize, -halfSize }, // 7
@@ -40,7 +40,7 @@ struct Cube : public Geometry {
             { halfSize,  halfSize, -halfSize }  // 6
         };
 
-        glm::vec3 normals[] = {
+        normals = {
             // +x
             { 1.0f,  0.0f,  0.0f },
             { 1.0f,  0.0f,  0.0f },
@@ -73,7 +73,7 @@ struct Cube : public Geometry {
             { 0.0f,  0.0f, -1.0f }
         };
 
-        glm::vec2 texCoords[] = {
+        texCoords = {
             // +x
             { 0.0f, 0.0f },
             { 1.0f, 0.0f },
@@ -105,11 +105,6 @@ struct Cube : public Geometry {
             { 1.0f, 1.0f },
             { 0.0f, 1.0f }
         };
-
-        vertices = {};
-        for(int i = 0; i < 24; i++) {
-            vertices.push_back({ positions[i], normals[i], texCoords[i] });
-        }
 
         indices = {
             0,  1,  2,  0,  2,  3,

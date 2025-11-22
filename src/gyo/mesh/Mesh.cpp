@@ -15,6 +15,8 @@ Mesh::Mesh(Geometry* geometry, Material* material, bool computeTangents) {
     this->geometry = geometry;
     this->material = material;
 
+    // only the ModelLoader sets this to false, as the tangents are extracted
+    // from the model file
     if(computeTangents) {
         this->geometry->ComputeTangents();
     }
@@ -29,6 +31,18 @@ Mesh::Mesh(Geometry* geometry, Material* material, bool computeTangents) {
 void Mesh::Initialize() {
     if(VAO != 0) {
         return;
+    }
+
+    unsigned int vertexCount = geometry->positions.size();
+    std::vector<Vertex> vertices;
+    vertices.reserve(vertexCount);
+    for(int i = 0; i < vertexCount; i++) {
+        vertices.emplace_back(
+            geometry->positions[i],
+            geometry->normals[i],
+            geometry->texCoords[i],
+            geometry->tangents[i]
+        );
     }
 
     // create the vertex/index buffers and vertex array object
@@ -46,7 +60,7 @@ void Mesh::Initialize() {
     // copy our vertices array in a buffer
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glCheckError();
-    glBufferData(GL_ARRAY_BUFFER, geometry->vertices.size() * sizeof(Vertex), &geometry->vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
     glCheckError();
 
     // copy our indices
@@ -92,9 +106,9 @@ void Mesh::ComputeBounds() {
     glm::vec3 maxPoint(std::numeric_limits<float>::lowest());
 
     // iterate through the vertex array
-    for (const auto& vertex : geometry->vertices) {
-        minPoint = glm::min(minPoint, vertex.position);
-        maxPoint = glm::max(maxPoint, vertex.position);
+    for (const auto& position : geometry->positions) {
+        minPoint = glm::min(minPoint, position);
+        maxPoint = glm::max(maxPoint, position);
     }
 
     bounds = { minPoint, maxPoint };

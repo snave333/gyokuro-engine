@@ -7,7 +7,7 @@
 namespace gyo {
 
 struct Sphere : public Geometry {
-    Sphere(float radius = 0.5f, int stacks = 20, int slices = 20) {
+    Sphere(float radius = 1.0f, int stacks = 32, int slices = 32) {
         // generate vertices
         for (int stack = 0; stack <= stacks; ++stack) {
             float phi = glm::pi<float>() * stack / stacks; // from 0 to π (latitude)
@@ -25,7 +25,9 @@ struct Sphere : public Geometry {
                     static_cast<float>(slice) / slices,       // u coordinate
                     -static_cast<float>(stack) / stacks);     // v coordinate
 
-                vertices.push_back({ position, normal, uv });
+                positions.push_back(position);
+                normals.push_back(normal);
+                texCoords.push_back(uv);
             }
         }
 

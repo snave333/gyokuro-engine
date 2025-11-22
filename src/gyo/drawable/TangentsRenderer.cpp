@@ -14,11 +14,12 @@ TangentsRenderer::TangentsRenderer(Geometry& geometry, float lineLength) : lineL
     geometry.ComputeTangents();
 
     // translate to TangentVertex types
+    vertexCount = geometry.positions.size();
     std::vector<TangentVertex> vertices;
-    for(const auto& v : geometry.vertices) {
-        vertices.push_back(TangentVertex(v));
+    vertices.reserve(vertexCount);
+    for(int i = 0; i < vertexCount; i++) {
+        vertices.emplace_back(geometry.positions[i], geometry.normals[i], geometry.tangents[i]);
     }
-    vertexCount = vertices.size();
 
     // create the vertex/index buffers and vertex array object
     glGenVertexArrays(1, &VAO);
