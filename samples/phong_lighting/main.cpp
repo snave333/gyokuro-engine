@@ -9,7 +9,7 @@ void loadScene(SceneController& sc);
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
 
-    gyo::Engine* engine = new gyo::Engine();
+    gyo::Engine* engine = new gyo::Engine(1280, 720);
 
     if(!engine->IsRunning()) {
         std::cerr << "Engine failed to start." << std::endl;
@@ -70,7 +70,7 @@ void loadScene(SceneController& sc) {
 
     // next add the models
 
-    ModelNode* floor = new ModelNode(new Model(new Mesh(new Quad(), new PhongMaterial(
+    ModelNode* floor = new ModelNode(new Model(new Mesh(new Quad(0.5f), new PhongMaterial(
         { 1, 1, 1, 1 }, { 1, 1, 1 }, 64,
         Resources::GetTexture("brick_DIFF.jpg", true),
         nullptr,
@@ -81,7 +81,7 @@ void loadScene(SceneController& sc) {
     floor->Scale(10);
     sc.AddNode(floor);
 
-    ModelNode* crate = new ModelNode(new Model(new Mesh(new Cube(),
+    ModelNode* crate = new ModelNode(new Model(new Mesh(new Cube(0.5f),
         new PhongMaterial(
             { 1, 1, 1, 1 }, { 1, 1, 1 }, 128,
             Resources::GetTexture("crate_DIFF.jpg", true),

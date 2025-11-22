@@ -10,7 +10,7 @@ void loadScene(SceneController& sc);
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
 
-    gyo::Engine* engine = new gyo::Engine();
+    gyo::Engine* engine = new gyo::Engine(1280, 720);
 
     if(!engine->IsRunning()) {
         std::cerr << "Engine failed to start." << std::endl;
@@ -88,7 +88,7 @@ void loadScene(SceneController& sc) {
 
             // std::cout << std::to_string(metalness) << ", " << std::to_string(roughness) << std::endl;
 
-            ModelNode* model = new ModelNode(new Model(new Mesh(new Sphere(), new PBRMaterial(
+            ModelNode* model = new ModelNode(new Model(new Mesh(new Sphere(0.5f), new PBRMaterial(
                 { 0, 0.8f, 1 },
                 metalness,
                 roughness
