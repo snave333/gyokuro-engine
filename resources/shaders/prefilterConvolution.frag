@@ -6,7 +6,6 @@ out vec4 FragColor;
 in vec3 worldPos;
 
 #include "brdf.glsl"
-#include "convolution.glsl"
 
 uniform samplerCube environmentMap;
 uniform float roughness;
