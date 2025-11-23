@@ -16,7 +16,7 @@ struct Geometry;
 class Mesh {
 public:
     // constructor
-    Mesh(Geometry* geometry, Material* material, bool computeTangents = true);
+    Mesh(Geometry* geometry, Material* material);
     ~Mesh();
 
     void Draw();

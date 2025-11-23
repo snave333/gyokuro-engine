@@ -38,6 +38,7 @@ set(PUBLIC_HEADERS
     src/gyo/shading/PBRMaterial.h
     src/gyo/shading/PhongMaterial.h
     src/gyo/shading/ShaderMaterial.h
+    src/gyo/shading/ShaderSemantics.h
     src/gyo/shading/UnlitMaterial.h
     src/gyo/gyo.h
 )
@@ -108,6 +109,7 @@ set(SOURCES
     src/gyo/scene/SceneController.cpp
     src/gyo/scene/SceneNode.cpp
     src/gyo/shading/GoochMaterial.cpp
+    src/gyo/shading/Material.cpp
     src/gyo/shading/PBRMaterial.cpp
     src/gyo/shading/PhongMaterial.cpp
     src/gyo/shading/Shader.cpp

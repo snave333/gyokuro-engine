@@ -1,0 +1,14 @@
+#ifndef SHADER_SEMANTICS_H
+#define SHADER_SEMANTICS_H
+
+namespace gyo {
+
+#define SEMANTIC_POSITION 0x001
+#define SEMANTIC_NORMAL 0x002
+#define SEMANTIC_TEXCOORD0 0x003
+#define SEMANTIC_TANGENT 0x004
+#define SEMANTIC_COLOR 0x005
+  
+} // namespace gyo
+
+#endif // SHADER_SEMANTICS_H

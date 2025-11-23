@@ -1,6 +1,7 @@
 
 #include <gyo/shading/UnlitMaterial.h>
 #include <gyo/shading/Shader.h>
+#include <gyo/shading/ShaderSemantics.h>
 #include <gyo/shading/Texture2D.h>
 #include <gyo/resources/Resources.h>
 
@@ -21,6 +22,11 @@ UnlitMaterial::UnlitMaterial(
     bool hasAlpha = false;
     hasAlpha = hasAlpha || color.a < 1.0f;
 
+    semantics = {
+        { "aPos", SEMANTIC_POSITION },
+        { "aNormal", SEMANTIC_NORMAL }
+    };
+
     // select our shader depending on whether or not a texture was passed
     if(texture == nullptr) {
         shader = Resources::GetShader("default.vert", "solidColor.frag");
@@ -30,6 +36,8 @@ UnlitMaterial::UnlitMaterial(
 
         shader->Use();
         shader->SetInt("tex", 0);
+
+        semantics["texCoord"] = SEMANTIC_TEXCOORD0;
 
         hasAlpha = hasAlpha || texture->hasAlpha;
     }

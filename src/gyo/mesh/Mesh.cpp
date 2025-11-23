@@ -6,18 +6,18 @@
 #include <gyo/geometry/Geometry.h>
 #include <gyo/shading/Material.h>
 #include <gyo/utilities/GetError.h>
+#include <gyo/shading/ShaderSemantics.h>
 
 #include <glad/glad.h>
 
 namespace gyo {
 
-Mesh::Mesh(Geometry* geometry, Material* material, bool computeTangents) {
+Mesh::Mesh(Geometry* geometry, Material* material) {
     this->geometry = geometry;
     this->material = material;
 
-    // only the ModelLoader sets this to false, as the tangents are extracted
-    // from the model file
-    if(computeTangents) {
+    // only compute the tangents if they haven't already been
+    if(geometry->tangents.empty()) {
         this->geometry->ComputeTangents();
     }
 
@@ -30,6 +30,10 @@ Mesh::Mesh(Geometry* geometry, Material* material, bool computeTangents) {
 
 void Mesh::Initialize() {
     if(VAO != 0) {
+        return;
+    }
+
+    if(!material->ValidateShaderAttributes()) {
         return;
     }
 

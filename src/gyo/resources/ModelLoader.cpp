@@ -123,8 +123,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
 
     return new Mesh(
         new Geometry{ positions, normals, texCoords, tangents, indices },
-        new PhongMaterial(glm::vec4(1), glm::vec4(1), 128, diffMap, specMap, nrmMap),
-        false);
+        new PhongMaterial(glm::vec4(1), glm::vec4(1), 128, diffMap, specMap, nrmMap));
 }
 
 Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, const aiScene* scene) {
