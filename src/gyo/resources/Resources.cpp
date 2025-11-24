@@ -8,8 +8,8 @@
 #include <gyo/utilities/FileSystem.h>
 #include <gyo/utilities/Hash.h>
 
+#include <gyo/geometry/Geometry.h>
 #include <gyo/mesh/Model.h>
-#include <gyo/mesh/Geometry.h>
 #include <gyo/shading/Shader.h>
 #include <gyo/shading/Texture2D.h>
 #include <gyo/shading/TextureCube.h>

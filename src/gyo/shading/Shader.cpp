@@ -9,8 +9,14 @@
 
 namespace gyo {
 
-Shader::Shader(const unsigned int& shaderProgramId, std::map<std::string, int>& uniforms) {
+Shader::Shader(const unsigned int& shaderProgramId,
+    const std::set<std::string>& defines,
+    const std::map<std::string, AttributeInfo>& attributes,
+    const std::map<std::string, UniformInfo>& uniforms
+) {
     ID = shaderProgramId;
+    this->defines = defines;
+    this->attributes = attributes;
     this->uniforms = uniforms;
 }
 
@@ -108,12 +114,12 @@ bool Shader::HasUniform(const char* name) const {
     return uniforms.find(name) != uniforms.end();
 }
 
-int Shader::GetUniformLocation(const char* name) const {
+GLint Shader::GetUniformLocation(const char* name) const {
     if(uniforms.find(name) == uniforms.end()) {
         return -1;
     }
 
-    return uniforms.at(name);
+    return uniforms.at(name).location;
 }
 
 } // namespace gyo

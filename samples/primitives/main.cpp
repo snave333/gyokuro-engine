@@ -9,7 +9,7 @@ void loadScene(SceneController& sc);
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
 
-    gyo::Engine* engine = new gyo::Engine();
+    gyo::Engine* engine = new gyo::Engine(1280, 720);
 
     if(!engine->IsRunning()) {
         std::cerr << "Engine failed to start." << std::endl;
@@ -36,13 +36,13 @@ void loadScene(SceneController& sc) {
 
     // the models
 
-    ModelNode* floor = new ModelNode(new Model(new Mesh(new Quad(), new PhongMaterial())));
+    ModelNode* floor = new ModelNode(new Model(new Mesh(new Quad(0.5f), new PhongMaterial())));
     floor->Translate(0, -2, 0);
     floor->Rotate(-90, 0, 0);
     floor->Scale(10);
     sc.AddNode(floor);
 
-    ModelNode* cube = new ModelNode(new Model(new Mesh(new Cube(), new PhongMaterial())));
+    ModelNode* cube = new ModelNode(new Model(new Mesh(new Cube(0.5f), new PhongMaterial())));
     cube->Translate(-3, 0, 4);
     sc.AddNode(cube);
 
@@ -50,7 +50,7 @@ void loadScene(SceneController& sc) {
     pyramid->Translate(-1, -0.5, 4);
     sc.AddNode(pyramid);
 
-    ModelNode* sphere = new ModelNode(new Model(new Mesh(new Sphere(), new PhongMaterial())));
+    ModelNode* sphere = new ModelNode(new Model(new Mesh(new Sphere(0.5f), new PhongMaterial())));
     sphere->Translate(1, 0, 4);
     sc.AddNode(sphere);
 

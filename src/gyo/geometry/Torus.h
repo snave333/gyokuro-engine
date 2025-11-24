@@ -1,7 +1,7 @@
 #ifndef TORUS_H
 #define TORUS_H
 
-#include <gyo/mesh/Geometry.h>
+#include <gyo/geometry/Geometry.h>
 #include <glm/gtc/constants.hpp>
 
 namespace gyo {
@@ -9,8 +9,8 @@ namespace gyo {
 struct Torus : public Geometry {
     Torus(float majorRadius = 0.5f,
           float minorRadius = 0.2f,
-          int majorSegments = 20,
-          int minorSegments = 20)
+          int majorSegments = 32,
+          int minorSegments = 32)
     {
         // generate vertices
         for (int i = 0; i <= majorSegments; ++i) {
@@ -36,7 +36,9 @@ struct Torus : public Geometry {
                 glm::vec2 uv(static_cast<float>(i) / majorSegments, static_cast<float>(j) / minorSegments);
 
                 // add vertex
-                vertices.push_back({ position, normal, uv });
+                positions.push_back(position);
+                normals.push_back(normal);
+                texCoords.push_back(uv);
             }
         }
 

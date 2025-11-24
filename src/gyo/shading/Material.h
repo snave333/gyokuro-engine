@@ -15,8 +15,11 @@ public:
     }
 
     virtual void Queue() = 0; // pure virtual
+
+    bool ValidateShaderAttributes();
     
     const Shader& GetShader() const { return *shader; }
+    const std::map<std::string, unsigned int>& GetShaderSemantics() const { return semantics; }
 
     RenderType renderType = RenderType::OPAQUE;
     bool usesDirectLighting = false; // include scene direct lighting
@@ -24,6 +27,7 @@ public:
 
 protected:
     Shader* shader = nullptr;
+    std::map<std::string, unsigned int> semantics;
 };
 
 } // namespace gyo

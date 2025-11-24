@@ -3,25 +3,24 @@
 
 #include <glm/glm.hpp>
 #include <gyo/drawable/IDrawable.h>
-#include <gyo/mesh/Geometry.h>
+#include <gyo/geometry/Geometry.h>
+#include <gyo/mesh/Vertex.h>
 
 namespace gyo {
 
 class Shader;
 struct Geometry;
 
+// TODO move this to a gyo/mesh/TangentVertex class?
 struct TangentVertex {
     glm::vec3 position;
     glm::vec3 normal;
     glm::vec3 tangent;
 
     TangentVertex() {}
-
-    TangentVertex(const Vertex& other) {
-        this->position = glm::vec3(other.position);
-        this->normal = glm::vec3(other.normal);
-        this->tangent = glm::vec3(other.tangent);
-    }
+    
+    TangentVertex(const glm::vec3& position, const glm::vec3& normal, const glm::vec3& tangent)
+        : position(position), normal(normal), tangent(tangent) {}
 };
 
 class TangentsRenderer : public IDrawable {

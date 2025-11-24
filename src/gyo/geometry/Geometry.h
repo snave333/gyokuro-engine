@@ -2,30 +2,22 @@
 #define GEOMETRY_H
 
 #include <vector>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 
 namespace gyo {
 
-struct Vertex {
-    glm::vec3 position;
-    glm::vec3 normal;
-    glm::vec2 texCoord;
-    glm::vec3 tangent = glm::vec3(0.0f);
-
-    // we calculate the tangent later
-    Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord) :
-        position(position), normal(normal), texCoord(texCoord) {}
-
-    Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord, glm::vec3 tangent) :
-        position(position), normal(normal), texCoord(texCoord), tangent(tangent) {}
-};
-
 struct Geometry {
-    std::vector<Vertex> vertices;
+    std::vector<glm::vec3> positions;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> texCoords;
+    std::vector<glm::vec3> tangents;
     std::vector<unsigned int> indices;
 
     void ComputeTangents() {
+        tangents.resize(positions.size());
+
         // variables for calculating tangent/bitangent
         unsigned int i0, i1, i2;
         glm::vec3 edge1, edge2;
@@ -40,15 +32,19 @@ struct Geometry {
             i1 = indices[i+1];
             i2 = indices[i+2];
 
-            Vertex& v0 = vertices[i0];
-            Vertex& v1 = vertices[i1];
-            Vertex& v2 = vertices[i2];
+            glm::vec3 p0 = positions[i0];
+            glm::vec3 p1 = positions[i1];
+            glm::vec3 p2 = positions[i2];
+
+            glm::vec2 uv0 = texCoords[i0];
+            glm::vec2 uv1 = texCoords[i1];
+            glm::vec2 uv2 = texCoords[i2];
 
             // compute our variables needed for the change-of-basis matrix
-            edge1 = v1.position - v0.position;
-            edge2 = v2.position - v0.position;
-            deltaUV1 = v1.texCoord - v0.texCoord;
-            deltaUV2 = v2.texCoord - v0.texCoord;
+            edge1 = p1 - p0;
+            edge2 = p2 - p0;
+            deltaUV1 = uv1 - uv0;
+            deltaUV2 = uv2 - uv0;
 
             // fractional part
             float det = deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x;
@@ -63,16 +59,16 @@ struct Geometry {
 
             // accumulate our results
 
-            v0.tangent += tangent;
-            v1.tangent += tangent;
-            v2.tangent += tangent;
+            tangents[i0] += tangent;
+            tangents[i1] += tangent;
+            tangents[i2] += tangent;
         }
 
         // normalize the results per vert to account for verts that are shared
         // between multiple triangles
 
-        for(auto& vertex : vertices) {
-            vertex.tangent = glm::normalize(vertex.tangent);
+        for(int i = 0; i < tangents.size(); i++) {
+            tangents[i] = glm::normalize(tangents[i]);
         }
     }
 };

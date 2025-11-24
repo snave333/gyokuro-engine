@@ -2,14 +2,33 @@
 #define SHADER_H
 
 #include <map>
+#include <set>
+
 #include <glm/glm.hpp>
+#include <glad/glad.h>
 
 namespace gyo {
+
+struct AttributeInfo {
+    GLint location;
+    GLenum type;
+};
+
+struct UniformInfo {
+    GLint location;
+    GLenum type;
+};
 
 class Shader {
 public:
     Shader() {}
-    Shader(const unsigned int& shaderProgramId, std::map<std::string, int>& uniforms);
+    Shader(const unsigned int& shaderProgramId,
+        const std::set<std::string>& defines,
+        const std::map<std::string, AttributeInfo>& attributes,
+        const std::map<std::string, UniformInfo>& uniforms
+    );
+
+    const std::map<std::string, AttributeInfo>& GetAttributes() const { return attributes; }
     
     void Dispose();
 
@@ -31,10 +50,12 @@ private:
     // the program ID
     unsigned int ID;
 
-    std::map<std::string, int> uniforms;
+    std::set<std::string> defines;
+    std::map<std::string, AttributeInfo> attributes;
+    std::map<std::string, UniformInfo> uniforms;
 
     bool HasUniform(const char* name) const;
-    int GetUniformLocation(const char* name) const;
+    GLint GetUniformLocation(const char* name) const;
 };
   
 } // namespace gyo

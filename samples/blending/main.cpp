@@ -9,7 +9,7 @@ void loadScene(SceneController& sc);
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
 
-    gyo::Engine* engine = new gyo::Engine();
+    gyo::Engine* engine = new gyo::Engine(1280, 720);
 
     if(!engine->IsRunning()) {
         std::cerr << "Engine failed to start." << std::endl;
@@ -43,16 +43,16 @@ void loadScene(SceneController& sc) {
 
     // transparent objects
 
-    ModelNode* m1 = new ModelNode(new Model(new Mesh(new Cube(), new UnlitMaterial(glm::vec4(1), false, Resources::GetTexture("window.png", true)))));
+    ModelNode* m1 = new ModelNode(new Model(new Mesh(new Cube(0.5f), new UnlitMaterial(glm::vec4(1), false, Resources::GetTexture("window.png", true)))));
     // m1->Rotate(180, 0, 0);
     sc.AddNode(m1);
 
-    ModelNode* m2 = new ModelNode(new Model(new Mesh(new Quad(), new UnlitMaterial(glm::vec4(1), false, Resources::GetTexture("window.png", true)))));
+    ModelNode* m2 = new ModelNode(new Model(new Mesh(new Quad(0.5f), new UnlitMaterial(glm::vec4(1), false, Resources::GetTexture("window.png", true)))));
     m2->Translate(0.75f, 0.25f, 2);
     m2->Rotate(180, 0, 0);
     sc.AddNode(m2);
 
-    ModelNode* m3 = new ModelNode(new Model(new Mesh(new Quad(), new UnlitMaterial(glm::vec4(0, 0.5f, 0.8f, 0.2f)))));
+    ModelNode* m3 = new ModelNode(new Model(new Mesh(new Quad(0.5f), new UnlitMaterial(glm::vec4(0, 0.5f, 0.8f, 0.2f)))));
     m3->Translate(0, -0.25f, 3);
     m3->Rotate(180, 0, 0);
     sc.AddNode(m3);
@@ -60,7 +60,7 @@ void loadScene(SceneController& sc) {
     // additive
 
     ModelNode* mAdd = new ModelNode(new Model({
-        new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 }, true)),
+        new Mesh(new Cube(0.5f), new UnlitMaterial({ 1, 0.5, 0, 1 }, true)),
         new Mesh(new Sphere(0.65f), new UnlitMaterial({ 0, 1, 0.5, 1 }, true)),
     }));
     mAdd->Translate(-2, 0, 0);
