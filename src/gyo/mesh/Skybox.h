@@ -16,8 +16,10 @@ public:
     ~Skybox();
 
     void Draw(glm::mat4 view, glm::mat4 projection);
+    
     const TextureCube& GetIrradianceMap() const { return *irradianceMap; }
     const TextureCube& GetPrefilteredEnvMap() const { return *prefilteredEnvMap; }
+    const Texture2D& GetBRDFLUT() const { return *brdfLUT; }
 
 private:
     void CreateDefaultResources();
@@ -25,6 +27,7 @@ private:
     void InitCaptureFramebuffer();
     TextureCube* RenderTexCube(const Shader* shader, unsigned int size, std::function<void()> setUniforms);
     TextureCube* RenderPrefilteredTexCube(const Shader* shader, unsigned int size, std::function<void()> setUniforms);
+    Texture2D* PreComputeBRDFLUT(unsigned int size);
 
     // render data
     unsigned int VAO;
@@ -39,6 +42,7 @@ private:
     TextureCube* cubeMap = nullptr;
     TextureCube* irradianceMap = nullptr;
     TextureCube* prefilteredEnvMap = nullptr;
+    Texture2D* brdfLUT = nullptr;
     Shader* shader = nullptr;
 
     // normally, disposal is handled by Resources, unless we generated from a

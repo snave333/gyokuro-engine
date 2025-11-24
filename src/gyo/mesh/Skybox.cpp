@@ -1,11 +1,16 @@
 
 #include <gyo/mesh/Skybox.h>
-#include <gyo/shading/Shader.h>
+#include <gyo/geometry/Quad.h>
+#include <gyo/mesh/Mesh.h>
 #include <gyo/resources/Resources.h>
+#include <gyo/shading/Shader.h>
+#include <gyo/shading/ShaderMaterial.h>
+#include <gyo/shading/ShaderSemantics.h>
 #include <gyo/shading/Texture2D.h>
 #include <gyo/shading/TextureCube.h>
 #include <gyo/utilities/Clock.h>
 #include <gyo/utilities/GetError.h>
+#include <gyo/utilities/ImageWriter.h>
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -78,7 +83,9 @@ Skybox::Skybox(Texture2D* hdrTexture) {
         });
     }
 
-    // TODO finally, pre-compute the BRDF LUT
+    // finally, pre-compute the BRDF LUT
+
+    brdfLUT = PreComputeBRDFLUT(512);
 }
 
 void Skybox::CreateDefaultResources() {
@@ -292,10 +299,10 @@ TextureCube* Skybox::RenderPrefilteredTexCube(const Shader* captureShader, unsig
 
     // create our float cube texture with mip maps
 
-    unsigned int prefilterMap;
-    glGenTextures(1, &prefilterMap);
+    unsigned int texId;
+    glGenTextures(1, &texId);
     glCheckError();
-    glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texId);
     glCheckError();
     for (unsigned int i = 0; i < 6; ++i) {
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, size, size, 0, GL_RGB, GL_FLOAT, nullptr);
@@ -347,7 +354,7 @@ TextureCube* Skybox::RenderPrefilteredTexCube(const Shader* captureShader, unsig
         for(unsigned int i = 0; i < 6; i++) {
             captureShader->SetMat4("view", captureViews[i]);
 
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, texId, mip);
             glCheckError();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glCheckError();
@@ -370,7 +377,72 @@ TextureCube* Skybox::RenderPrefilteredTexCube(const Shader* captureShader, unsig
     glViewport(vp[0],vp[1], vp[2], vp[3]);
     glCheckError();
 
-    return new TextureCube(prefilterMap, size, size);
+    return new TextureCube(texId, size, size);
+}
+
+Texture2D* Skybox::PreComputeBRDFLUT(unsigned int size) {
+    std::set<std::string> brdfDefines = { "SAMPLE_COUNT 1024u" };
+    Mesh* mesh = new Mesh(new Quad(), new ShaderMaterial(
+        Resources::GetShader(
+            "screen.vert",
+            "brdfConvolution.frag",
+            brdfDefines
+        ),
+        {
+            { "aPos", SEMANTIC_POSITION },
+            { "aTexCoord", SEMANTIC_TEXCOORD0 }
+        }
+    ));
+
+    // save our initial viewport size
+
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+    glCheckError();
+
+    // bind and resize our frame buffer
+
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size, size);
+
+    // create our float LUT texture
+
+    unsigned int brdfLUTTexture;
+    glGenTextures(1, &brdfLUTTexture);
+    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, size, size, 0, GL_RG, GL_FLOAT, 0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // prepare the shader and viewport
+    
+    mesh->GetMaterial()->Queue();
+    
+    glViewport(0, 0, size, size);
+    
+    // use the same framebuffer object and run this shader over an NDC screen-space quad
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    mesh->Draw();
+
+    // unbind our framebuffer, and restore our initial viewport
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(vp[0],vp[1], vp[2], vp[3]);
+
+    // clean up our resources, then return the texture
+
+    delete mesh;
+
+    return new Texture2D(brdfLUTTexture, size, size, false);
 }
 
 Skybox::~Skybox() {
@@ -383,6 +455,7 @@ Skybox::~Skybox() {
         cubeMap->Dispose();
         irradianceMap->Dispose();
         prefilteredEnvMap->Dispose();
+        brdfLUT->Dispose();
     }
 
     cubeMap = nullptr;
