@@ -80,7 +80,7 @@ set(PRIVATE_HEADERS
     src/gyo/utilities/FrameStats.h
     src/gyo/utilities/GetError.h
     src/gyo/utilities/Hash.h
-    src/stb_image/stb_image.h
+    src/stb/stb_image.h
 )
 
 set(SOURCES
@@ -120,7 +120,7 @@ set(SOURCES
     src/gyo/ui/Font.cpp
     src/gyo/ui/Text.cpp
     src/gyo/utilities/GetError.cpp
-    src/stb_image/stb_image.c
+    src/stb/stb_image.c
 )
 
 # ---- Add our dependencies -----

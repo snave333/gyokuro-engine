@@ -7,6 +7,7 @@
 #include <gyo/mesh/Mesh.h>
 #include <gyo/mesh/Skybox.h>
 #include <gyo/shading/TextureCube.h>
+#include <gyo/shading/Texture2D.h>
 #include <gyo/utilities/GetError.h>
 
 #include <glad/glad.h>
@@ -226,7 +227,11 @@ void Renderer::RenderOpaque(std::vector<DrawCall> drawCalls, Skybox* skybox) {
         // bind the IBL maps for any IBL materials
         if(skybox != nullptr && dc.material->usesIBL) {
             const TextureCube& irradianceMap = skybox->GetIrradianceMap();
-            irradianceMap.Bind();
+            const TextureCube& prefilteredEnvMap = skybox->GetPrefilteredEnvMap();
+            const Texture2D& brdfLUT = skybox->GetBRDFLUT();
+            irradianceMap.Bind(0U);
+            prefilteredEnvMap.Bind(1U);
+            brdfLUT.Bind(2U);
         }
         
         // set any shader uniforms

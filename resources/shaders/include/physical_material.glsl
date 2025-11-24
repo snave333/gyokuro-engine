@@ -11,3 +11,5 @@ uniform Material material;
 
 // IBL
 uniform samplerCube irradianceMap;
+uniform samplerCube prefilteredEnvMap;
+uniform sampler2D brdfLUT;
