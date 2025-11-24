@@ -27,6 +27,8 @@ Renderer::Renderer(const int& width, const int& height) {
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glCheckError();
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    glCheckError();
 }
 
 Renderer::~Renderer() {

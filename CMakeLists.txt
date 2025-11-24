@@ -19,24 +19,26 @@ set(PUBLIC_HEADERS
     src/gyo/core/Engine.h
     src/gyo/drawable/AABBWireframe.h
     src/gyo/drawable/TangentsRenderer.h
+    src/gyo/geometry/Cube.h
+    src/gyo/geometry/Pyramid.h
+    src/gyo/geometry/Quad.h
+    src/gyo/geometry/Sphere.h
+    src/gyo/geometry/Torus.h
     src/gyo/lighting/DirectionalLight.h
     src/gyo/lighting/LightNode.h
     src/gyo/lighting/PointLight.h
     src/gyo/lighting/SpotLight.h
-    src/gyo/mesh/Cube.h
     src/gyo/mesh/Mesh.h
     src/gyo/mesh/Model.h
     src/gyo/mesh/ModelNode.h
-    src/gyo/mesh/Pyramid.h
-    src/gyo/mesh/Quad.h
     src/gyo/mesh/Skybox.h
-    src/gyo/mesh/Sphere.h
-    src/gyo/mesh/Torus.h
     src/gyo/resources/Resources.h
     src/gyo/scene/SceneController.h
     src/gyo/shading/GoochMaterial.h
     src/gyo/shading/PBRMaterial.h
     src/gyo/shading/PhongMaterial.h
+    src/gyo/shading/ShaderMaterial.h
+    src/gyo/shading/ShaderSemantics.h
     src/gyo/shading/UnlitMaterial.h
     src/gyo/gyo.h
 )
@@ -48,13 +50,14 @@ set(PRIVATE_HEADERS
     src/gyo/camera/CameraNode.h
     src/gyo/camera/FlyCamera.h
     src/gyo/drawable/IDrawable.h
+    src/gyo/geometry/Geometry.h
     src/gyo/lighting/Light.h
     src/gyo/lighting/LightsUBO.h
     src/gyo/math/AABB.h
     src/gyo/math/Frustum.h
     src/gyo/math/Plane.h
     src/gyo/math/Sphere.h
-    src/gyo/mesh/Geometry.h
+    src/gyo/mesh/Vertex.h
     src/gyo/renderer/DrawCall.h
     src/gyo/renderer/Renderer.h
     src/gyo/renderer/RenderState.h
@@ -106,11 +109,13 @@ set(SOURCES
     src/gyo/scene/SceneController.cpp
     src/gyo/scene/SceneNode.cpp
     src/gyo/shading/GoochMaterial.cpp
+    src/gyo/shading/Material.cpp
     src/gyo/shading/PBRMaterial.cpp
     src/gyo/shading/PhongMaterial.cpp
     src/gyo/shading/Shader.cpp
     src/gyo/shading/Texture2D.cpp
     src/gyo/shading/TextureCube.cpp
+    src/gyo/shading/ShaderMaterial.cpp
     src/gyo/shading/UnlitMaterial.cpp
     src/gyo/ui/Font.cpp
     src/gyo/ui/Text.cpp

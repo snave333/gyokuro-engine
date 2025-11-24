@@ -5,7 +5,7 @@
 #include <gyo/utilities/FileSystem.h>
 #include <gyo/mesh/Model.h>
 #include <gyo/mesh/Mesh.h>
-#include <gyo/mesh/Geometry.h>
+#include <gyo/geometry/Geometry.h>
 #include <gyo/shading/Material.h>
 #include <gyo/shading/PhongMaterial.h>
 #include <gyo/shading/Texture2D.h>
@@ -67,39 +67,32 @@ void ModelLoader::ProcessNode(aiNode* node, const aiScene* scene, std::vector<Me
 }
 
 Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
-    std::vector<Vertex> vertices;
+    std::vector<glm::vec3> positions;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> texCoords;
+    std::vector<glm::vec3> tangents;
     std::vector<unsigned int> indices;
 
     std::cout << "- processing " << std::to_string(mesh->mNumVertices) << " vertices" << std::endl;
 
+    positions.reserve(mesh->mNumVertices);
+    normals.reserve(mesh->mNumVertices);
+    texCoords.reserve(mesh->mNumVertices);
+    tangents.reserve(mesh->mNumVertices);
+
     // process vertices
-    glm::vec3 position;
-    glm::vec3 normal;
-    glm::vec2 texCoord;
-    glm::vec3 tangent;
     for(unsigned int i = 0; i < mesh->mNumVertices; i++) {
-        position.x = mesh->mVertices[i].x;
-        position.y = mesh->mVertices[i].y;
-        position.z = mesh->mVertices[i].z;
-
-        normal.x = mesh->mNormals[i].x;
-        normal.y = mesh->mNormals[i].y;
-        normal.z = mesh->mNormals[i].z;
-
-        tangent.x = mesh->mTangents[i].x;
-        tangent.y = mesh->mTangents[i].y;
-        tangent.z = mesh->mTangents[i].z;
+        positions.emplace_back(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+        normals.emplace_back(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+        tangents.emplace_back(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z);
 
         // NOTE we're only using the first set of tex coords for now
         if(mesh->mTextureCoords[0]) {
-            texCoord.x = mesh->mTextureCoords[0][i].x;
-            texCoord.y = mesh->mTextureCoords[0][i].y;
+            texCoords.emplace_back(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
         }
         else {
-            texCoord = glm::vec2(0);
+            texCoords.push_back({ 0.0, 0.0 });
         }
-
-        vertices.push_back(Vertex( position, normal, texCoord, tangent ));
     }
 
     std::cout << "- processing " << std::to_string(mesh->mNumFaces) << " faces" << std::endl;
@@ -120,8 +113,8 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
         std::cout << "- processing material with " << std::to_string(material->mNumProperties) << " properties" << std::endl;
-        // LogMaterialProperties(material);
-        // LogMaterialTextureTypes(material, scene);
+        LogMaterialProperties(material);
+        LogMaterialTextureTypes(material, scene);
 
         diffMap = LoadMaterialTexture(material, aiTextureType_DIFFUSE, scene);
         specMap = LoadMaterialTexture(material, aiTextureType_SPECULAR, scene);
@@ -129,9 +122,8 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     }
 
     return new Mesh(
-        new Geometry{ vertices, indices },
-        new PhongMaterial(glm::vec4(1), glm::vec4(1), 128, diffMap, specMap, nrmMap),
-        false);
+        new Geometry{ positions, normals, texCoords, tangents, indices },
+        new PhongMaterial(glm::vec4(1), glm::vec4(1), 128, diffMap, specMap, nrmMap));
 }
 
 Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, const aiScene* scene) {

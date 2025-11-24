@@ -9,6 +9,8 @@
 namespace gyo {
 
 class Shader;
+struct AttributeInfo;
+struct UniformInfo;
 
 class ShaderLoader {
 public:
@@ -36,7 +38,13 @@ private:
     static std::string ReadFile(std::string fileName, bool isInclude);
     static std::string ReadFilePath(std::string filePath);
 
-    static void GetUniformLocations(unsigned int id, std::map<std::string, int>& uniforms);
+    static void QueryShaderInfo(
+        unsigned int id,
+        std::map<std::string, AttributeInfo>& attributes,
+        std::map<std::string, UniformInfo>& uniforms);
+    static void PrintShaderInfo(
+        const std::map<std::string, AttributeInfo>& attributes,
+        const std::map<std::string, UniformInfo>& uniforms);
 };
   
 } // namespace gyo

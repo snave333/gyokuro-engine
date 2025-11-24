@@ -2,6 +2,7 @@
 #include <gyo/shading/PhongMaterial.h>
 #include <gyo/resources/Resources.h>
 #include <gyo/shading/Texture2D.h>
+#include <gyo/shading/ShaderSemantics.h>
 
 namespace gyo {
 
@@ -33,9 +34,17 @@ PhongMaterial::PhongMaterial(
         specularMap != nullptr ||
         normalMap != nullptr;
 
+    semantics = {
+        { "aPos", SEMANTIC_POSITION },
+        { "aNormal", SEMANTIC_NORMAL }
+    };
+
     if(hasTextures) {
         std::set<std::string> defines = { "MATERIAL_TEXTURES" };
         shader = Resources::GetShader("default.vert", "phong.frag", defines);
+
+        semantics["aTexCoord"] = SEMANTIC_TEXCOORD0;
+        semantics["aTangent"] = SEMANTIC_TANGENT;
 
         // fallback to the built-in white textures from Resources
         if(diffuseMap == nullptr) {

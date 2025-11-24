@@ -9,7 +9,7 @@ void loadScene(SceneController& sc);
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
 
-    gyo::Engine* engine = new gyo::Engine();
+    gyo::Engine* engine = new gyo::Engine(1280, 720);
 
     if(!engine->IsRunning()) {
         std::cerr << "Engine failed to start." << std::endl;
@@ -33,13 +33,13 @@ void loadScene(SceneController& sc) {
     // meshes objects
 
     ModelNode* m1 = new ModelNode(new Model({
-        new Mesh(new Cube(), new UnlitMaterial({ 1, 0.5, 0, 1 })),
+        new Mesh(new Cube(0.5f), new UnlitMaterial({ 1, 0.5, 0, 1 })),
         new Mesh(new Sphere(0.65f), new UnlitMaterial({ 0, 1, 0.5, 1 }, true)),
     }));
     m1->Translate(1, 0, 0);
     sc.AddNode(m1);
 
-    Geometry* geo = new Sphere();
+    Geometry* geo = new Sphere(0.5f);
     ModelNode* m2 = new ModelNode(new Model(new Mesh(geo, new UnlitMaterial({ 0, 0.5, 1, 1 }))));
     m2->Translate(-1, 0, 0);
     sc.AddNode(m2);

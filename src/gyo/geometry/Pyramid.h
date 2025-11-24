@@ -1,7 +1,7 @@
 #ifndef PYRAMID_H
 #define PYRAMID_H
 
-#include <gyo/mesh/Geometry.h>
+#include <gyo/geometry/Geometry.h>
 
 namespace gyo {
 
@@ -28,30 +28,31 @@ struct Pyramid : public Geometry {
         glm::vec2 uvBase2(1.0f, 1.0f);
         glm::vec2 uvBase3(0.0f, 1.0f);
 
-        // vertices
-        vertices = {
-            // top point shared across all triangular faces
-            { top0, normal0, uvTop },
-            { base1, normal0, uvBase0 },
-            { base2, normal0, uvBase1 },
-
-            { top0, normal1, uvTop },
-            { base2, normal1, uvBase0 },
-            { base3, normal1, uvBase1 },
-
-            { top0, normal2, uvTop },
-            { base3, normal2, uvBase0 },
-            { base4, normal2, uvBase1 },
-
-            { top0, normal3, uvTop },
-            { base4, normal3, uvBase0 },
-            { base1, normal3, uvBase1 },
-
+        positions = {
+            top0, base1, base2,
+            top0, base2, base3,
+            top0, base3, base4,
+            top0, base4, base1,
             // base quad
-            { base1, baseNormal, uvBase0 },
-            { base2, baseNormal, uvBase1 },
-            { base3, baseNormal, uvBase2 },
-            { base4, baseNormal, uvBase3 },
+            base1, base2, base3, base4
+        };
+
+        normals = {
+            normal0, normal0, normal0,
+            normal1, normal1, normal1,
+            normal2, normal2, normal2,
+            normal3, normal3, normal3,
+            // base quad
+            baseNormal, baseNormal, baseNormal, baseNormal
+        };
+
+        texCoords = {
+            uvTop, uvBase0, uvBase1,
+            uvTop, uvBase0, uvBase1,
+            uvTop, uvBase0, uvBase1,
+            uvTop, uvBase0, uvBase1,
+            // base quad
+            uvBase0, uvBase1, uvBase2, uvBase3
         };
 
         // indices
