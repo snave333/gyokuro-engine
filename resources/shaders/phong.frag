@@ -5,6 +5,7 @@ in VS_OUT {
     vec3 normal;
     vec2 texCoord;
     vec3 tangent;
+    vec4 color;
 } fs_in;
 
 #include "normal.glsl"

@@ -10,14 +10,6 @@ namespace gyo {
 bool Material::ValidateShaderAttributes() {
     const std::map<std::string, AttributeInfo>& shaderAttributes = shader->GetAttributes();
 
-    const std::unordered_map<unsigned int, GLenum> requiredTypes = {
-        { SEMANTIC_POSITION,  GL_FLOAT_VEC3 },
-        { SEMANTIC_NORMAL,    GL_FLOAT_VEC3 },
-        { SEMANTIC_TEXCOORD0, GL_FLOAT_VEC2 },
-        { SEMANTIC_TANGENT,   GL_FLOAT_VEC3 },
-        { SEMANTIC_COLOR,     GL_FLOAT_VEC4 }
-    };
-    
     for (const auto& pair : semantics) {
         const std::string name = pair.first;
         unsigned int semantic = pair.second;
@@ -30,8 +22,8 @@ bool Material::ValidateShaderAttributes() {
             return false;
         }
 
-        auto requiredTypeIt = requiredTypes.find(semantic);
-        if(requiredTypeIt == requiredTypes.end()) {
+        auto requiredTypeIt = SEMANTIC_TO_GLTYPE.find(semantic);
+        if(requiredTypeIt == SEMANTIC_TO_GLTYPE.end()) {
             return false;
         }
 

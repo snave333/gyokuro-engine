@@ -12,6 +12,14 @@
 
 namespace gyo {
 
+struct VertexAttributeEntry {
+    unsigned int semantic;
+    GLint index;            // i.e. location
+    GLint size;             // in float values, not bytes
+    unsigned long offset;   // in float values, not bytes
+};
+
+
 Mesh::Mesh(Geometry* geometry, Material* material) {
     this->geometry = geometry;
     this->material = material;
@@ -37,16 +45,85 @@ void Mesh::Initialize() {
         return;
     }
 
+    const Shader& shader = material->GetShader();
+    const std::map<std::string, AttributeInfo>& shaderAttributes = shader.GetAttributes();
+
+    // gather our vertex array entries
+
     unsigned int vertexCount = geometry->positions.size();
-    std::vector<Vertex> vertices;
-    vertices.reserve(vertexCount);
-    for(int i = 0; i < vertexCount; i++) {
-        vertices.emplace_back(
-            geometry->positions[i],
-            geometry->normals[i],
-            geometry->texCoords[i],
-            geometry->tangents[i]
-        );
+    unsigned int floatsPerVertex = 0U;
+    unsigned long bytesPerVertex = 0UL;
+
+    auto declaredAttributes = material->GetShaderSemantics();
+    std::vector<VertexAttributeEntry> attributes;
+    attributes.reserve(declaredAttributes.size());
+
+    for(auto& pair : declaredAttributes) {
+        std::string name = pair.first;
+        unsigned int semantic = pair.second;
+
+        auto shaderAttribute = shaderAttributes.at(name);
+        auto attributeSizeDesc = SEMANTIC_TO_GLSIZE.at(semantic);
+
+        attributes.push_back({
+            semantic,
+            shaderAttribute.location,
+            attributeSizeDesc.first,
+            floatsPerVertex
+        });
+        
+        floatsPerVertex += attributeSizeDesc.first;
+        bytesPerVertex += attributeSizeDesc.first * attributeSizeDesc.second;
+    }
+
+    // generate our vertex array
+
+    unsigned int vertexArrayLength = vertexCount * floatsPerVertex;
+    float vertexArray[vertexArrayLength];
+    for(const VertexAttributeEntry& attribute : attributes) {
+        for(int v = 0; v < vertexCount; v++) {
+            int i0 = v * floatsPerVertex + attribute.offset;
+            int i1 = i0 + 1;
+            int i2 = i0 + 2;
+            int i3 = i0 + 3;
+            
+            switch(attribute.semantic) {
+                case SEMANTIC_POSITION:
+                    vertexArray[i0] = geometry->positions[v].x;
+                    vertexArray[i1] = geometry->positions[v].y;
+                    vertexArray[i2] = geometry->positions[v].z;
+                    break;
+
+                case SEMANTIC_NORMAL:
+                    vertexArray[i0] = geometry->normals[v].x;
+                    vertexArray[i1] = geometry->normals[v].y;
+                    vertexArray[i2] = geometry->normals[v].z;
+                    break;
+
+                case SEMANTIC_TEXCOORD0:
+                    vertexArray[i0] = geometry->texCoords[v].x;
+                    vertexArray[i1] = geometry->texCoords[v].y;
+                    break;
+
+                case SEMANTIC_TANGENT:
+                    vertexArray[i0] = geometry->tangents[v].x;
+                    vertexArray[i1] = geometry->tangents[v].y;
+                    vertexArray[i2] = geometry->tangents[v].z;
+                    break;
+
+                // Currently unsupported; get this from the shader?
+                // case SEMANTIC_COLOR:
+                //     vertexArray[i0] = geometry->colors[v].r;
+                //     vertexArray[i1] = geometry->colors[v].g;
+                //     vertexArray[i2] = geometry->colors[v].b;
+                //     vertexArray[i3] = geometry->colors[v].a;
+                //     break;
+
+                default:
+                    std::cerr << "Error: Unsupported semantic type " << attribute.semantic << std::endl;
+                    break;
+            }
+        }
     }
 
     // create the vertex/index buffers and vertex array object
@@ -64,7 +141,7 @@ void Mesh::Initialize() {
     // copy our vertices array in a buffer
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glCheckError();
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexArray), &vertexArray, GL_STATIC_DRAW); // vertexCount * bytesPerVertex
     glCheckError();
 
     // copy our indices
@@ -74,26 +151,12 @@ void Mesh::Initialize() {
     glCheckError();
     
     // link the vertex attribute pointers
-    // positions
-    glEnableVertexAttribArray(0);	
-    glCheckError();
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    glCheckError();
-    // normals
-    glEnableVertexAttribArray(1);	
-    glCheckError();
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-    glCheckError();
-    // texture coords
-    glEnableVertexAttribArray(2);	
-    glCheckError();
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
-    glCheckError();
-    // tangents
-    glEnableVertexAttribArray(3);	
-    glCheckError();
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
-    glCheckError();
+    for(const VertexAttributeEntry& attribute : attributes) {
+        glEnableVertexAttribArray(attribute.index);
+        glCheckError();
+        glVertexAttribPointer(attribute.index, attribute.size, GL_FLOAT, GL_FALSE, bytesPerVertex, (void*)(attribute.offset * sizeof(float)));
+        glCheckError();
+    }
 
     // clean up and unbind
     glBindVertexArray(0);

@@ -9,6 +9,7 @@ in VS_OUT {
     vec3 normal;
     vec2 texCoord;
     vec3 tangent;
+    vec4 color;
 } fs_in;
 
 vec3 lit(vec3 L, vec3 N, vec3 V);

@@ -28,7 +28,7 @@ public:
         const std::map<std::string, UniformInfo>& uniforms
     );
 
-    const std::map<std::string, AttributeInfo>& GetAttributes() { return attributes; }
+    const std::map<std::string, AttributeInfo>& GetAttributes() const { return attributes; }
     
     void Dispose();
 

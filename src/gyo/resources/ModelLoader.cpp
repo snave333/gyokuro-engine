@@ -113,8 +113,8 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
         std::cout << "- processing material with " << std::to_string(material->mNumProperties) << " properties" << std::endl;
-        // LogMaterialProperties(material);
-        // LogMaterialTextureTypes(material, scene);
+        LogMaterialProperties(material);
+        LogMaterialTextureTypes(material, scene);
 
         diffMap = LoadMaterialTexture(material, aiTextureType_DIFFUSE, scene);
         specMap = LoadMaterialTexture(material, aiTextureType_SPECULAR, scene);
