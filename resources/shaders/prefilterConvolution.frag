@@ -12,20 +12,9 @@ float hash12(vec2 p) {
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
 }
 
-vec3 softClamp(vec3 color, float maxLum, float knee) {
-    float lum = luminance(color);
-    if (lum <= maxLum) {
-        return color;
-    }
-    float x = (lum - maxLum) / max(knee, 1e-6);
-    float scale = (maxLum + knee * (1.0 - exp(-x))) / lum; // smooth rolloff
-    return color * scale;
-}
-
 uniform samplerCube environmentMap;
 uniform float roughness;
 uniform int mipLevel;
-uniform float maxLuminance;
 
 const uint MIN_SAMPLES = 256u;      // minimum samples at low roughness
 const uint MAX_SAMPLES = 8192u;     // maximum samples at high roughness
@@ -75,9 +64,6 @@ void main()
             mipLOD = max(mipLOD, 0.0);
 
             vec3 sampleColor = textureLod(environmentMap, L, mipLOD).rgb;
-
-            // clamp HDR energy of the sample (luminance clamp)
-            sampleColor = softClamp(sampleColor, maxLuminance, maxLuminance * 0.8);
 
             prefilteredColor += sampleColor * NdotL;
             totalWeight      += NdotL;

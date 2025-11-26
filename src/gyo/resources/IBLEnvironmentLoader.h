@@ -47,12 +47,9 @@ private:
     ShaderMaterial* prefilterConvolutionMaterial;
     ShaderMaterial* brdfConvolutionMaterial;
 
-    float medianHDRLuminance;
-
     Mesh* cube;
     Mesh* ndcQuad;
 
-    float ComputeLuminance(Texture2D* hdrTexture);
     TextureCube RenderTexCube(const Shader& shader, unsigned int size, std::function<void()> setUniforms);
     TextureCube RenderPrefilteredTexCube(const Shader& shader, unsigned int size, unsigned int maxMipLevels, std::function<void()> setUniforms);
     Texture2D PreComputeBRDFLUT(unsigned int size);
