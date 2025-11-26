@@ -3,7 +3,8 @@
 
 namespace gyo {
 
-class Shader;
+// class Shader;
+class Mesh;
 
 class ScreenQuad {
 public:
@@ -14,11 +15,7 @@ public:
     void Draw(unsigned int textureColorbuffer);
 
 private:
-    // render data
-    unsigned int VAO;
-    unsigned int VBO;
-
-    Shader* shader = nullptr;
+    Mesh* mesh;
 };
 
 } // namespace gyo

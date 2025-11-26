@@ -41,7 +41,13 @@ void Mesh::Initialize() {
         return;
     }
 
+    if(material == nullptr) {
+        std::cout << "Cannot initialize mesh; missing material" << std::endl;
+        return;
+    }
+
     if(!material->ValidateShaderAttributes()) {
+        std::cout << "Invalid shader attributes and declared semantics" << std::endl;
         return;
     }
 
@@ -198,12 +204,14 @@ Mesh::~Mesh() {
 
 void Mesh::SetMaterial(Material* newMaterial) {
     if(this->material) {
-        delete this->material;
-        this->material = nullptr;
+        // delete this->material;
+        // this->material = nullptr;
     }
 
     if(newMaterial) {
         this->material = newMaterial;
+        this->Initialize();
+        // TODO rebuild vertex arrays using shader semantics and attributes?
     }
 }
 

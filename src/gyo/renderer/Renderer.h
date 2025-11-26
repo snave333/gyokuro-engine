@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 
 #include <gyo/renderer/RenderState.h>
+#include <gyo/scene/IBLEnvironment.h>
 #include <gyo/utilities/FrameStats.h>
 
 namespace gyo {
@@ -23,7 +24,7 @@ public:
     void CreateFrameBuffer();
 
     void BeginFrame();
-    void RenderOpaque(std::vector<DrawCall> drawCalls, Skybox* skybox);
+    void RenderOpaque(std::vector<DrawCall> drawCalls, const IBLEnvironment& environment);
     void RenderSkybox(Skybox* skybox, glm::mat4 cameraView, glm::mat4 cameraProjection);
     void RenderTransparent(std::vector<DrawCall> drawCalls);
     void EndGeometryPass();

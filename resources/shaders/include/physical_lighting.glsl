@@ -109,13 +109,15 @@ vec3 calcRadiance(vec3 V, vec3 P, vec3 N) {
     return Lo;
 }
 
-// compute the irradiance using ibl
+// compute the irradiance using IBL
 vec3 calcAmbient(vec3 V, vec3 P, vec3 N) {
+    vec3 R = reflect(-V, N);
+
     // pre-computed reflection coefficient
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, material.albedo, material.metallic);
 
-    vec3 F = fresnelSchlick(max(0.0, dot(N, V)), F0);
+    vec3 F = fresnelSchlickRoughness(max(0.0, dot(N, V)), F0, material.roughness);
 
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
@@ -123,6 +125,13 @@ vec3 calcAmbient(vec3 V, vec3 P, vec3 N) {
     
     vec3 irradiance = texture(irradianceMap, N).rgb;
     vec3 diffuse = irradiance * material.albedo;
+
+    const float MAX_REFLECTION_LOD = 4.0; // TODO #define this
     
-    return (kD * diffuse) * material.ao;
+    // combine the pre-filter map and BRDF LUT as per the Split-Sum approximation to get the IBL specular part
+    vec3 prefilteredColor = textureLod(prefilteredEnvMap, R, material.roughness * MAX_REFLECTION_LOD).rgb;    
+    vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), material.roughness)).rg;
+    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+    
+    return (kD * diffuse + specular) * material.ao;
 }

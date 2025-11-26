@@ -20,12 +20,22 @@ PBRMaterial::PBRMaterial(
     usesIBL = true;
 
     // compile a IBL version which includes irradiance sampler
-    std::set<std::string> defines = { "USE_IBL" };
+    std::set<std::string> defines;
+    if(usesIBL) {
+        defines.insert("USE_IBL");
+    }
     shader = Resources::GetShader("default.vert", "pbr.frag", defines);
     semantics = {
         { "aPos", SEMANTIC_POSITION },
         { "aNormal", SEMANTIC_NORMAL }
     };
+
+    if(usesIBL) {
+        shader->Use();
+        shader->SetInt("irradianceMap", 0);
+        shader->SetInt("prefilteredEnvMap", 1);
+        shader->SetInt("brdfLUT", 2);
+    }
 }
 
 PBRMaterial::~PBRMaterial() {

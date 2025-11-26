@@ -51,6 +51,7 @@ set(PRIVATE_HEADERS
     src/gyo/camera/FlyCamera.h
     src/gyo/drawable/IDrawable.h
     src/gyo/geometry/Geometry.h
+    src/gyo/geometry/InvertedCube.h
     src/gyo/lighting/Light.h
     src/gyo/lighting/LightsUBO.h
     src/gyo/math/AABB.h
@@ -65,9 +66,11 @@ set(PRIVATE_HEADERS
     src/gyo/renderer/ScreenQuad.h
     src/gyo/resources/DataLoader.h
     src/gyo/resources/FontLoader.h
+    src/gyo/resources/IBLEnvironmentLoader.h
+    src/gyo/resources/ModelLoader.h
     src/gyo/resources/ShaderLoader.h
     src/gyo/resources/TextureLoader.h
-    src/gyo/resources/ModelLoader.h
+    src/gyo/scene/IBLEnvironment.h
     src/gyo/scene/SceneNode.h
     src/gyo/shading/Material.h
     src/gyo/shading/Shader.h
@@ -80,7 +83,7 @@ set(PRIVATE_HEADERS
     src/gyo/utilities/FrameStats.h
     src/gyo/utilities/GetError.h
     src/gyo/utilities/Hash.h
-    src/stb_image/stb_image.h
+    src/stb/stb_image.h
 )
 
 set(SOURCES
@@ -102,6 +105,7 @@ set(SOURCES
     src/gyo/renderer/ScreenQuad.cpp
     src/gyo/resources/DataLoader.cpp
     src/gyo/resources/FontLoader.cpp
+    src/gyo/resources/IBLEnvironmentLoader.cpp
     src/gyo/resources/ModelLoader.cpp
     src/gyo/resources/Resources.cpp
     src/gyo/resources/ShaderLoader.cpp
@@ -120,7 +124,7 @@ set(SOURCES
     src/gyo/ui/Font.cpp
     src/gyo/ui/Text.cpp
     src/gyo/utilities/GetError.cpp
-    src/stb_image/stb_image.c
+    src/stb/stb_image.c
 )
 
 # ---- Add our dependencies -----

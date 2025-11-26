@@ -112,7 +112,7 @@ void SceneController::AddDrawable(IDrawable* drawable) {
 }
 
 void SceneController::SetSkybox(Skybox* skybox) {
-    // clear any existing skybox if we have one
+    // clear any existing skybox and environment if we have one
     if(this->skybox != nullptr) {
         delete this->skybox;
         this->skybox = nullptr;
@@ -121,6 +121,21 @@ void SceneController::SetSkybox(Skybox* skybox) {
     // set the new skybox if it isn't null
     if(skybox != nullptr) {
         this->skybox = skybox;
+    }
+}
+
+void SceneController::SetEnvironment(const char* hdrFileName) {
+    // clear any existing skybox and environment if we have one
+    if(this->skybox != nullptr) {
+        delete this->skybox;
+        this->skybox = nullptr;
+    }
+
+    // set the new environment if it isn't null
+    
+    if(hdrFileName != nullptr) {
+        this->environment = Resources::GetEnvironment(hdrFileName);
+        this->skybox = new Skybox(this->environment.cubeMap);
     }
 }
 
@@ -196,7 +211,7 @@ void SceneController::RenderScene() {
     {
         CLOCKT(render_opaque, &renderer->stats.opaqueMs);
 
-        renderer->RenderOpaque(opaqueDrawCalls, this->skybox);
+        renderer->RenderOpaque(opaqueDrawCalls, this->environment);
 
         if(skybox != nullptr) {
             renderer->RenderSkybox(skybox, camera->GetView(), camera->GetProjection());
