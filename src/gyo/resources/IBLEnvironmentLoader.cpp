@@ -78,7 +78,6 @@ IBLEnvironmentLoader::IBLEnvironmentLoader() {
 
 
     std::set<std::string> prefilterDefines = { 
-        "SAMPLE_COUNT " + std::to_string(PrefilterSampleCount) + "u",
         "ENV_MAP_RESOLUTION " + std::to_string(EnvMapSize) + ".0"
     };
     Shader* prefilterConvolutionShader = Resources::GetShader(
@@ -166,6 +165,10 @@ TextureCube IBLEnvironmentLoader::GetCubemap(Texture2D* hdrTexture) {
     glCheckError();
     glViewport(vp[0],vp[1], vp[2], vp[3]);
     glCheckError();
+
+    // save the median luminance for later prefiltering
+
+    medianHDRLuminance = ComputeLuminance(hdrTexture);
 
     return cubeMap;
 }
@@ -265,6 +268,42 @@ Texture2D IBLEnvironmentLoader::GetBRDFLUT() {
     return brdfLUT;
 }
 
+float IBLEnvironmentLoader::ComputeLuminance(Texture2D* hdrTexture) {
+    unsigned int width = hdrTexture->width;
+    unsigned int height = hdrTexture->height;
+
+    // collect our rgb pixels
+
+    hdrTexture->Bind();
+
+    std::vector<float> floatPixels(width * height * 3);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_FLOAT, floatPixels.data());
+    glCheckError();
+
+    // compute our luminance of each pixel
+
+    std::vector<float> luminances;
+    luminances.reserve(width * height);
+    for (unsigned int i = 0u; i < width * height; ++i) {
+        float r = floatPixels[i * 3 + 0];
+        float g = floatPixels[i * 3 + 1];
+        float b = floatPixels[i * 3 + 2];
+
+        glm::vec3 rgb = { r, g, b };
+        glm::vec3 lumCoeffs = { 0.2126, 0.7152, 0.0722 };
+
+        float luminance = glm::dot(rgb, lumCoeffs);
+        luminances.push_back(luminance);
+    }
+
+    // find the median value
+
+    std::nth_element(luminances.begin(), luminances.begin() + luminances.size() / 2, luminances.end());
+    float medianLum = luminances[luminances.size() / 2];
+
+    return medianLum;
+}
+
 TextureCube IBLEnvironmentLoader::RenderTexCube(const Shader& captureShader, unsigned int size, std::function<void()> setUniforms) {
     // resize our frame buffer
 
@@ -359,6 +398,8 @@ TextureCube IBLEnvironmentLoader::RenderPrefilteredTexCube(const Shader& capture
         setUniforms();
     }
 
+    captureShader.SetFloat("maxLuminance", medianHDRLuminance * 50);
+
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glCheckError();
 
@@ -379,6 +420,7 @@ TextureCube IBLEnvironmentLoader::RenderPrefilteredTexCube(const Shader& capture
 
         float roughness = (float)mip / (float)(maxMipLevels - 1);
         captureShader.SetFloat("roughness", roughness);
+        captureShader.SetInt("mipLevel", mip);
         for(unsigned int i = 0; i < 6; i++) {
             captureShader.SetMat4("view", captureViews[i]);
 
