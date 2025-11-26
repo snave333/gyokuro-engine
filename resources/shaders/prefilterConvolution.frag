@@ -1,5 +1,5 @@
-// defined in ShaderLoader: SAMPLE_COUNT 1024u
-// defined in ShaderLoader: ENV_MAP_RESOLUTION 512.0
+// defined in IBLEnvironmentLoader: SAMPLE_COUNT 1024u
+// defined in IBLEnvironmentLoader: ENV_MAP_RESOLUTION 512.0
 
 out vec4 FragColor;
 

@@ -84,6 +84,7 @@ set(PRIVATE_HEADERS
     src/gyo/utilities/GetError.h
     src/gyo/utilities/Hash.h
     src/stb/stb_image.h
+    src/stb/stb_image_write.h
 )
 
 set(SOURCES
@@ -125,6 +126,7 @@ set(SOURCES
     src/gyo/ui/Text.cpp
     src/gyo/utilities/GetError.cpp
     src/stb/stb_image.c
+    src/stb/stb_image_write.c
 )
 
 # ---- Add our dependencies -----

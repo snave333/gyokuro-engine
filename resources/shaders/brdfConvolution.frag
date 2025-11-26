@@ -1,4 +1,4 @@
-// defined in ShaderLoader: SAMPLE_COUNT 1024u
+// defined in IBLEnvironmentLoader: SAMPLE_COUNT 1024u
 
 out vec2 FragColor;
 

@@ -1,3 +1,5 @@
+// defined in PBRMaterial: MAX_REFLECTION_LOD 4.0
+
 #include "physical_material.glsl"
 #include "lights.glsl"
 #include "brdf.glsl"
@@ -126,8 +128,6 @@ vec3 calcAmbient(vec3 V, vec3 P, vec3 N) {
     vec3 irradiance = texture(irradianceMap, N).rgb;
     vec3 diffuse = irradiance * material.albedo;
 
-    const float MAX_REFLECTION_LOD = 4.0; // TODO #define this
-    
     // combine the pre-filter map and BRDF LUT as per the Split-Sum approximation to get the IBL specular part
     vec3 prefilteredColor = textureLod(prefilteredEnvMap, R, material.roughness * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), material.roughness)).rg;

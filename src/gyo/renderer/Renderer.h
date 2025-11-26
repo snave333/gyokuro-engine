@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 
 #include <gyo/renderer/RenderState.h>
-#include <gyo/scene/IBLEnvironment.h>
+#include <gyo/shading/IBLEnvironment.h>
 #include <gyo/utilities/FrameStats.h>
 
 namespace gyo {

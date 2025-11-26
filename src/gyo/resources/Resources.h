@@ -1,7 +1,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include <gyo/scene/IBLEnvironment.h>
+#include <gyo/shading/IBLEnvironment.h>
 
 #include <map>
 #include <set>

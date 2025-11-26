@@ -1,4 +1,4 @@
-// defined in ShaderLoader: SAMPLE_DELTA 0.025
+// defined in IBLEnvironmentLoader: SAMPLE_DELTA 0.025
 
 out vec4 FragColor;
 

@@ -2,6 +2,7 @@
 #include <gyo/shading/PBRMaterial.h>
 #include <gyo/shading/ShaderSemantics.h>
 #include <gyo/resources/Resources.h>
+#include <gyo/resources/IBLEnvironmentLoader.h>
 
 namespace gyo {
 
@@ -20,7 +21,9 @@ PBRMaterial::PBRMaterial(
     usesIBL = true;
 
     // compile a IBL version which includes irradiance sampler
-    std::set<std::string> defines;
+    std::set<std::string> defines = {
+        "MAX_REFLECTION_LOD " + std::to_string(IBLEnvironmentLoader::PrefilterMipLevels - 1U) + ".0"
+    };
     if(usesIBL) {
         defines.insert("USE_IBL");
     }

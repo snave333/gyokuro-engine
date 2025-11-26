@@ -4,7 +4,7 @@
 #include <gyo/geometry/InvertedCube.h>
 #include <gyo/geometry/Quad.h>
 #include <gyo/mesh/Mesh.h>
-#include <gyo/scene/IBLEnvironment.h>
+#include <gyo/shading/IBLEnvironment.h>
 #include <gyo/shading/Shader.h>
 #include <gyo/shading/ShaderMaterial.h>
 #include <gyo/shading/ShaderSemantics.h>

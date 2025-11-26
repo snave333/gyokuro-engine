@@ -28,16 +28,7 @@ if(!engine->IsRunning()) {
 
 SceneController& sc = engine->sc();
 
-std::vector<const char*> faces {
-    "skybox_px.jpg",
-    "skybox_nx.jpg",
-    "skybox_py.jpg",
-    "skybox_ny.jpg",
-    "skybox_nz.jpg",
-    "skybox_pz.jpg"
-};
-Skybox* skybox = new Skybox(Resources::GetTextureCube(faces, true));
-sc.SetSkybox(skybox);
+sc.SetEnvironment("brown_photostudio_2k.hdr");
 
 glm::vec3 spotLightColor = { 1.0f, 0.2f, 0.2f };
 LightNode* spotLight = new LightNode(new SpotLight(spotLightColor * 6.0f, 40.0f));
@@ -81,11 +72,10 @@ For more examples, see the runnable projects in the [samples](samples) folder.
   * [x] Camera matrices UBO
   * [x] Scene lighting UBO
 * [x] 2D Texture Loading
-* [ ] Lights
+* [x] Simple Lights
   * [x] Directional
   * [x] Point
   * [x] Spot
-  * [ ] Area
 * [x] Material Definitions
   * [x] Unlit (supports color map)
   * [x] Phong (supports diffuse, specular, and normal map)
@@ -93,9 +83,9 @@ For more examples, see the runnable projects in the [samples](samples) folder.
   * [x] Mesh normals/tangents/bitangents viewer (geom shader)
   * [x] AABB wireframe renderer
   * [ ] Frustum wireframe renderer
-* [ ] Skybox
+* [x] Skybox
   * [x] Cubemap
-  * [ ] Skydome
+  * [x] HDR
 * [ ] View Frustum Culling
   * [x] AABB based model culling
     * [x] P/N vertex LUT optimization
@@ -122,7 +112,8 @@ For more examples, see the runnable projects in the [samples](samples) folder.
 * [ ] PBR
   * [ ] Material (supports albedo, normal, metallic/roughness, and ao map)
   * [x] Analytic lights
-  * [ ] IBL
+  * [x] IBL
+* [ ] MSAA
 * [ ] Image effects
 * [ ] Shadows
 

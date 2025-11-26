@@ -17,12 +17,12 @@ class IBLEnvironmentLoader {
 public:
     static const unsigned int       EnvMapSize =            512U;
 
-    static constexpr const float    IrradianceSampleDelta = 0.025f;
     static const unsigned int       IrradianceTexSize =     32U;
+    static constexpr const float    IrradianceSampleDelta = 0.025f;
 
     static const unsigned int       PrefilteredTexSize =    128U;
-    static const unsigned int       PrefilterSampleCount =  1024U;
     static const unsigned int       PrefilterMipLevels =    5U;
+    static const unsigned int       PrefilterSampleCount =  1024U;
 
     static const unsigned int       BRDFLUTSize =           512U;
     static const unsigned int       BRDFSampleCount =       1024U;

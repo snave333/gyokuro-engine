@@ -1,7 +1,7 @@
 #ifndef SCENE_CONTROLLER_H
 #define SCENE_CONTROLLER_H
 
-#include <gyo/scene/IBLEnvironment.h>
+#include <gyo/shading/IBLEnvironment.h>
 
 #include <functional>
 #include <glm/glm.hpp>
