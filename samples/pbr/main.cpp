@@ -31,7 +31,9 @@ int main(int argc, const char * argv[]) {
 }
 
 void loadScene(SceneController& sc) {
-    sc.SetEnvironment("brown_photostudio_2k.hdr");
+    // sc.SetEnvironment("brown_photostudio_2k.hdr");
+    // sc.SetEnvironment("dikhololo_night_2k.hdr");
+    sc.SetEnvironment("sunny_rose_garden_2k.hdr");
 
     // first our lights
 
@@ -69,7 +71,7 @@ void loadScene(SceneController& sc) {
 
     // spawn our grid of spheres
 
-    float z = 0;
+    float z = -0.5f;
     float spacing = 0.6f;
 
     int numRows = 5;

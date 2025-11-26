@@ -7,9 +7,9 @@ This project is my journey following the tutorials and guides from [Learn OpenGL
 ## Key Features
 
  - Model Loading
- - PBR Materials
+ - PBR Materials, IBL
  - HDR Pipeline
- - Fast View Frustum Culling
+ - Fast VFC
 
 For a full feature list and roadmap of planned features, see [the list below](#roadmap).
 
