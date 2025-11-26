@@ -1,11 +1,13 @@
 
 #include <gyo/resources/Resources.h>
+#include <gyo/resources/IBLEnvironmentLoader.h>
 #include <gyo/resources/ModelLoader.h>
 #include <gyo/resources/ShaderLoader.h>
 #include <gyo/resources/TextureLoader.h>
 #include <gyo/resources/FontLoader.h>
 #include <gyo/resources/DataLoader.h>
 #include <gyo/utilities/FileSystem.h>
+#include <gyo/utilities/Clock.h>
 #include <gyo/utilities/Hash.h>
 
 #include <gyo/geometry/Geometry.h>
@@ -200,6 +202,58 @@ TextureCube* Resources::GetTextureCube(std::vector<const char*> faceFileNames, b
     Resources::cubeMaps[id] = texture;
 
     return &Resources::cubeMaps[id];
+}
+
+IBLEnvironment Resources::GetEnvironment(const char* hdrFileName) {
+    CLOCK(IBL_Generation);
+
+    IBLEnvironmentLoader envLoader = IBLEnvironmentLoader();
+
+    // first get our hdr texture
+
+    Texture2D* hdrTexture = Resources::GetHDRTexture(hdrFileName);
+
+    // create our hash ids
+
+    std::string cubemapHashKey = std::string(hdrFileName) + "_cubemap";
+    long cubemapId = HASH(cubemapHashKey);
+
+    std::string irradianceMapHashKey = std::string(hdrFileName) + "_irradianceMap";
+    long irradianceMapId = HASH(irradianceMapHashKey);
+
+    std::string prefilteredEnvMapHashKey = std::string(hdrFileName) + "_prefilteredEnvMap";
+    long prefilteredEnvMapId = HASH(prefilteredEnvMapHashKey);
+
+    long brdfLUTId = HASH("brdfLUT");
+
+    // now load or generate our textures
+
+    if (Resources::cubeMaps.find(cubemapId) == Resources::cubeMaps.end()) {
+        TextureCube cubemap = envLoader.GetCubemap(hdrTexture);
+        Resources::cubeMaps[cubemapId] = cubemap;
+    }
+
+    if (Resources::cubeMaps.find(irradianceMapId) == Resources::cubeMaps.end()) {
+        TextureCube irradianceMap = envLoader.GetIrradianceMap(&Resources::cubeMaps[cubemapId]);
+        Resources::cubeMaps[irradianceMapId] = irradianceMap;
+    }
+
+    if (Resources::cubeMaps.find(prefilteredEnvMapId) == Resources::cubeMaps.end()) {
+        TextureCube prefilteredEnvMap = envLoader.GetPrefilteredEnvMap(&Resources::cubeMaps[cubemapId]);
+        Resources::cubeMaps[prefilteredEnvMapId] = prefilteredEnvMap;
+    }
+
+    if (Resources::textures.find(brdfLUTId) == Resources::textures.end()) {
+        Texture2D brdfLUT = envLoader.GetBRDFLUT();
+        Resources::textures[brdfLUTId] = brdfLUT;
+    }
+
+    return {
+        &Resources::cubeMaps[cubemapId],
+        &Resources::cubeMaps[irradianceMapId],
+        &Resources::cubeMaps[prefilteredEnvMapId],
+        &Resources::textures[brdfLUTId]
+    };
 }
 
 Font* Resources::GetFont(const char* fontName, const float& pixelsPerEm, const float& pixelRange) {

@@ -1,6 +1,8 @@
 #ifndef SCENE_CONTROLLER_H
 #define SCENE_CONTROLLER_H
 
+#include <gyo/scene/IBLEnvironment.h>
+
 #include <functional>
 #include <glm/glm.hpp>
 
@@ -35,6 +37,7 @@ public:
     void AddNode(SceneNode* node);
     void AddDrawable(IDrawable* drawable);
     void SetSkybox(Skybox* skybox = nullptr);
+    void SetEnvironment(const char* hdrFileName);
     void AddUpdateFunction(std::function<void(float)> f) { updateFunctions.push_back(f); }
 
     void OnKeyPressed(int key, float dt);
@@ -50,6 +53,7 @@ private:
     FlyCamera* camera = nullptr;
 
     Skybox* skybox = nullptr;
+    IBLEnvironment environment;
 
     const glm::vec3 ambientLight = { 0, 0, 0 };
     std::vector<LightNode*> lights = {};

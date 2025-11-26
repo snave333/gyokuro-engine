@@ -51,6 +51,7 @@ set(PRIVATE_HEADERS
     src/gyo/camera/FlyCamera.h
     src/gyo/drawable/IDrawable.h
     src/gyo/geometry/Geometry.h
+    src/gyo/geometry/InvertedCube.h
     src/gyo/lighting/Light.h
     src/gyo/lighting/LightsUBO.h
     src/gyo/math/AABB.h
@@ -65,9 +66,11 @@ set(PRIVATE_HEADERS
     src/gyo/renderer/ScreenQuad.h
     src/gyo/resources/DataLoader.h
     src/gyo/resources/FontLoader.h
+    src/gyo/resources/IBLEnvironmentLoader.h
+    src/gyo/resources/ModelLoader.h
     src/gyo/resources/ShaderLoader.h
     src/gyo/resources/TextureLoader.h
-    src/gyo/resources/ModelLoader.h
+    src/gyo/scene/IBLEnvironment.h
     src/gyo/scene/SceneNode.h
     src/gyo/shading/Material.h
     src/gyo/shading/Shader.h
@@ -102,6 +105,7 @@ set(SOURCES
     src/gyo/renderer/ScreenQuad.cpp
     src/gyo/resources/DataLoader.cpp
     src/gyo/resources/FontLoader.cpp
+    src/gyo/resources/IBLEnvironmentLoader.cpp
     src/gyo/resources/ModelLoader.cpp
     src/gyo/resources/Resources.cpp
     src/gyo/resources/ShaderLoader.cpp

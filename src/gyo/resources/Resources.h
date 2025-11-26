@@ -1,6 +1,8 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
+#include <gyo/scene/IBLEnvironment.h>
+
 #include <map>
 #include <set>
 
@@ -28,6 +30,7 @@ public:
     static Texture2D* GetTexture(const char* imageFileName, bool srgb, int wrapMode = GL_REPEAT, bool useMipmaps = true);
     static Texture2D* GetHDRTexture(const char* imageFileName);
     static TextureCube* GetTextureCube(std::vector<const char*> faceFileNames, bool srgb);
+    static IBLEnvironment GetEnvironment(const char* imageFileName);
     static Font* GetFont(const char* fontName, const float& pixelsPerEm, const float& pixelRange);
     static CSVData GetCSV(const char* filePath);
 

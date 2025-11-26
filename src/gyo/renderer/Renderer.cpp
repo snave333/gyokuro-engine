@@ -217,7 +217,7 @@ void Renderer::BeginFrame() {
     glCheckError();
 }
 
-void Renderer::RenderOpaque(std::vector<DrawCall> drawCalls, Skybox* skybox) {
+void Renderer::RenderOpaque(std::vector<DrawCall> drawCalls, const IBLEnvironment& environment) {
     state.SetDepthTestingEnabled(true);
     state.SetBlendingEnabled(false);
 
@@ -225,13 +225,10 @@ void Renderer::RenderOpaque(std::vector<DrawCall> drawCalls, Skybox* skybox) {
         dc.material->Queue();
         
         // bind the IBL maps for any IBL materials
-        if(skybox != nullptr && dc.material->usesIBL) {
-            const TextureCube& irradianceMap = skybox->GetIrradianceMap();
-            const TextureCube& prefilteredEnvMap = skybox->GetPrefilteredEnvMap();
-            const Texture2D& brdfLUT = skybox->GetBRDFLUT();
-            irradianceMap.Bind(0U);
-            prefilteredEnvMap.Bind(1U);
-            brdfLUT.Bind(2U);
+        if(environment.irradianceMap != nullptr && dc.material->usesIBL) {
+            environment.irradianceMap->Bind(0U);
+            environment.prefilteredEnvMap->Bind(1U);
+            environment.brdfLUT->Bind(2U);
         }
         
         // set any shader uniforms

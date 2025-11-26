@@ -22,7 +22,7 @@ Shader ShaderLoader::LoadShader(
     const char* fragFileName,
     const std::set<std::string>& defines)
 {
-    std::cout << "Compiling shaders " << vertFileName << " & " << fragFileName << std::endl;
+    std::cout << "\nCompiling shaders " << vertFileName << " & " << fragFileName << std::endl;
 
     // read the base file contents
     std::string vShaderCodeStr = ReadFile(vertFileName, false);

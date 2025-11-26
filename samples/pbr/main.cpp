@@ -31,8 +31,7 @@ int main(int argc, const char * argv[]) {
 }
 
 void loadScene(SceneController& sc) {
-    Skybox* skybox = new Skybox(Resources::GetHDRTexture("brown_photostudio_2k.hdr"));
-    sc.SetSkybox(skybox);
+    sc.SetEnvironment("brown_photostudio_2k.hdr");
 
     // first our lights
 
