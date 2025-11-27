@@ -13,7 +13,7 @@ public:
     static Engine* Instance;
     
 public:
-    Engine(unsigned int ptWidth = 0, unsigned int ptHeight = 0);
+    Engine(unsigned int ptWidth = 0, unsigned int ptHeight = 0, unsigned int msaaSamples = 4U);
     ~Engine();
 
     const bool& IsRunning() const { return isRunning; }

@@ -14,10 +14,19 @@
 
 namespace gyo {
 
-Renderer::Renderer(const int& width, const int& height) {
+Renderer::Renderer(const int& width, const int& height, int msaaSamples) {
     size = glm::ivec2(width, height);
 
     PrintGLInfo();
+
+    // validate our requested msaa sample count
+
+    GLint maxMsaaSamples;
+    glGetIntegerv(GL_MAX_SAMPLES, &maxMsaaSamples);
+    glCheckError();
+    this->msaaSamples = std::min(maxMsaaSamples, std::max(0, msaaSamples));
+
+    // setup our render state
 
     state = RenderState();
     state.SetFaceCullingEnabled(true);
@@ -38,56 +47,138 @@ Renderer::~Renderer() {
 
     glDeleteFramebuffers(1, &framebuffer);
     glCheckError();
-    glDeleteTextures(1, &textureColorbuffer);
-    glCheckError();
-    glDeleteRenderbuffers(1, &depthRenderbuffer);
-    glCheckError();
+
+    if(msaaSamples > 0) {
+        glDeleteTextures(1, &textureColorbufferMS);
+        glCheckError();
+        glDeleteRenderbuffers(1, &depthRenderbufferMS);
+        glCheckError();
+
+        glDeleteFramebuffers(1, &intermediateFramebuffer);
+        glCheckError();
+        glDeleteTextures(1, &textureColorbuffer);
+        glCheckError();
+    }
+    else {
+        glDeleteTextures(1, &textureColorbuffer);
+        glCheckError();
+        glDeleteRenderbuffers(1, &depthRenderbuffer);
+        glCheckError();
+    }
 }
 
 void Renderer::CreateFrameBuffer() {
     screenQuad = new ScreenQuad();
-    
+
+    // create and bind our main framebuffer
     glGenFramebuffers(1, &framebuffer);
     glCheckError();
-
-    // generate hdr color texture
-    glGenTextures(1, &textureColorbuffer);
-    glCheckError();
-    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-    glCheckError();
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
-    glCheckError();
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glCheckError();
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glCheckError();
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glCheckError();
-
-    // generate render buffer object for depth / stencil
-    glGenRenderbuffers(1, &depthRenderbuffer);
-    glCheckError();
-    glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer); 
-    glCheckError();
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, size.x, size.y);
-    glCheckError();
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    glCheckError();
-
-    // attach color and depth/stencil buffers to currently bound framebuffer object
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glCheckError();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-    glCheckError();
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
-    glCheckError();
 
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        std::cout << "ERROR::RENDERER::FRAMEBUFFER_NOT_COMPLETE" << std::endl;
+    if(msaaSamples > 0) {
+        // create our ms texture object and image
+        glGenTextures(1, &textureColorbufferMS);
+        glCheckError();
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureColorbufferMS);
+        glCheckError();
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, msaaSamples, GL_RGB16F, size.x, size.y, GL_TRUE);
+        glCheckError();
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+        glCheckError();
+        
+        // create a (also multisampled) renderbuffer object for depth and stencil attachments
+        glGenRenderbuffers(1, &depthRenderbufferMS);
+        glCheckError();
+        glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbufferMS);
+        glCheckError();
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaaSamples, GL_DEPTH24_STENCIL8, size.x, size.y);
+        glCheckError();
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glCheckError();
+
+        // attach color and depth/stencil buffers to currently bound framebuffer object
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, textureColorbufferMS, 0);
+        glCheckError();
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthRenderbufferMS);
+        glCheckError();
+
+        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            std::cout << "Error: framebuffer not complete" << std::endl;
+        }
+        glCheckError();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glCheckError();
+
+        // now configure our secondary post-process framebuffer
+        glGenFramebuffers(1, &intermediateFramebuffer);
+        glCheckError();
+        glBindFramebuffer(GL_FRAMEBUFFER, intermediateFramebuffer);
+        glCheckError();
+
+        // generate intermediate hdr color texture
+        glGenTextures(1, &textureColorbuffer);
+        glCheckError();
+        glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+        glCheckError();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+        glCheckError();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glCheckError();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glCheckError();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glCheckError();
+
+        // attach color buffer (we don't need depth/stencil) to currently bound framebuffer object
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+        glCheckError();
+
+        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            std::cout << "Error: framebuffer not complete" << std::endl;
+        }
+        glCheckError();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glCheckError();
     }
-    glCheckError();
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);  
-    glCheckError();
+    else {
+        // generate hdr color texture
+        glGenTextures(1, &textureColorbuffer);
+        glCheckError();
+        glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+        glCheckError();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+        glCheckError();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glCheckError();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glCheckError();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glCheckError();
+    
+        // generate render buffer object for depth / stencil
+        glGenRenderbuffers(1, &depthRenderbuffer);
+        glCheckError();
+        glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer); 
+        glCheckError();
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, size.x, size.y);
+        glCheckError();
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glCheckError();
+    
+        // attach color and depth/stencil buffers to currently bound framebuffer object
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+        glCheckError();
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+        glCheckError();
+
+        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            std::cout << "Error: framebuffer not complete" << std::endl;
+        }
+        glCheckError();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glCheckError();
+    }
 }
 
 void Renderer::PrintGLInfo() {
@@ -211,6 +302,8 @@ void Renderer::BeginFrame() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glCheckError();
+    glViewport(0, 0, size.x, size.y);
+    glCheckError();
     glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
     glCheckError();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -305,6 +398,13 @@ void Renderer::RenderTransparent(std::vector<DrawCall> drawCalls) {
 void Renderer::EndGeometryPass() {
     state.SetDepthTestingEnabled(false);
     state.SetBlendingEnabled(false);
+
+    // copy the MS buffer to the normal colorbuffer of intermediate framebuffer
+    if(msaaSamples > 0) {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intermediateFramebuffer);
+        glBlitFramebuffer(0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
 
     // unbind our framebuffer, and render the full screen quad
 

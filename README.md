@@ -2,7 +2,7 @@
 
 A C++ OpenGL rendering library – pronounced "gee-o-kuh-ro". Uses the forward shading technique and targets the OpenGL 3.3 Core profile.
 
-This project is my journey following the tutorials and guides from [Learn OpenGL](https://learnopengl.com/), and creating a high-level wrapper around the rendering software.
+This project is my journey following the tutorials and guides from [Learn OpenGL](https://learnopengl.com/), along with a slew of [other online and print guides](#acknowledgments), and creating a high-level wrapper around the rendering software.
 
 ## Key Features
 
@@ -113,7 +113,7 @@ For more examples, see the runnable projects in the [samples](samples) folder.
   * [ ] Material (supports albedo, normal, metallic/roughness, and ao map)
   * [x] Analytic lights
   * [x] IBL
-* [ ] MSAA
+* [x] MSAA
 * [ ] Image effects
 * [ ] Shadows
 
@@ -124,10 +124,9 @@ For more examples, see the runnable projects in the [samples](samples) folder.
 * [glm](https://github.com/g-truc/glm/)
 * [stb_image](https://github.com/nothings/stb/)
 * [assimp](https://github.com/assimp/assimp/)
+* [msdf-atlas-gen](https://github.com/Chlumsky/msdf-atlas-gen)
 
 ## Acknowledgments
-
-"Dice.fbx" 3D model and textures by [Josh Cook](https://www.linkedin.com/in/josh-cook-380a3a147/).
 
 * [Computer Graphics Programming In OpenGL With C++](https://www.merclearning.com/titles/Computer_Graphics_Programming_in_OpenGL_with_C++.html)
 * [Real-Time Rendering](https://www.realtimerendering.com/)
@@ -137,3 +136,5 @@ For more examples, see the runnable projects in the [samples](samples) folder.
 * [Optimized View Frustum Culling Algorithms for Bounding Boxes](https://www.cse.chalmers.se/~uffe/vfc_bbox.pdf)
 * [Fast Extraction of Viewing Frustum Planes from the WorldView-Projection Matrix](https://www8.cs.umu.se/kurser/5DV051/HT12/lab/plane_extraction.pdf)
 * [Other Graphics Programming Papers](https://www.gamedevs.org/#graphics-programming)
+
+"Dice.fbx" 3D model and textures by [Josh Cook](https://www.linkedin.com/in/josh-cook-380a3a147/).

@@ -14,7 +14,7 @@ namespace gyo {
 
 Engine* Engine::Instance = nullptr;
 
-Engine::Engine(unsigned int ptWidth, unsigned int ptHeight) {
+Engine::Engine(unsigned int ptWidth, unsigned int ptHeight, unsigned int msaaSamples) {
     if(Engine::Instance) {
         throw std::runtime_error("Cannot have 2 instances of Engine");
     }
@@ -87,7 +87,7 @@ Engine::Engine(unsigned int ptWidth, unsigned int ptHeight) {
 
     Resources::Initialize();
 
-    renderer = new Renderer(pxWidth, pxHeight);
+    renderer = new Renderer(pxWidth, pxHeight, msaaSamples);
     sceneController = new SceneController(renderer, pxWidth, pxHeight);
 
     isRunning = true;

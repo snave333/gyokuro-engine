@@ -18,7 +18,7 @@ class Renderer {
 public:
     FrameStats stats;
 
-    Renderer(const int& width, const int& height);
+    Renderer(const int& width, const int& height, int msaaSamples);
     ~Renderer();
 
     void CreateFrameBuffer();
@@ -34,6 +34,7 @@ public:
 
 private:
     glm::ivec2 size;
+    unsigned int msaaSamples;
 
     RenderState state;
 
@@ -41,9 +42,15 @@ private:
 
     // frame buffer
     ScreenQuad* screenQuad = nullptr;
+
     unsigned int framebuffer;
-    unsigned int textureColorbuffer;
+    // non-MSAA
+    unsigned int textureColorbuffer; // we re-use this if MSAA is enabled
     unsigned int depthRenderbuffer;
+    // MSAA
+    unsigned int textureColorbufferMS;
+    unsigned int depthRenderbufferMS;
+    unsigned int intermediateFramebuffer;
 
     void PrintGLInfo();
 };
