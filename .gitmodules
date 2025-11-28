@@ -7,3 +7,7 @@
 [submodule "deps/assimp"]
 	path = deps/assimp
 	url = git@github.com:assimp/assimp.git
+[submodule "deps/tinygltf"]
+	path = deps/tinygltf
+	url = git@github.com:syoyo/tinygltf.git
+	branch = release
