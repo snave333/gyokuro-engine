@@ -26,8 +26,8 @@ Model* ModelLoader::LoadModel(const char* fileName, bool flipUVs) {
     std::string modelFilePath = FileSystem::CombinePath(ResourceDir, fileName);
     
     std::string ext = FileSystem::GetFilePathExtension(modelFilePath);
-    if(ext.compare("gltf") != 0 && ext.compare("glb") != 0) {
-        throw std::runtime_error("Only GLTF and GLTF2 model file types are supported");
+    if(ext.compare("gltf") != 0 && ext.compare("glb") != 0 && ext.compare("fbx") != 0) {
+        throw std::runtime_error("Only GLTF, GLTF2, and FBX model file types are supported");
     }
 
     // our import flags
