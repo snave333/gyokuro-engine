@@ -141,9 +141,18 @@ add_subdirectory( deps/glfw )
 add_subdirectory( deps/glm )
 
 # configure and add assimp asset importer
-set( ASSIMP_NO_EXPORT ON CACHE BOOL "Importers only" )
-set( ASSIMP_BUILD_TESTS OFF CACHE BOOL "Don't build tests" )
-set( ASSIMP_INSTALL OFF CACHE BOOL "We're using as a submodule" )
+set(ASSIMP_INSTALL              OFF CACHE BOOL "We're using as a submodule" )
+# remove all our unneeded stuff
+set(ASSIMP_NO_EXPORT            ON CACHE BOOL "Importers only" )
+set(ASSIMP_BUILD_ASSIMP_TOOLS   OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS          OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_SAMPLES        OFF CACHE BOOL "" FORCE)
+
+# only enabling glb and gltf for now
+set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_GLTF_IMPORTER  ON CACHE BOOL "" FORCE)  # glTF 1.x importer
+set(ASSIMP_BUILD_GLTF2_IMPORTER ON CACHE BOOL "" FORCE)  # glTF 2.0 / .glb importer (name in most recent builds)
+
 add_subdirectory( deps/assimp )
 
 # libjpeg for jpeg decompression

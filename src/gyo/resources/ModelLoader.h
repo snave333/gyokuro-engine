@@ -1,5 +1,5 @@
-#ifndef Model_LOADER_H
-#define Model_LOADER_H
+#ifndef MODEL_LOADER_H
+#define MODEL_LOADER_H
 
 #include <string>
 #include <vector>
@@ -36,4 +36,4 @@ private:
   
 } // namespace gyo
 
-#endif // Model_LOADER_H
+#endif // MODEL_LOADER_H

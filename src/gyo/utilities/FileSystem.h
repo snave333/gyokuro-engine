@@ -74,12 +74,19 @@ public:
         return GetFileName(std::string(filePath));
     }
 
-    static std::string GetFileName(std::string filePath) {
+    static std::string GetFileName(const std::string& filePath) {
         // find the position of the last directory separator ('/' or '\')
         size_t pos = filePath.find_last_of("/\\");
         
         // extract and return the substring after the last separator
         return (pos == std::string::npos) ? filePath : filePath.substr(pos + 1);
+    }
+
+    static std::string GetFilePathExtension(const std::string &filePath) {
+        if (filePath.find_last_of(".") != std::string::npos) {
+            return filePath.substr(filePath.find_last_of(".") + 1);
+        }
+        return "";
     }
 };
 

@@ -24,6 +24,11 @@ Assimp::Importer ModelLoader::importer;
 Model* ModelLoader::LoadModel(const char* fileName, bool flipUVs) {
     // get the full file path
     std::string modelFilePath = FileSystem::CombinePath(ResourceDir, fileName);
+    
+    std::string ext = FileSystem::GetFilePathExtension(modelFilePath);
+    if(ext.compare("gltf") != 0 && ext.compare("glb") != 0) {
+        throw std::runtime_error("Only GLTF and GLTF2 model file types are supported");
+    }
 
     // our import flags
     unsigned int flags = aiProcess_Triangulate | aiProcess_CalcTangentSpace;
