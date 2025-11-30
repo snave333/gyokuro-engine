@@ -41,13 +41,55 @@ void Mesh::Initialize() {
         return;
     }
 
+    // create the vertex/index buffers and vertex array object
+    glGenVertexArrays(1, &VAO);
+    glCheckError();
+    glGenBuffers(1, &VBO);
+    glCheckError();
+    glGenBuffers(1, &EBO);
+    glCheckError();
+    
+    // bind Vertex Array Object first
+    glBindVertexArray(VAO);
+    glCheckError();
+    
+    // copy our vertices array in a buffer
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glCheckError();
+    glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STATIC_DRAW); // set to 0 initially; computed in ComputeVertexArrayBuffer
+    glCheckError();
+
+    // copy our indices
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glCheckError();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, geometry->indices.size() * sizeof(unsigned int), &geometry->indices[0], GL_STATIC_DRAW);
+    glCheckError();
+
+    // clean up and unbind
+    glBindVertexArray(0);
+    glCheckError();
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glCheckError();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glCheckError();
+
+    // compute and set our vertex array buffer
+    ComputeVertexArrayBuffer();
+}
+
+void Mesh::ComputeVertexArrayBuffer() {
+    if(VAO == 0) {
+        std::cerr << "Cannot set vertex array buffer without vertex array object" << std::endl;
+        return;
+    }
+
     if(material == nullptr) {
         std::cout << "Cannot initialize mesh; missing material" << std::endl;
         return;
     }
 
     if(!material->ValidateShaderAttributes()) {
-        std::cout << "Invalid shader attributes and declared semantics" << std::endl;
+        std::cerr << "Invalid shader attributes and declared semantics" << std::endl;
         return;
     }
 
@@ -132,30 +174,28 @@ void Mesh::Initialize() {
         }
     }
 
-    // create the vertex/index buffers and vertex array object
-    glGenVertexArrays(1, &VAO);
-    glCheckError();
-    glGenBuffers(1, &VBO);
-    glCheckError();
-    glGenBuffers(1, &EBO);
-    glCheckError();
-    
     // bind Vertex Array Object first
     glBindVertexArray(VAO);
     glCheckError();
-    
+
+    // disable all attributes in case we're rebuilding
+    for (GLuint i = 0; i < SEMANTIC_COLOR; ++i) {
+        glDisableVertexAttribArray(i);
+    }
+
+    // generate the vertex buffer object in case we're not rebuilding
+    if(VBO == 0) {
+        glGenBuffers(1, &VBO);
+        glCheckError();
+    }
+
     // copy our vertices array in a buffer
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glCheckError();
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexArray), &vertexArray, GL_STATIC_DRAW); // vertexCount * bytesPerVertex
+    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexArray), &vertexArray, GL_STATIC_DRAW);
     glCheckError();
 
-    // copy our indices
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glCheckError();
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, geometry->indices.size() * sizeof(unsigned int), &geometry->indices[0], GL_STATIC_DRAW);
-    glCheckError();
-    
     // link the vertex attribute pointers
     for(const VertexAttributeEntry& attribute : attributes) {
         glEnableVertexAttribArray(attribute.index);
@@ -168,8 +208,6 @@ void Mesh::Initialize() {
     glBindVertexArray(0);
     glCheckError();
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glCheckError();
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glCheckError();
 }
 
@@ -204,14 +242,13 @@ Mesh::~Mesh() {
 
 void Mesh::SetMaterial(Material* newMaterial) {
     if(this->material) {
-        // delete this->material;
-        // this->material = nullptr;
+        delete this->material;
+        this->material = nullptr;
     }
 
     if(newMaterial) {
         this->material = newMaterial;
-        this->Initialize();
-        // TODO rebuild vertex arrays using shader semantics and attributes?
+        this->ComputeVertexArrayBuffer();
     }
 }
 

@@ -35,6 +35,7 @@ protected:
     AABB bounds;
 
     void Initialize();
+    void ComputeVertexArrayBuffer();
     void ComputeBounds();
 
 private:
