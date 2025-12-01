@@ -3,11 +3,11 @@
 #include <gyo/shading/Texture2D.h>
 #include <gyo/shading/TextureCube.h>
 #include <gyo/utilities/FileSystem.h>
+#include <gyo/utilities/GetError.h>
+#include <gyo/utilities/Log.h>
 
-#include <iostream>
 #include <algorithm>
 
-// #include <glad/glad.h>
 #include <stb/stb_image.h>
 #include <assimp/texture.h>
 #include <jpeglib.h>
@@ -23,7 +23,9 @@ Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb, int w
     // create and bind the texture object
     unsigned int id;
     glGenTextures(1, &id);
+    glCheckError();
     glBindTexture(GL_TEXTURE_2D, id);
+    glCheckError();
     
     // flip vertically
     stbi_set_flip_vertically_on_load(true);
@@ -37,8 +39,10 @@ Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb, int w
         GetTextureFormat(srgb, numChannels, &format, &internalFormat);
         
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glCheckError();
         if (useMipmaps) {
             glGenerateMipmap(GL_TEXTURE_2D);
+            glCheckError();
         }
     }
     else {
@@ -50,11 +54,16 @@ Texture2D TextureLoader::LoadTexture(const char* imageFileName, bool srgb, int w
 
     // set the texture wrapping/filtering options
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, useMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glCheckError();
 
     glBindTexture(GL_TEXTURE_2D, 0);
+    glCheckError();
 
     return Texture2D(id, width, height, numChannels == 4);
 }
@@ -76,41 +85,50 @@ Texture2D* TextureLoader::LoadEmbeddedTexture(const aiTexture* texture, bool srg
         }
         // else if(formatHint == "png") {} // TODO look into using libpng
         else {
-            std::cerr << "Unsupported embedded texture compression format " + formatHint << std::endl;
+            LOGE("Unsupported embedded texture compression format %s", formatHint.c_str());
             return nullptr;
         }
     }
     // uncompressed image data
     else {
         // TODO parse format from hint - e.g. rgba8888, argb8888, rgba5650, etc.
-        std::cerr << "Unsupported embedded texture format" + formatHint << std::endl;
+        LOGE("Unsupported embedded texture format %s", formatHint.c_str());
         return nullptr;
     }
 
     if(!imageData) {
-        std::cerr << "Failed to extract image data from aiTexture" << std::endl;
+        LOGE("Failed to extract image data from aiTexture");
         return nullptr;
     }
 
     // create and bind the texture object
     unsigned int id;
     glGenTextures(1, &id);
+    glCheckError();
     glBindTexture(GL_TEXTURE_2D, id);
+    glCheckError();
     
     unsigned int format;
     unsigned int internalFormat;
     GetTextureFormat(srgb, numChannels, &format, &internalFormat);
 
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, imageData);
+    glCheckError();
     glGenerateMipmap(GL_TEXTURE_2D);
+    glCheckError();
 
     // set the texture wrapping/filtering options
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glCheckError();
 
     glBindTexture(GL_TEXTURE_2D, 0);
+    glCheckError();
 
     // free the image data after uploading it to the GPU
     free(imageData);
@@ -125,7 +143,9 @@ Texture2D TextureLoader::LoadHDRTexture(const char* imageFileName) {
     // create and bind the texture object
     unsigned int id;
     glGenTextures(1, &id);
+    glCheckError();
     glBindTexture(GL_TEXTURE_2D, id);
+    glCheckError();
     
     // flip vertically
     stbi_set_flip_vertically_on_load(true);
@@ -135,6 +155,7 @@ Texture2D TextureLoader::LoadHDRTexture(const char* imageFileName) {
     float *data = stbi_loadf(imageFilePath.c_str(), &width, &height, &numChannels, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, data);
+        glCheckError();
     }
     else {
         throw std::runtime_error("Failed to load texture");
@@ -145,11 +166,16 @@ Texture2D TextureLoader::LoadHDRTexture(const char* imageFileName) {
 
     // set the texture wrapping/filtering options
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glCheckError();
 
     glBindTexture(GL_TEXTURE_2D, 0);
+    glCheckError();
 
     return Texture2D(id, width, height, false);
 }
@@ -164,7 +190,9 @@ TextureCube TextureLoader::LoadTextureCube(std::vector<const char*> faceFileName
     // create and bind the texture object
     unsigned int id;
     glGenTextures(1, &id);
+    glCheckError();
     glBindTexture(GL_TEXTURE_CUBE_MAP, id);
+    glCheckError();
 
     // flip vertically
     stbi_set_flip_vertically_on_load(false);
@@ -179,9 +207,10 @@ TextureCube TextureLoader::LoadTextureCube(std::vector<const char*> faceFileName
             GetTextureFormat(srgb, numChannels, &format, &internalFormat);
 
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+            glCheckError();
         }
         else {
-            std::cout << "Failed to load cubemap at path " << faceFilePaths[i] << std::endl;
+            LOGE("Failed to load cubemap at path '%s'", faceFilePaths[i].c_str());
         }
 
         stbi_image_free(data);
@@ -189,12 +218,18 @@ TextureCube TextureLoader::LoadTextureCube(std::vector<const char*> faceFileName
 
     // set the texture wrapping/filtering options
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glCheckError();
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    glCheckError();
 
     return TextureCube(id, width, height);
 }
@@ -203,18 +238,26 @@ Texture2D TextureLoader::GenerateTexture2D(int width, int height, unsigned int f
     // create and bind the texture object
     unsigned int id;
     glGenTextures(1, &id);
+    glCheckError();
     glBindTexture(GL_TEXTURE_2D, id);
+    glCheckError();
 
     // generate the texture
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);
+    glCheckError();
 
     // set the texture wrapping/filtering options (on the currently bound texture object)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glCheckError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glCheckError();
 
     glBindTexture(GL_TEXTURE_2D, 0);
+    glCheckError();
 
     bool hasAlpha = format == GL_RGBA || format == GL_SRGB_ALPHA;
 
@@ -241,13 +284,12 @@ void TextureLoader::DecompressJpegData(
     *height = cinfo.output_height;
     *numChannels = cinfo.output_components; // typically 3 for RGB
 
-    std::cout << "Decompressing " << std::to_string(*width) << " x " << std::to_string(*height) <<
-        " JPEG image with " << std::to_string(*numChannels) << " channels" << std::endl;
+    LOGD("Decompressing %dx%d JPEG image with %d channels", *width, *height, *numChannels);
 
     *imageData = (unsigned char*)malloc(*width * *height * *numChannels);
     if (!*imageData) {
         jpeg_destroy_decompress(&cinfo);
-        std::cout << "Failed to allocate memory for JPEG image." << std::endl;
+        LOGE("Failed to allocate memory for JPEG image");
         return;
     }
 

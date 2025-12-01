@@ -32,7 +32,7 @@ public:
             *timeMs = ms;
         }
         else {
-            LOGI("%s: %.2f ms", name.c_str(), ms);
+            LOGD("%s: %.2f ms", name.c_str(), ms);
         }
     }
 

@@ -43,7 +43,7 @@ Shader ShaderLoader::LoadShader(
         std::string definesString = "";
         for(const std::string& define : defines) {
             definesString = definesString + std::string("#define ") + define + "\n";
-            LOGI("Setting define '%s'", define.c_str());
+            LOGD("Setting define '%s'", define.c_str());
         }
         
         vShaderCodeStr = definesString + vShaderCodeStr;
@@ -167,7 +167,7 @@ Shader ShaderLoader::LoadShader(
         std::string definesString = "";
         for(const std::string& define : defines) {
             definesString = definesString + std::string("#define ") + define + "\n";
-            LOGI("Setting define '%s'", define.c_str());
+            LOGD("Setting define '%s'", define.c_str());
         }
         
         vShaderCodeStr = definesString + vShaderCodeStr;
@@ -383,7 +383,7 @@ void ShaderLoader::QueryShaderInfo(
     glGetProgramiv(id, GL_ACTIVE_ATTRIBUTES, &numAttributes);
     glCheckError();
 
-    LOGI("Found %d attributes", numAttributes);
+    LOGD("Found %d attributes", numAttributes);
 
     GLint maxAttributeNameLength;
     glGetProgramiv(id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttributeNameLength);
@@ -417,7 +417,7 @@ void ShaderLoader::QueryShaderInfo(
     glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &numUniforms);
     glCheckError();
 
-    LOGI("Found %d uniforms", numUniforms);
+    LOGD("Found %d uniforms", numUniforms);
 
     GLint maxUniformNameLength;
     glGetProgramiv(id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformNameLength);

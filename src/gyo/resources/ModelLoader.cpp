@@ -2,13 +2,14 @@
 #include <gyo/resources/ModelLoader.h>
 #include <gyo/resources/Resources.h>
 #include <gyo/resources/TextureLoader.h>
-#include <gyo/utilities/FileSystem.h>
 #include <gyo/mesh/Model.h>
 #include <gyo/mesh/Mesh.h>
 #include <gyo/geometry/Geometry.h>
 #include <gyo/shading/Material.h>
 #include <gyo/shading/PhongMaterial.h>
 #include <gyo/shading/Texture2D.h>
+#include <gyo/utilities/FileSystem.h>
+#include <gyo/utilities/Log.h>
 
 #include <iostream>
 
@@ -41,15 +42,12 @@ Model* ModelLoader::LoadModel(const char* fileName, bool flipUVs) {
     const aiScene* scene = ModelLoader::importer.ReadFile(modelFilePath, flags);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        std::cout << "ERROR::ASSIMP::" << ModelLoader::importer.GetErrorString() << std::endl;
-        throw std::runtime_error("ERROR::ASSIMP::" + std::string(ModelLoader::importer.GetErrorString()));
+        LOGE("Import error: %s", ModelLoader::importer.GetErrorString());
+        return nullptr;
     }
 
-    std::cout << "assimp successfully imported model with " <<
-        std::to_string(scene->mNumMeshes) << " meshes, " <<
-        std::to_string(scene->mNumMaterials) << " materials, and " <<
-        std::to_string(scene->mNumTextures) << " textures " <<
-        "for model " << fileName << std::endl;
+    LOGI("Importing model '%s' with %u meshes, %u materials, and %u textures",
+        fileName, scene->mNumMeshes, scene->mNumMaterials, scene->mNumTextures);
 
     // assemble the meshes which makeup the model
     std::vector<Mesh*> meshes;
@@ -78,7 +76,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     std::vector<glm::vec3> tangents;
     std::vector<unsigned int> indices;
 
-    std::cout << "- processing " << std::to_string(mesh->mNumVertices) << " vertices" << std::endl;
+    LOGD("Processing %u vertices", mesh->mNumVertices);
 
     positions.reserve(mesh->mNumVertices);
     normals.reserve(mesh->mNumVertices);
@@ -100,7 +98,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
         }
     }
 
-    std::cout << "- processing " << std::to_string(mesh->mNumFaces) << " faces" << std::endl;
+    LOGD("Processing %u faces", mesh->mNumFaces);
 
     // process indices
     for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
@@ -117,7 +115,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     if(mesh->mMaterialIndex >= 0) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        std::cout << "- processing material with " << std::to_string(material->mNumProperties) << " properties" << std::endl;
+        LOGD("Processing material with %u properties", material->mNumProperties);
         LogMaterialProperties(material);
         LogMaterialTextureTypes(material, scene);
 
@@ -132,7 +130,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
 }
 
 Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, const aiScene* scene) {
-    std::cout << "- found " << std::to_string(mat->GetTextureCount(type)) << " textures of type " << std::to_string(type) << std::endl;
+    LOGD("Attempting to load %s material texture", TextureTypeToString(type).c_str());
 
     Texture2D* texture = nullptr;
     
@@ -142,20 +140,18 @@ Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type,
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiReturn result = mat->GetTexture(type, i, &str);
         if(result != AI_SUCCESS) {
-            std::cerr << "Failed to get texture path from material" << std::endl;
+            LOGW("Failed to get texture path from material");
             continue;
         }
         
         const aiTexture* aiTex = scene->GetEmbeddedTexture(str.C_Str());
         if(aiTex) {
-            std::cout << "- embedded texture '" << str.C_Str() << "', " <<
-                std::to_string(aiTex->mWidth) << " x " << std::to_string(aiTex->mHeight) << " - " <<
-                aiTex->achFormatHint << std::endl;
+            LOGD(" Found embedded texture '%s', %ux%u - %s", str.C_Str(), aiTex->mWidth, aiTex->mHeight, aiTex->achFormatHint);
             
             texture = TextureLoader::LoadEmbeddedTexture(aiTex, type == aiTextureType_DIFFUSE);
         }
         else {
-            std::cout << "- referenced texture '" << str.C_Str() << "'" << std::endl;
+            LOGD(" Found referenced texture '%s'", str.C_Str());
 
             // NOTE: this assumes referenced textures use file names (not paths),
             // and are placed in the /textures folder.
@@ -170,8 +166,7 @@ Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type,
 void ModelLoader::LogMaterialProperties(aiMaterial* mat) {
     for(unsigned int i = 0; i < mat->mNumProperties; i++) {
         aiMaterialProperty* prop = mat->mProperties[i];
-        std::string data = std::string(prop->mData, prop->mDataLength);
-        std::cout << "aiMaterial[" << prop->mKey.C_Str() << "] = " << data << std::endl;
+        LOGT(" aiMaterial[%s] size: %u bytes", prop->mKey.C_Str(), prop->mDataLength);
     }
 }
 
@@ -181,7 +176,7 @@ void ModelLoader::LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene)
         unsigned int count = mat->GetTextureCount(type);
 
         if(count > 0) {
-            std::cout << "found " << std::to_string(count) << " textures of type " << std::to_string(type) << std::endl;
+            LOGT("Found %u textures of type %s", count, TextureTypeToString(type).c_str());
         }
         
         aiString str;
@@ -190,14 +185,53 @@ void ModelLoader::LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene)
             
             const aiTexture* aiTex = scene->GetEmbeddedTexture(str.C_Str());
             if(aiTex) {
-                std::cout << "\tembedded texture '" << str.C_Str() << "', " <<
-                    std::to_string(aiTex->mWidth) << " x " << std::to_string(aiTex->mHeight) << " - " <<
-                    aiTex->achFormatHint << std::endl;
+                LOGT(" Embedded texture '%s', %ux%u - %s", str.C_Str(), aiTex->mWidth, aiTex->mHeight, aiTex->achFormatHint);
             }
             else {
-                std::cout << "\treferenced texture '" << str.C_Str() << "'" << std::endl;
+                LOGT(" Referenced texture '%s'", str.C_Str());
             }
         }
+    }
+}
+
+std::string ModelLoader::TextureTypeToString(aiTextureType type) {
+    switch(type) {
+        case aiTextureType_NONE:                   return "NONE";
+        case aiTextureType_DIFFUSE:                return "DIFFUSE";
+        case aiTextureType_SPECULAR:               return "SPECULAR";
+        case aiTextureType_AMBIENT:                return "AMBIENT";
+        case aiTextureType_EMISSIVE:               return "EMISSIVE";
+        case aiTextureType_HEIGHT:                 return "HEIGHT";
+        case aiTextureType_NORMALS:                return "NORMALS";
+        case aiTextureType_SHININESS:              return "SHININESS";
+        case aiTextureType_OPACITY:                return "OPACITY";
+        case aiTextureType_DISPLACEMENT:           return "DISPLACEMENT";
+        case aiTextureType_LIGHTMAP:               return "LIGHTMAP (AO)";
+        case aiTextureType_REFLECTION:             return "REFLECTION";
+
+        case aiTextureType_BASE_COLOR:             return "BASE_COLOR";
+        case aiTextureType_NORMAL_CAMERA:          return "NORMAL_CAMERA";
+        case aiTextureType_EMISSION_COLOR:         return "EMISSION_COLOR";
+        case aiTextureType_METALNESS:              return "METALNESS";
+        case aiTextureType_DIFFUSE_ROUGHNESS:      return "DIFFUSE_ROUGHNESS";
+        case aiTextureType_AMBIENT_OCCLUSION:      return "AMBIENT_OCCLUSION";
+
+        case aiTextureType_UNKNOWN:                return "UNKNOWN";
+
+        case aiTextureType_SHEEN:                  return "SHEEN";
+        case aiTextureType_CLEARCOAT:              return "CLEARCOAT";
+        case aiTextureType_TRANSMISSION:           return "TRANSMISSION";
+
+        case aiTextureType_MAYA_BASE:              return "MAYA_BASE";
+        case aiTextureType_MAYA_SPECULAR:          return "MAYA_SPECULAR";
+        case aiTextureType_MAYA_SPECULAR_COLOR:    return "MAYA_SPECULAR_COLOR";
+        case aiTextureType_MAYA_SPECULAR_ROUGHNESS:return "MAYA_SPECULAR_ROUGHNESS";
+
+        case aiTextureType_ANISOTROPY:             return "ANISOTROPY";
+
+        case aiTextureType_GLTF_METALLIC_ROUGHNESS:return "GLTF_METALLIC_ROUGHNESS";
+
+        default:                                   return "UNRECOGNIZED_aiTextureType";
     }
 }
 
