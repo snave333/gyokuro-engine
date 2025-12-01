@@ -1,5 +1,6 @@
 
 #include <gyo/resources/DataLoader.h>
+#include <gyo/utilities/Log.h>
 
 #include <iostream>
 #include <fstream>
@@ -14,7 +15,7 @@ CSVData DataLoader::LoadCSV(const char* filePath) {
     std::ifstream file(filePath);
 
     if (!file.is_open()) {
-        std::cerr << "Error: Could not open the file " << filePath << std::endl;
+        LOGE("Could not open file '%s'", filePath);
         return data;
     }
 

@@ -9,6 +9,7 @@
 #include <gyo/scene/SceneController.h>
 #include <gyo/resources/Resources.h>
 #include <gyo/utilities/GetError.h>
+#include <gyo/utilities/Log.h>
 
 namespace gyo {
 
@@ -23,7 +24,7 @@ Engine::Engine(unsigned int ptWidth, unsigned int ptHeight, unsigned int msaaSam
     glfwSetErrorCallback(Engine::glfwOnError);
 
     if (!glfwInit()) {
-        std::cout << "GLFW initialization failed" << std::endl;
+        LOGE("GLFW initialization failed");
         isRunning = true;
         return;
     }
@@ -54,7 +55,7 @@ Engine::Engine(unsigned int ptWidth, unsigned int ptHeight, unsigned int msaaSam
 
     // make the window context the main context
     if (window == nullptr) {
-        std::cout << "Failed to create GLFW window" << std::endl;
+        LOGE("Failed to create GLFW window");
         glfwTerminate();
         isRunning = true;
         return;
@@ -64,7 +65,7 @@ Engine::Engine(unsigned int ptWidth, unsigned int ptHeight, unsigned int msaaSam
     
     // initialize GLAD before we call any OpenGL function
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+        LOGE("Failed to initialize GLAD");
         glfwTerminate();
         isRunning = true;
         return;

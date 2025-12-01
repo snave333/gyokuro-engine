@@ -4,6 +4,7 @@
 #include <gyo/shading/Texture2D.h>
 #include <gyo/ui/Font.h>
 #include <gyo/utilities/FileSystem.h>
+#include <gyo/utilities/Log.h>
 
 #include <iostream>
 #include <map>
@@ -31,7 +32,7 @@ Font FontLoader::LoadFont(const char* fontName, const float& pixelsPerEm) {
     // parse the glyphData and create the characters
     for(std::vector<std::string> glyph : glyphData) {
         if(glyph.size() != 10) {
-            std::cerr << "Invalid glyph data for " << fontName << std::endl;
+            LOGE("Invalid glyph data for '%s'", fontName);
             continue;
         }
 

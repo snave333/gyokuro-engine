@@ -9,6 +9,7 @@
 #include <gyo/shading/TextureCube.h>
 #include <gyo/shading/Texture2D.h>
 #include <gyo/utilities/GetError.h>
+#include <gyo/utilities/Log.h>
 
 #include <glad/glad.h>
 
@@ -104,7 +105,7 @@ void Renderer::CreateFrameBuffer() {
         glCheckError();
 
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cout << "Error: framebuffer not complete" << std::endl;
+            LOGE("Framebuffer not complete");
         }
         glCheckError();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -135,7 +136,7 @@ void Renderer::CreateFrameBuffer() {
         glCheckError();
 
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cout << "Error: framebuffer not complete" << std::endl;
+            LOGE("Framebuffer not complete");
         }
         glCheckError();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -173,7 +174,7 @@ void Renderer::CreateFrameBuffer() {
         glCheckError();
 
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cout << "Error: framebuffer not complete" << std::endl;
+            LOGE("Framebuffer not complete");
         }
         glCheckError();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -182,22 +183,24 @@ void Renderer::CreateFrameBuffer() {
 }
 
 void Renderer::PrintGLInfo() {
-    std::cout << "Renderer Info & Capabilities: " << std::endl;
+    LOGI("Renderer Info & Capabilities: ");
 
     // Query and print renderer and version information
-    const GLubyte* renderer = glGetString(GL_RENDERER);  // GPU name
+    const GLubyte* renderer = glGetString(GL_RENDERER);
     glCheckError();
-    const GLubyte* version = glGetString(GL_VERSION);    // OpenGL version
-    glCheckError();
-    const GLubyte* vendor = glGetString(GL_VENDOR);      // Vendor name
-    glCheckError();
-    const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION); // GLSL version
-    glCheckError();
+    LOGI("- Renderer: %s", renderer);
 
-    std::cout << "- Renderer: " << renderer << "\n";
-    std::cout << "- OpenGL Version: " << version << "\n";
-    std::cout << "- Vendor: " << vendor << "\n";
-    std::cout << "- GLSL Version: " << glslVersion << "\n";
+    const GLubyte* version = glGetString(GL_VERSION);
+    glCheckError();
+    LOGI("- OpenGL Version: %s", version);
+
+    const GLubyte* vendor = glGetString(GL_VENDOR);
+    glCheckError();
+    LOGI("- Vendor: %s", vendor);
+
+    const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+    glCheckError();
+    LOGI("- GLSL Version: %s", glslVersion);
 
     // Query and print OpenGL limits and capabilities
     GLint value;
@@ -205,93 +208,88 @@ void Renderer::PrintGLInfo() {
     // Shader and Program Limits
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &value);
     glCheckError();
-    std::cout << "- Max Vertex Attributes: " << value << "\n";
+    LOGD("- Max Vertex Attributes: %d", value);
 
     glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &value);
     glCheckError();
-    std::cout << "- Max Vertex Uniform Components: " << value << "\n";
+    LOGD("- Max Vertex Uniform Components: %d", value);
 
     glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &value);
     glCheckError();
-    std::cout << "- Max Fragment Uniform Components: " << value << "\n";
+    LOGD("- Max Fragment Uniform Components: %d", value);
 
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &value);
     glCheckError();
-    std::cout << "- Max Texture Image Units: " << value << "\n";
+    LOGD("- Max Texture Image Units: %d", value);
 
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &value);
     glCheckError();
-    std::cout << "- Max Combined Texture Image Units: " << value << "\n";
+    LOGD("- Max Combined Texture Image Units: %d", value);
 
     // this triggers a INVALID_ENUM for some reason
     // glGetIntegerv(GL_MAX_VARYING_COMPONENTS, &value);
     // glCheckError();
-    // std::cout << "- Max Varying Components: " << value << "\n";
+    // LOGD("- Max Varying Components: %d", value);
 
     glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &value);
     glCheckError();
-    std::cout << "- Max Uniform Block Size: " << value << " bytes\n";
+    LOGD("- Max Uniform Block Size: %d bytes", value);
 
     // Texture Capabilities
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value);
     glCheckError();
-    std::cout << "- Max 2D Texture Size: " << value << "x" << value << "\n";
+    LOGD("- Max 2D Texture Size: %dx%d", value, value);
 
     glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &value);
     glCheckError();
-    std::cout << "- Max 3D Texture Size: " << value << "x" << value << "x" << value << "\n";
+    LOGD("- Max 3D Texture Size: %dx%dx%d", value, value, value);
 
     glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &value);
     glCheckError();
-    std::cout << "- Max Cube Map Texture Size: " << value << "x" << value << "\n";
+    LOGD("- Max Cube Map Texture Size: %dx%d", value, value);
 
     glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &value);
     glCheckError();
-    std::cout << "- Max Array Texture Layers: " << value << "\n";
+    LOGD("- Max Array Texture Layers: %d", value);
 
     // Framebuffer and Renderbuffer
     glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &value);
     glCheckError();
-    std::cout << "- Max Renderbuffer Size: " << value << "x" << value << "\n";
+    LOGD("- Max Renderbuffer Size: %dx%d", value, value);
 
     glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &value);
     glCheckError();
-    std::cout << "- Max Color Attachments: " << value << "\n";
+    LOGD("- Max Color Attachments: %d", value);
 
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &value);
     glCheckError();
-    std::cout << "- Max Draw Buffers: " << value << "\n";
+    LOGD("- Max Draw Buffers: %d", value);
 
     // MSAA Capabilities
     glGetIntegerv(GL_MAX_SAMPLES, &value);
     glCheckError();
-    std::cout << "- Max MSAA Samples: " << value << "\n";
-#if false
-    // Compute Shader Limits (if supported)
-    glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &value);
-    std::cout << "- Max Compute Work Group Invocations: " << value << "\n";
+    LOGD("- Max MSAA Samples: %d", value);
 
-    glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_COUNT, &value);
-    std::cout << "- Max Compute Work Group Count (x, y, z): (" << value << ", " << value << ", " << value << ")\n";
-#endif
     // Viewport and Clipping
     GLint viewportDims[2];
     glGetIntegerv(GL_MAX_VIEWPORT_DIMS, viewportDims);
     glCheckError();
-    std::cout << "- Max Viewport Dimensions: " << viewportDims[0] << "x" << viewportDims[1] << "\n";
+    LOGD("- Max Viewport Dimensions: %dx%d", viewportDims[0], viewportDims[1]);
 
     glGetIntegerv(GL_MAX_CLIP_DISTANCES, &value);
     glCheckError();
-    std::cout << "- Max Clip Distances: " << value << "\n";
+    LOGD("- Max Clip Distances: %d", value);
 
     // Extensions
     glGetIntegerv(GL_NUM_EXTENSIONS, &value);
-    std::cout << "- Number of Extensions: " << value << "\n";
+    glCheckError();
+    LOGD("- Number of Extensions: %d", value);
+
     if(value != 0) {
         for (GLint i = 0; i < value; i++) {
             const char* extensionName = (const char*)glGetStringi(GL_EXTENSIONS, i);
             if (extensionName) {
-                std::cout << "  " << i << ": " << extensionName << std::endl;
+                LOGD("  %d: %s", i, extensionName);
             }
         }
     }

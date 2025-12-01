@@ -83,6 +83,7 @@ set(PRIVATE_HEADERS
     src/gyo/utilities/FrameStats.h
     src/gyo/utilities/GetError.h
     src/gyo/utilities/Hash.h
+    src/gyo/utilities/Log.h
     src/stb/stb_image.h
     src/stb/stb_image_write.h
 )

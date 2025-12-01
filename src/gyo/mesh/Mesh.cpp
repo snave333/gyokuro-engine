@@ -5,8 +5,9 @@
 #include <gyo/mesh/Vertex.h>
 #include <gyo/geometry/Geometry.h>
 #include <gyo/shading/Material.h>
-#include <gyo/utilities/GetError.h>
 #include <gyo/shading/ShaderSemantics.h>
+#include <gyo/utilities/GetError.h>
+#include <gyo/utilities/Log.h>
 
 #include <glad/glad.h>
 
@@ -79,17 +80,17 @@ void Mesh::Initialize() {
 
 void Mesh::ComputeVertexArrayBuffer() {
     if(VAO == 0) {
-        std::cerr << "Cannot set vertex array buffer without vertex array object" << std::endl;
+        LOGW("Cannot set vertex array buffer without vertex array object");
         return;
     }
 
     if(material == nullptr) {
-        std::cout << "Cannot initialize mesh; missing material" << std::endl;
+        LOGW("Cannot initialize mesh; missing material");
         return;
     }
 
     if(!material->ValidateShaderAttributes()) {
-        std::cerr << "Invalid shader attributes and declared semantics" << std::endl;
+        LOGE("Invalid shader attributes and declared semantics");
         return;
     }
 
@@ -168,7 +169,7 @@ void Mesh::ComputeVertexArrayBuffer() {
                 //     break;
 
                 default:
-                    std::cerr << "Error: Unsupported semantic type " << attribute.semantic << std::endl;
+                    LOGE("Unsupported semantic type %u", attribute.semantic);
                     break;
             }
         }

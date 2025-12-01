@@ -7,6 +7,7 @@
 #include <gyo/shading/Shader.h>
 #include <gyo/resources/Resources.h>
 #include <gyo/utilities/GetError.h>
+#include <gyo/utilities/Log.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -176,7 +177,7 @@ void Text::EnsureVBOCapacity(int& requiredNumVertices) {
         glCheckError();
         currentVBOCapacity = newCapacity;
 
-        std::cout << "Resized Text VBO to " << newCapacity << " vertices" << std::endl;
+        LOGD("Resized Text VBO to %d vertices", newCapacity);
     }
 }
 
