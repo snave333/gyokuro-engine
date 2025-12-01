@@ -2,6 +2,7 @@
 #include <gyo/shading/Material.h>
 #include <gyo/shading/Shader.h>
 #include <gyo/shading/ShaderSemantics.h>
+#include <gyo/utilities/Log.h>
 
 #include <iostream>
 
@@ -16,9 +17,7 @@ bool Material::ValidateShaderAttributes() {
 
         auto attributeIt = shaderAttributes.find(name);
         if(attributeIt == shaderAttributes.end()) {
-            std::cerr << "Error: semantic '" << name
-                      << "' not found in compiled shader"
-                      << std::endl;
+            LOGE("Semantic '%s' not found in compiled shader", name.c_str());
             return false;
         }
 
@@ -31,10 +30,7 @@ bool Material::ValidateShaderAttributes() {
         GLenum requiredType = requiredTypeIt->second;
 
         if(actualType != requiredType) {
-            std::cerr << "Error: type mismatch for shader attribute '" << name
-                      << "': expected " << requiredType
-                      << ", got " << actualType
-                      << std::endl;
+            LOGE("Type mismatch for shader attribute '%s': expected %u but got %u", name.c_str(), requiredType, actualType);
             return false;
         }
     }

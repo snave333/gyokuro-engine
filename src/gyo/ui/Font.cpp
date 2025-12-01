@@ -1,9 +1,9 @@
 
 #include <gyo/ui/Font.h>
+#include <gyo/shading/Texture2D.h>
+#include <gyo/utilities/Log.h>
 
 #include <iostream>
-
-#include <gyo/shading/Texture2D.h>
 
 namespace gyo {
 
@@ -16,7 +16,7 @@ void Font::Dispose() {
 
 void Font::BindTexture() {
     if(textureAtlas == nullptr) {
-        std::cerr << "SDF Font missing texture atlas" << std::endl;
+        LOGE("SDF Font missing texture atlas");
         return;
     }
 

@@ -1,12 +1,13 @@
 
 #include <gyo/resources/ShaderLoader.h>
 #include <gyo/shading/Shader.h>
+#include <gyo/utilities/Clock.h>
 #include <gyo/utilities/FileSystem.h>
 #include <gyo/utilities/GetError.h>
+#include <gyo/utilities/Log.h>
 
 #include <fstream>
 #include <sstream>
-#include <iostream>
 #include <regex>
 
 #include <glad/glad.h>
@@ -22,7 +23,8 @@ Shader ShaderLoader::LoadShader(
     const char* fragFileName,
     const std::set<std::string>& defines)
 {
-    std::cout << "\nCompiling shaders " << vertFileName << " & " << fragFileName << std::endl;
+    LOGI("Compiling shaders %s & %s", vertFileName, fragFileName);
+    CLOCK(Shader_Compilation);
 
     // read the base file contents
     std::string vShaderCodeStr = ReadFile(vertFileName, false);
@@ -30,10 +32,10 @@ Shader ShaderLoader::LoadShader(
 
     // ensure there is no match for '#version', followed by number and optional profile
     std::regex versionPattern(R"(#version\s+\d+\s+\w*)");
-    if(std::regex_search(vShaderCodeStr, versionPattern) ||
-        std::regex_search(fShaderCodeStr, versionPattern))
-    {
-        std::cout << "ERROR: '#version ...' should not be included in your glsl code" << std::endl;
+    if( std::regex_search(vShaderCodeStr, versionPattern) ||
+        std::regex_search(fShaderCodeStr, versionPattern)
+    ) {
+        LOGE("#version ...' should not be included in your glsl code");
     }
 
     // prepend the defines
@@ -41,7 +43,7 @@ Shader ShaderLoader::LoadShader(
         std::string definesString = "";
         for(const std::string& define : defines) {
             definesString = definesString + std::string("#define ") + define + "\n";
-            std::cout << "Setting define \'" << define.c_str() << "\'" << std::endl;
+            LOGI("Setting define '%s'", define.c_str());
         }
         
         vShaderCodeStr = definesString + vShaderCodeStr;
@@ -62,8 +64,8 @@ Shader ShaderLoader::LoadShader(
     const char* vShaderCode = vShaderCodeStr.c_str();
     const char* fShaderCode = fShaderCodeStr.c_str();
 
-    // std::cout << "Final vertex shader code:\n" << vShaderCode << std::endl;
-    // std::cout << "Final fragment shader code:\n" << fShaderCode << std::endl;
+    // LOGT("Final vert shader code:\n```\n%s\n```", vShaderCode);
+    // LOGT("Final frag shader code:\n```\n%s\n```", fShaderCode);
 
     // compile shaders
     unsigned int vertex, fragment;
@@ -84,7 +86,7 @@ Shader ShaderLoader::LoadShader(
     if(!success) {
         glGetShaderInfoLog(vertex, 512, NULL, infoLog);
         glCheckError();
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED " << vertFileName << "\n" << infoLog << std::endl;
+        LOGE("Vertex shader '%s' compilation failed: %s", vertFileName, infoLog);
     };
     
     // similiar for Fragment Shader
@@ -101,7 +103,7 @@ Shader ShaderLoader::LoadShader(
     if(!success) {
         glGetShaderInfoLog(fragment, 512, NULL, infoLog);
         glCheckError();
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED " << fragFileName << "\n" << infoLog << std::endl;
+        LOGE("Fragment shader '%s' compilation failed: %s", fragFileName, infoLog);
     };
     
     // shader Program
@@ -120,7 +122,7 @@ Shader ShaderLoader::LoadShader(
     if(!success) {
         glGetProgramInfoLog(id, 512, NULL, infoLog);
         glCheckError();
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        LOGE("Shader program linking failed: %s", infoLog);
     }
     
     // now save the uniforms for reduced gl calls later
@@ -144,7 +146,7 @@ Shader ShaderLoader::LoadShader(
     const char* fragFileName,
     const std::set<std::string>& defines)
 {
-    std::cout << "Compiling shaders " << vertFileName << ", " << geomFileName << ", & " << fragFileName << std::endl;
+    LOGI("Compiling shaders %s, %s, & %s", vertFileName, geomFileName, fragFileName);
     
     // read the base file contents
     std::string vShaderCodeStr = ReadFile(vertFileName, false);
@@ -157,7 +159,7 @@ Shader ShaderLoader::LoadShader(
         std::regex_search(gShaderCodeStr, versionPattern) ||
         std::regex_search(fShaderCodeStr, versionPattern))
     {
-        std::cout << "ERROR: '#version ...' should not be included in your glsl code" << std::endl;
+        LOGE("#version ...' should not be included in your glsl code");
     }
 
     // prepend the defines
@@ -165,7 +167,7 @@ Shader ShaderLoader::LoadShader(
         std::string definesString = "";
         for(const std::string& define : defines) {
             definesString = definesString + std::string("#define ") + define + "\n";
-            std::cout << "Setting define \'" << define.c_str() << "\'" << std::endl;
+            LOGI("Setting define '%s'", define.c_str());
         }
         
         vShaderCodeStr = definesString + vShaderCodeStr;
@@ -191,9 +193,9 @@ Shader ShaderLoader::LoadShader(
     const char* gShaderCode = gShaderCodeStr.c_str();
     const char* fShaderCode = fShaderCodeStr.c_str();
 
-    // std::cout << "Final vertex shader code:\n" << vShaderCode << std::endl;
-    // std::cout << "Final geometry shader code:\n" << gShaderCode << std::endl;
-    // std::cout << "Final fragment shader code:\n" << fShaderCode << std::endl;
+    // LOGT("Final vert shader code:\n```\n%s\n```", vShaderCode);
+    // LOGT("Final geom shader code:\n```\n%s\n```", gShaderCode);
+    // LOGT("Final frag shader code:\n```\n%s\n```", fShaderCode);
 
     // compile shaders
     unsigned int vertex, geometry, fragment;
@@ -214,7 +216,7 @@ Shader ShaderLoader::LoadShader(
     if(!success) {
         glGetShaderInfoLog(vertex, 512, NULL, infoLog);
         glCheckError();
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED " << vertFileName << "\n" << infoLog << std::endl;
+        LOGE("Vertex shader '%s' compilation failed: %s", vertFileName, infoLog);
     };
     
     // geometry shader
@@ -231,7 +233,7 @@ Shader ShaderLoader::LoadShader(
     if(!success) {
         glGetShaderInfoLog(geometry, 512, NULL, infoLog);
         glCheckError();
-        std::cout << "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED " << geomFileName << "\n" << infoLog << std::endl;
+        LOGE("Geometry shader '%s' compilation failed: %s", geomFileName, infoLog);
     };
     
     // finally, the fragment shader
@@ -248,7 +250,7 @@ Shader ShaderLoader::LoadShader(
     if(!success) {
         glGetShaderInfoLog(fragment, 512, NULL, infoLog);
         glCheckError();
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED " << fragFileName << "\n" << infoLog << std::endl;
+        LOGE("Fragment shader '%s' compilation failed: %s", fragFileName, infoLog);
     };
     
     // shader Program
@@ -269,7 +271,7 @@ Shader ShaderLoader::LoadShader(
     if(!success) {
         glGetProgramInfoLog(id, 512, NULL, infoLog);
         glCheckError();
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        LOGE("Shader program linking failed: %s", infoLog);
     }
     
     // now save the uniforms for reduced gl calls later
@@ -318,10 +320,10 @@ std::string ShaderLoader::ResolveIncludes(
                 // Recursively resolve includes in the included file
                 result << ResolveIncludes(includeContent, includedFiles);
             } catch (const std::exception& e) {
-                std::cerr << "ERROR::SHADER::INCLUDE_FILE_NOT_FOUND: " << includeName << "\n" << e.what() << std::endl;
+                LOGE("Include file '%s' not found: %s", includeName.c_str(), e.what());
             }
         } else {
-            std::cerr << "WARNING::SHADER::CIRCULAR_INCLUDE_DETECTED: " << includeName << std::endl;
+            LOGW("Circular include detected: %s", includeName.c_str());
         }
 
         lastPos = match.position() + match.length();
@@ -364,7 +366,7 @@ std::string ShaderLoader::ReadFilePath(std::string filePath) {
         result = stringStream.str();
     }
     catch(std::ifstream::failure e) {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+        LOGE("Shader '%s' not successfully read: %s", filePath.c_str(), e.what());
     }
 
     return result;
@@ -380,6 +382,8 @@ void ShaderLoader::QueryShaderInfo(
     GLint numAttributes;
     glGetProgramiv(id, GL_ACTIVE_ATTRIBUTES, &numAttributes);
     glCheckError();
+
+    LOGI("Found %d attributes", numAttributes);
 
     GLint maxAttributeNameLength;
     glGetProgramiv(id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttributeNameLength);
@@ -400,6 +404,8 @@ void ShaderLoader::QueryShaderInfo(
         GLint location = glGetAttribLocation(id, name.c_str());
         glCheckError();
 
+        // LOGT("- %s, length: %d, size: %d, type: 0x%X", name.c_str(), length, size, type);
+
         attributes[name] = { location, type };
     }
 
@@ -411,7 +417,7 @@ void ShaderLoader::QueryShaderInfo(
     glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &numUniforms);
     glCheckError();
 
-    // std::cout << "Found " << std::to_string(numUniforms) << " uniforms:" << std::endl;
+    LOGI("Found %d uniforms", numUniforms);
 
     GLint maxUniformNameLength;
     glGetProgramiv(id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformNameLength);
@@ -432,7 +438,7 @@ void ShaderLoader::QueryShaderInfo(
         GLint location = glGetUniformLocation(id, name.c_str());
         glCheckError();
 
-        // std::cout << "- " << std::string(nameBuffer, length) << std::endl;
+        // LOGT("- %s, length: %d, size: %d, type: 0x%X", name.c_str(), length, size, type);
 
         uniforms[name] = { location, type };
     }
@@ -444,23 +450,19 @@ void ShaderLoader::PrintShaderInfo(
     const std::map<std::string, AttributeInfo>& attributes,
     const std::map<std::string, UniformInfo>& uniforms
 ) {
-    std::cout << "Attributes:" << std::endl;
+    LOGD("Attributes:");
     for (const auto& pair : attributes) {
-        std::cout << "Name: " << pair.first
-                  << ", Location: " << pair.second.location
-                  << ", Type: 0x" << std::hex << pair.second.type << std::dec
-                  << std::endl;
+        LOGD("- '%s', location: %d, type: 0x%X", pair.first.c_str(), pair.second.location, pair.second.type);
     }
 
-    std::cout << "Uniforms:" << std::endl;
+    LOGD("Uniforms:");
     for (const auto& pair : uniforms) {
-        std::cout << "Name: " << pair.first
-                  << ", Location: " << pair.second.location
-                  << ", Type: 0x" << std::hex << pair.second.type << std::dec
-                  << std::endl;
+        std::ostringstream oss;
+        oss << "- \'" << pair.first << "\'"
+            << ", location: " << pair.second.location
+            << ", type: 0x" << std::hex << pair.second.type << std::dec;
+        LOGD("- '%s', location: %d, type: 0x%X", pair.first.c_str(), pair.second.location, pair.second.type);
     }
-
-    std::cout << std::endl;
 }
 
 

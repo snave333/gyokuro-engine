@@ -1,6 +1,8 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
+#include <gyo/utilities/Log.h>
+
 #include <iostream>
 #include <cstdio>
 #include <string>
@@ -30,8 +32,7 @@ public:
             *timeMs = ms;
         }
         else {
-            // std::cout << name << ": " << ms << " ms" << std::endl;
-            printf("> %s: %.2f ms\n", name.c_str(), ms);
+            LOGI("%s: %.2f ms", name.c_str(), ms);
         }
     }
 

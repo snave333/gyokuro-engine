@@ -18,13 +18,14 @@
 #include <gyo/lighting/PointLight.h>
 #include <gyo/lighting/SpotLight.h>
 #include <gyo/scene/SceneController.h>
+#include <gyo/utilities/GetError.h>
+#include <gyo/utilities/Log.h>
 
 #include <iostream>
 
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <gyo/utilities/GetError.h>
 
 namespace gyo {
 
@@ -171,7 +172,7 @@ void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) 
         glCheckError();
     }
 
-    std::cout << "Finished update Lights UBO with offset " << offset << std::endl;
+    LOGD("Finished update LightsUBO with offset %lu", offset);
 
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glCheckError();
