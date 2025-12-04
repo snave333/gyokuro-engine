@@ -38,7 +38,6 @@ set(PUBLIC_HEADERS
     src/gyo/shading/PBRMaterial.h
     src/gyo/shading/PhongMaterial.h
     src/gyo/shading/ShaderMaterial.h
-    src/gyo/shading/ShaderSemantics.h
     src/gyo/shading/UnlitMaterial.h
     src/gyo/gyo.h
 )
@@ -74,6 +73,7 @@ set(PRIVATE_HEADERS
     src/gyo/scene/SceneNode.h
     src/gyo/shading/Material.h
     src/gyo/shading/Shader.h
+    src/gyo/shading/ShaderSemantics.h
     src/gyo/shading/Texture2D.h
     src/gyo/shading/TextureCube.h
     src/gyo/ui/Font.h

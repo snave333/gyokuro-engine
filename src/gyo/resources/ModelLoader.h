@@ -33,7 +33,8 @@ private:
     static void LogMaterialProperties(aiMaterial* mat);
     static void LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene);
 
-    static inline std::string TextureTypeToString(aiTextureType type);
+    static inline const char* TextureTypeToString(aiTextureType type);
+    static inline const char* PropertyTypeToString(aiPropertyTypeInfo type);
 };
   
 } // namespace gyo

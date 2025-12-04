@@ -8,6 +8,7 @@
 #include <gyo/shading/Material.h>
 #include <gyo/shading/PhongMaterial.h>
 #include <gyo/shading/Texture2D.h>
+#include <gyo/utilities/Clock.h>
 #include <gyo/utilities/FileSystem.h>
 #include <gyo/utilities/Log.h>
 
@@ -23,6 +24,9 @@ std::string ModelLoader::ResourceDir = "";
 Assimp::Importer ModelLoader::importer;
 
 Model* ModelLoader::LoadModel(const char* fileName, bool flipUVs) {
+    LOGI("Importing model %s", fileName);
+    CLOCK(Model_Load);
+
     // get the full file path
     std::string modelFilePath = FileSystem::CombinePath(ResourceDir, fileName);
     
@@ -130,7 +134,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
 }
 
 Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, const aiScene* scene) {
-    LOGD("Attempting to load %s material texture", TextureTypeToString(type).c_str());
+    LOGD("Attempting to load %s material texture", TextureTypeToString(type));
 
     Texture2D* texture = nullptr;
     
@@ -166,7 +170,9 @@ Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type,
 void ModelLoader::LogMaterialProperties(aiMaterial* mat) {
     for(unsigned int i = 0; i < mat->mNumProperties; i++) {
         aiMaterialProperty* prop = mat->mProperties[i];
-        LOGT(" aiMaterial[%s] size: %u bytes", prop->mKey.C_Str(), prop->mDataLength);
+
+        LOGT(" aiMaterial[%s] size: %u bytes, type: %s",
+            prop->mKey.C_Str(), prop->mDataLength, PropertyTypeToString(prop->mType));
     }
 }
 
@@ -176,7 +182,7 @@ void ModelLoader::LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene)
         unsigned int count = mat->GetTextureCount(type);
 
         if(count > 0) {
-            LOGT("Found %u textures of type %s", count, TextureTypeToString(type).c_str());
+            LOGT("Found %u textures of type %s", count, TextureTypeToString(type));
         }
         
         aiString str;
@@ -194,7 +200,7 @@ void ModelLoader::LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene)
     }
 }
 
-std::string ModelLoader::TextureTypeToString(aiTextureType type) {
+const char* ModelLoader::TextureTypeToString(aiTextureType type) {
     switch(type) {
         case aiTextureType_NONE:                   return "NONE";
         case aiTextureType_DIFFUSE:                return "DIFFUSE";
@@ -232,6 +238,17 @@ std::string ModelLoader::TextureTypeToString(aiTextureType type) {
         case aiTextureType_GLTF_METALLIC_ROUGHNESS:return "GLTF_METALLIC_ROUGHNESS";
 
         default:                                   return "UNRECOGNIZED_aiTextureType";
+    }
+}
+
+const char* ModelLoader::PropertyTypeToString(aiPropertyTypeInfo type) {
+    switch(type) {
+        case aiPTI_Float:       return "Float";
+        case aiPTI_Double:      return "Double";
+        case aiPTI_String:      return "String";
+        case aiPTI_Integer:     return "Integer";
+        case aiPTI_Buffer:
+        default:                return "Buffer";
     }
 }
 
