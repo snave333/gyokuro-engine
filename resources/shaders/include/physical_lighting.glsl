@@ -19,17 +19,17 @@
 vec3 calcReflectance(vec3 lR, vec3 V, vec3 N, vec3 L, vec3 H) {
     // pre-computed reflection coefficient
     vec3 F0 = vec3(0.04); 
-    F0 = mix(F0, material.albedo, material.metallic);
+    F0 = mix(F0, uMaterial.albedo, uMaterial.metallic);
 
     // our Cook-Torrance specular BRDF term
 
-    float D = DistributionGGX(N, H, material.roughness);
-    float G = GeometrySmith(N, V, L, material.roughness);
+    float D = DistributionGGX(N, H, uMaterial.roughness);
+    float G = GeometrySmith(N, V, L, uMaterial.roughness);
     vec3 F = fresnelSchlick(max(0.0, dot(H, V)), F0);
 
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - material.metallic;
+    kD *= 1.0 - uMaterial.metallic;
 
     vec3 numerator = D * G * F;
     float denominator = 4.0 * max(0.0, dot(N, V)) * max(0.0, dot(N, L)) + 0.0001; // prevent divide by 0
@@ -37,7 +37,7 @@ vec3 calcReflectance(vec3 lR, vec3 V, vec3 N, vec3 L, vec3 H) {
 
     float NdotL = max(0.0, dot(N, L));
 
-    return (kD * material.albedo / PI + specular) * lR * NdotL;
+    return (kD * uMaterial.albedo / PI + specular) * lR * NdotL;
 }
 
 vec3 calcDirectionalLight(DirectionalLight light, vec3 V, vec3 N) {
@@ -117,21 +117,21 @@ vec3 calcAmbient(vec3 V, vec3 P, vec3 N) {
 
     // pre-computed reflection coefficient
     vec3 F0 = vec3(0.04); 
-    F0 = mix(F0, material.albedo, material.metallic);
+    F0 = mix(F0, uMaterial.albedo, uMaterial.metallic);
 
-    vec3 F = fresnelSchlickRoughness(max(0.0, dot(N, V)), F0, material.roughness);
+    vec3 F = fresnelSchlickRoughness(max(0.0, dot(N, V)), F0, uMaterial.roughness);
 
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - material.metallic;
+    kD *= 1.0 - uMaterial.metallic;
     
     vec3 irradiance = texture(irradianceMap, N).rgb;
-    vec3 diffuse = irradiance * material.albedo;
+    vec3 diffuse = irradiance * uMaterial.albedo;
 
     // combine the pre-filter map and BRDF LUT as per the Split-Sum approximation to get the IBL specular part
-    vec3 prefilteredColor = textureLod(prefilteredEnvMap, R, material.roughness * MAX_REFLECTION_LOD).rgb;    
-    vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), material.roughness)).rg;
+    vec3 prefilteredColor = textureLod(prefilteredEnvMap, R, uMaterial.roughness * MAX_REFLECTION_LOD).rgb;    
+    vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), uMaterial.roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
     
-    return (kD * diffuse + specular) * material.ao;
+    return (kD * diffuse + specular) * uMaterial.ao;
 }

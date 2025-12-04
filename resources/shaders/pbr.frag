@@ -22,7 +22,7 @@ void main()
 #ifdef USE_IBL
     vec3 ambient = calcAmbient(V, P, N);
 #else
-    vec3 ambient = globalAmbient.rgb * material.albedo * material.ao;
+    vec3 ambient = globalAmbient.rgb * uMaterial.albedo * uMaterial.ao;
 #endif
     
     vec3 color = ambient + Lo;

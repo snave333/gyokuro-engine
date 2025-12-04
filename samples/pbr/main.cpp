@@ -70,6 +70,7 @@ void loadScene(SceneController& sc) {
     sc.AddNode(p4M);
 
     // spawn our grid of spheres
+#if 0
 
     float z = -0.5f;
     float spacing = 0.6f;
@@ -99,4 +100,19 @@ void loadScene(SceneController& sc) {
             sc.AddNode(model);
         }
     }
+#else
+    Material* brickMat = new PBRMaterial(
+        glm::vec3(1),
+        1, 1, 1,
+        glm::vec3(0),
+        Resources::GetTexture("alley-brick-wall_albedo.png", true),
+        Resources::GetTexture("alley-brick-wall_normal-ogl.png", false),
+        Resources::GetTexture("alley-brick-wall_metallic.png", false),
+        Resources::GetTexture("alley-brick-wall_roughness.png", false),
+        nullptr,
+        Resources::GetTexture("alley-brick-wall_ao.png", false)
+    );
+    ModelNode* sphere1 = new ModelNode(new Model(new Mesh(new Sphere(0.5f), brickMat)));
+    sc.AddNode(sphere1);
+#endif
 }
