@@ -16,7 +16,7 @@
 */
 
 // compute the total reflectance for this light source, using our BRDF
-vec3 calcReflectance(vec3 lR, vec3 V, vec3 N, vec3 L, vec3 H) {
+vec3 calcReflectance(vec3 lR, vec3 V, vec3 N, vec3 L, vec3 H, PhysicalMaterial material) {
     // pre-computed reflection coefficient
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, material.albedo, material.metallic);
@@ -40,17 +40,17 @@ vec3 calcReflectance(vec3 lR, vec3 V, vec3 N, vec3 L, vec3 H) {
     return (kD * material.albedo / PI + specular) * lR * NdotL;
 }
 
-vec3 calcDirectionalLight(DirectionalLight light, vec3 V, vec3 N) {
+vec3 calcDirectionalLight(DirectionalLight light, vec3 V, vec3 N, PhysicalMaterial material) {
     vec3 L = normalize(-light.direction.xyz);
     vec3 H = normalize(L + V);
 
     // the light's individual radiance
     vec3 lR = light.color.rgb;
 
-    return calcReflectance(lR, V, N, L, H);
+    return calcReflectance(lR, V, N, L, H, material);
 }
 
-vec3 calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N) {
+vec3 calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N, PhysicalMaterial material) {
     vec3 L = light.position.xyz - P;
     float distance = length(L);
     L = L / distance; // normalize
@@ -61,7 +61,7 @@ vec3 calcPointLight(PointLight light, vec3 V, vec3 P, vec3 N) {
     // the light's individual radiance
     vec3 lR = light.color.rgb * attenuation;
 
-    return calcReflectance(lR, V, N, L, H);
+    return calcReflectance(lR, V, N, L, H, material);
 }
 
 // technique taken from https://www.3dgep.com/texturing-lighting-directx-11/#Spotlight_Cone
@@ -73,7 +73,7 @@ float calcSpotCone(SpotLight light, vec3 L) {
     return smoothstep(minCos, maxCos, cosAngle); 
 }
 
-vec3 calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N) {
+vec3 calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N, PhysicalMaterial material) {
     vec3 L = light.position.xyz - P;
     float distance = length(L);
     L = L / distance; // normalize
@@ -91,28 +91,29 @@ vec3 calcSpotLight(SpotLight light, vec3 V, vec3 P, vec3 N) {
     // the light's individual radiance
     vec3 lR = light.color.rgb * attenuation * spotlightFactor;
 
-    return calcReflectance(lR, V, N, L, H);
+    return calcReflectance(lR, V, N, L, H, material);
 }
 
 // compute the radiance, or total outgoing light
-vec3 calcRadiance(vec3 V, vec3 P, vec3 N) {
+vec3 calcRadiance(vec3 V, vec3 P, vec3 N, PhysicalMaterial material) {
     vec3 Lo = vec3(0.0);
 
-    Lo += calcDirectionalLight(dirLight, V, N);
+    Lo += calcDirectionalLight(dirLight, V, N, material);
 
     for(int i = 0; i < min(numPointLights, MAX_POINT_LIGHTS); i++) {
-        Lo += calcPointLight(pointLights[i], V, P, N);
+        Lo += calcPointLight(pointLights[i], V, P, N, material);
     }
 
     for(int i = 0; i < min(numSpotLights, MAX_SPOT_LIGHTS); i++) {
-        Lo += calcSpotLight(spotLights[i], V, P, N);
+        Lo += calcSpotLight(spotLights[i], V, P, N, material);
     }
 
     return Lo;
 }
 
+#ifdef USE_IBL
 // compute the irradiance using IBL
-vec3 calcAmbient(vec3 V, vec3 P, vec3 N) {
+vec3 calcAmbient(vec3 V, vec3 P, vec3 N, PhysicalMaterial material) {
     vec3 R = reflect(-V, N);
 
     // pre-computed reflection coefficient
@@ -135,3 +136,4 @@ vec3 calcAmbient(vec3 V, vec3 P, vec3 N) {
     
     return (kD * diffuse + specular) * material.ao;
 }
+#endif

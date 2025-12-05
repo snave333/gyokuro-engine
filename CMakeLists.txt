@@ -76,6 +76,7 @@ set(PRIVATE_HEADERS
     src/gyo/shading/ShaderSemantics.h
     src/gyo/shading/Texture2D.h
     src/gyo/shading/TextureCube.h
+    src/gyo/shading/TextureDefines.h
     src/gyo/ui/Font.h
     src/gyo/ui/Text.h
     src/gyo/utilities/Clock.h

@@ -13,14 +13,20 @@ in VS_OUT {
 
 void main()
 {
+    PhysicalMaterial material = getMaterialProps(
+        fs_in.normal,
+        fs_in.texCoord,
+        fs_in.tangent
+    );
+
     vec3 V = normalize(viewPos.xyz - fs_in.fragPos);
-    vec3 N = normalize(fs_in.normal);
+    vec3 N = normalize(material.worldNormal);
     vec3 P = fs_in.fragPos;
 
-    vec3 Lo = calcRadiance(V, P, N);
+    vec3 Lo = calcRadiance(V, P, N, material);
 
 #ifdef USE_IBL
-    vec3 ambient = calcAmbient(V, P, N);
+    vec3 ambient = calcAmbient(V, P, N, material);
 #else
     vec3 ambient = globalAmbient.rgb * material.albedo * material.ao;
 #endif
