@@ -23,7 +23,7 @@ struct Sphere : public Geometry {
                 glm::vec3 normal = glm::normalize(position); // sphere normals point outward
                 glm::vec2 uv = glm::vec2(
                     static_cast<float>(slice) / slices,       // u coordinate
-                    -static_cast<float>(stack) / stacks);     // v coordinate
+                    static_cast<float>(stack) / stacks);      // v coordinate
 
                 positions.push_back(position);
                 normals.push_back(normal);

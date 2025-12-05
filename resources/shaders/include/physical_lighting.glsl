@@ -111,6 +111,7 @@ vec3 calcRadiance(vec3 V, vec3 P, vec3 N) {
     return Lo;
 }
 
+#ifdef USE_IBL
 // compute the irradiance using IBL
 vec3 calcAmbient(vec3 V, vec3 P, vec3 N) {
     vec3 R = reflect(-V, N);
@@ -135,3 +136,4 @@ vec3 calcAmbient(vec3 V, vec3 P, vec3 N) {
     
     return (kD * diffuse + specular) * uMaterial.ao;
 }
+#endif

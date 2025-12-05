@@ -91,6 +91,7 @@ void loadScene(SceneController& sc) {
             // std::cout << std::to_string(metalness) << ", " << std::to_string(roughness) << std::endl;
 
             ModelNode* model = new ModelNode(new Model(new Mesh(new Sphere(0.5f), new PBRMaterial(
+                true,
                 { 0, 0.8f, 1 },
                 metalness,
                 roughness
@@ -102,6 +103,7 @@ void loadScene(SceneController& sc) {
     }
 #else
     Material* brickMat = new PBRMaterial(
+        true,
         glm::vec3(1),
         1, 1, 1,
         glm::vec3(0),

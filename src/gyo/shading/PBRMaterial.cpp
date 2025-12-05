@@ -9,6 +9,7 @@
 namespace gyo {
 
 PBRMaterial::PBRMaterial(
+    bool useIBL,
     glm::vec3 albedo,
     float metallic,
     float roughness,
@@ -31,7 +32,7 @@ PBRMaterial::PBRMaterial(
     this->emissive = emissive;
 
     usesDirectLighting = true;
-    usesIBL = true;
+    this->usesIBL = useIBL;
 
     // assemble our shader information
 
@@ -101,7 +102,7 @@ PBRMaterial::PBRMaterial(
     // set our texture slots
 
     shader->Use();
-    unsigned int texSlot = 0;
+    unsigned int texSlot = 0U;
     if(usesIBL) {
         shader->SetInt("irradianceMap", texSlot++);
         shader->SetInt("prefilteredEnvMap", texSlot++);
@@ -129,9 +130,10 @@ void PBRMaterial::Queue() {
     // TODO emissive
 
     if(hasTextures) {
-        unsigned int texSlot = 0;
+        unsigned int texSlot = 0U;
         if(usesIBL) {
-            texSlot += 3u;
+            // irradiance, prefiltered diffuse, and brdf maps set in Renderer::RenderOpaque
+            texSlot += 3U;
         }
         if(albedoMap)               albedoMap->Bind(texSlot++);
         if(normalMap)               normalMap->Bind(texSlot++);

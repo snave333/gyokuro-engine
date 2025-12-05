@@ -316,7 +316,11 @@ void Renderer::RenderOpaque(std::vector<DrawCall> drawCalls, const IBLEnvironmen
         dc.material->Queue();
         
         // bind the IBL maps for any IBL materials
-        if(environment.irradianceMap != nullptr && dc.material->usesIBL) {
+        if(dc.material->usesIBL) {
+            if(environment.irradianceMap == nullptr) {
+                LOGE("Cannot render IBL PBR Mesh without environment");
+                continue;
+            }
             environment.irradianceMap->Bind(0U);
             environment.prefilteredEnvMap->Bind(1U);
             environment.brdfLUT->Bind(2U);

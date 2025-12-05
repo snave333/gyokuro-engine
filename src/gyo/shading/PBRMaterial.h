@@ -12,6 +12,7 @@ class Texture2D;
 class PBRMaterial : public Material {
 public:
     PBRMaterial(
+        bool useIBL = true,
         glm::vec3 albedo = glm::vec3(1),
         float metallic = 0,
         float roughness = 0.5f,
@@ -38,7 +39,7 @@ private:
     float ao;
     glm::vec3 emissive;
 
-    bool hasTextures;
+    bool hasTextures = false;
 
     Texture2D* albedoMap = nullptr;
     Texture2D* normalMap = nullptr;
