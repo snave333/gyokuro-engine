@@ -31,46 +31,46 @@ int main(int argc, const char * argv[]) {
 }
 
 void loadScene(SceneController& sc) {
-    sc.SetEnvironment("brown_photostudio_2k.hdr");
-    // sc.SetEnvironment("dikhololo_night_2k.hdr");
+    // sc.SetEnvironment("brown_photostudio_2k.hdr");
+    sc.SetEnvironment("dikhololo_night_2k.hdr");
     // sc.SetEnvironment("sunny_rose_garden_2k.hdr");
 
+#if 0
     // first our lights
 
     float dist = 3;
     float lz = -3;
-    glm::vec3 lColor = glm::vec3(1, 1, 1) * 20.0f;
+    glm::vec3 lColor = glm::vec3(1, 1, 1) * 10.0f;
 
     LightNode* p1 = new LightNode(new PointLight(lColor));
     ModelNode* p1M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
     p1->Translate(dist, dist, lz);
     p1M->Translate(dist, dist, lz);
-    // sc.AddNode(p1);
-    // sc.AddNode(p1M);
+    sc.AddNode(p1);
+    sc.AddNode(p1M);
 
     LightNode* p2 = new LightNode(new PointLight(lColor));
     ModelNode* p2M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
     p2->Translate(-dist, dist, lz);
     p2M->Translate(-dist, dist, lz);
-    // sc.AddNode(p2);
-    // sc.AddNode(p2M);
+    sc.AddNode(p2);
+    sc.AddNode(p2M);
 
     LightNode* p3 = new LightNode(new PointLight(lColor));
     ModelNode* p3M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
     p3->Translate(dist, -dist, lz);
     p3M->Translate(dist, -dist, lz);
-    // sc.AddNode(p3);
-    // sc.AddNode(p3M);
+    sc.AddNode(p3);
+    sc.AddNode(p3M);
 
     LightNode* p4 = new LightNode(new PointLight(lColor));
     ModelNode* p4M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
     p4->Translate(-dist, -dist, lz);
     p4M->Translate(-dist, -dist, lz);
-    // sc.AddNode(p4);
-    // sc.AddNode(p4M);
+    sc.AddNode(p4);
+    sc.AddNode(p4M);
 
     // spawn our grid of spheres
-#if 0
 
     float z = -0.5f;
     float spacing = 0.6f;
@@ -102,6 +102,14 @@ void loadScene(SceneController& sc) {
         }
     }
 #else
+    glm::vec3 lColor = glm::vec3(1, 1, 1) * 10.0f;
+    LightNode* p2 = new LightNode(new PointLight(lColor));
+    ModelNode* p2M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
+    p2->Translate(-1.2, 2, 0);
+    p2M->Translate(-1.2, 2, 0);
+    sc.AddNode(p2);
+    sc.AddNode(p2M);
+
     Material* stoneMat = new PBRMaterial(
         true,
         glm::vec3(1),
