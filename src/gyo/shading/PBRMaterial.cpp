@@ -30,6 +30,8 @@ PBRMaterial::PBRMaterial(
     this->roughness = roughness;
     this->ao = ao;
     this->emissive = emissive;
+    this->uvTiling = uvTiling;
+    this->uvOffset = uvOffset;
 
     usesDirectLighting = true;
     this->usesIBL = useIBL;
