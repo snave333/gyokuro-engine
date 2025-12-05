@@ -105,8 +105,8 @@ void loadScene(SceneController& sc) {
     glm::vec3 lColor = glm::vec3(1, 1, 1) * 10.0f;
     LightNode* p2 = new LightNode(new PointLight(lColor));
     ModelNode* p2M = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(lColor, 1.0f)))));
-    p2->Translate(-1.2, 2, 0);
-    p2M->Translate(-1.2, 2, 0);
+    p2->Translate(-1.2, 1, 0);
+    p2M->Translate(-1.2, 1, 0);
     sc.AddNode(p2);
     sc.AddNode(p2M);
 
@@ -158,19 +158,19 @@ void loadScene(SceneController& sc) {
     );
 
     ModelNode* sphere1 = new ModelNode(new Model(new Mesh(new Sphere(0.5f), stoneMat)));
-    sphere1->SetPosition(1.8, 0, 0);
+    sphere1->SetPosition(1.8, -0.5, 0);
     sc.AddNode(sphere1);
 
     ModelNode* sphere2 = new ModelNode(new Model(new Mesh(new Sphere(0.5f), goldMat)));
-    sphere2->SetPosition(0.6, 0, 0);
+    sphere2->SetPosition(0.6, -0.5, 0);
     sc.AddNode(sphere2);
 
     ModelNode* sphere3 = new ModelNode(new Model(new Mesh(new Sphere(0.5f), rustedIronMat)));
-    sphere3->SetPosition(-0.6, 0, 0);
+    sphere3->SetPosition(-0.6, -0.5, 0);
     sc.AddNode(sphere3);
 
     ModelNode* sphere4 = new ModelNode(new Model(new Mesh(new Sphere(0.5f), plasticMat)));
-    sphere4->SetPosition(-1.8, 0, 0);
+    sphere4->SetPosition(-1.8, -0.5, 0);
     sc.AddNode(sphere4);
 #endif
 }

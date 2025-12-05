@@ -153,6 +153,7 @@ Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type,
             LOGD(" Found embedded texture '%s', %ux%u - %s", str.C_Str(), aiTex->mWidth, aiTex->mHeight, aiTex->achFormatHint);
             
             texture = TextureLoader::LoadEmbeddedTexture(aiTex, type == aiTextureType_DIFFUSE);
+            break;
         }
         else {
             LOGD(" Found referenced texture '%s'", str.C_Str());
@@ -161,6 +162,7 @@ Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type,
             // and are placed in the /textures folder.
             std::string fileName = FileSystem::GetFileName(str.C_Str());
             texture = Resources::GetTexture(fileName.c_str(), type == aiTextureType_DIFFUSE);
+            break;
         }
     }
 
