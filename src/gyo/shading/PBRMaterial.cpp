@@ -74,17 +74,19 @@ PBRMaterial::PBRMaterial(
 
         semantics["aTangent"] = SEMANTIC_TANGENT;
     }
-    if(metallicMap != nullptr) {
-        defines.insert(TEX_METALLIC);
-        this->metallicMap = metallicMap;
-    }
-    if(roughnessMap != nullptr) {
-        defines.insert(TEX_ROUGHNESS);
-        this->roughnessMap = roughnessMap;
-    }
     if(metallicRoughnessMap != nullptr) {
         defines.insert(TEX_METALLIC_ROUGHNESS);
         this->metallicRoughnessMap = metallicRoughnessMap;
+    }
+    else {
+        if(metallicMap != nullptr) {
+            defines.insert(TEX_METALLIC);
+            this->metallicMap = metallicMap;
+        }
+        if(roughnessMap != nullptr) {
+            defines.insert(TEX_ROUGHNESS);
+            this->roughnessMap = roughnessMap;
+        }
     }
     if(aoMap != nullptr) {
         defines.insert(TEX_AO);
