@@ -1,4 +1,6 @@
-# Gyokuro Rendering Library
+# Gyokuro
+
+![Hero image](media/pbr-spheres-dikhololo-night.jpg)
 
 A C++ OpenGL rendering library – pronounced "gee-o-kuh-ro". Uses the forward shading technique and targets the OpenGL 3.3 Core profile.
 
