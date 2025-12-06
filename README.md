@@ -141,4 +141,8 @@ For more examples, see the runnable projects in the [samples](samples) folder.
 * [Fast Extraction of Viewing Frustum Planes from the WorldView-Projection Matrix](https://www8.cs.umu.se/kurser/5DV051/HT12/lab/plane_extraction.pdf)
 * [Other Graphics Programming Papers](https://www.gamedevs.org/#graphics-programming)
 
-"Dice.fbx" 3D model and textures by [Josh Cook](https://www.linkedin.com/in/josh-cook-380a3a147/).
+## Attributions
+
+* "Dice.fbx" 3D model and textures by [Josh Cook](https://www.linkedin.com/in/josh-cook-380a3a147/).
+* "Battle Damaged Sci-fi Helmet - PBR" 3D model by "leonardo-carrion" [on Sketchfab here](https://skfb.ly/QNwv).
+* "Cerberus" revolver 3D model by Andrew Maximov [here](https://artisaverb.info/PBT.html).
