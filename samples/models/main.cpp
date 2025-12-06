@@ -30,6 +30,8 @@ int main(int argc, const char * argv[]) {
 }
 
 void loadScene(SceneController& sc) {
+    sc.SetEnvironment("brown_photostudio_2k.hdr");
+
     // some lighting
 
     glm::vec3 pointLight1Color = glm::vec3(0.8f, 0.8f, 1);
