@@ -57,7 +57,7 @@ void loadScene(SceneController& sc) {
     // the models we're loading
 
     ModelNode* helmet = new ModelNode(Resources::GetModel("DamagedHelmet.glb", true));
-    helmet->Translate(-1, 0, 0);
+    helmet->Translate(0, 0, 0);
     sc.AddNode(helmet);
 
     Model* diceModel = Resources::GetModel("Dice.fbx", false);
@@ -69,9 +69,27 @@ void loadScene(SceneController& sc) {
     ));
 
     ModelNode* dice = new ModelNode(diceModel);
-    dice->Translate(1, 0, 0);
+    dice->Translate(2, 0, 0);
     dice->Scale(0.5f);
     sc.AddNode(dice);
+
+    Model* cerberusModel = Resources::GetModel("Cerberus_LP.fbx", false);
+    cerberusModel->GetMeshes()[0]->SetMaterial(new PBRMaterial(
+        true,
+        glm::vec3(1),
+        1, 1, 1,
+        glm::vec3(0),
+        Resources::GetTexture("Cerberus_A.png", true),
+        Resources::GetTexture("Cerberus_N.png", false),
+        nullptr, nullptr,
+        Resources::GetTexture("Cerberus_RM.png", false),
+        Resources::GetTexture("Cerberus_AO.png", false)
+    ));
+    ModelNode* cerberus = new ModelNode(cerberusModel);
+    cerberus->Translate(-1.8, 0, -0.8);
+    cerberus->Rotate(-90, 0, 0);
+    cerberus->Scale(0.02f);
+    sc.AddNode(cerberus);
 
     sc.AddUpdateFunction([helmet, dice](float dt) {
         helmet->Rotate(0, dt * -15, 0);

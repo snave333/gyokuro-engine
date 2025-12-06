@@ -234,11 +234,11 @@ Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type,
         }
         else {
             LOGD(" Found referenced %s texture '%s'", TextureTypeToString(type), str.C_Str());
-
-            // NOTE: this assumes referenced textures use file names (not paths),
+            
+            // FIXME: this assumes referenced textures use file names (not paths),
             // and are placed in the /textures folder.
-            std::string fileName = FileSystem::GetFileName(str.C_Str());
-            texture = Resources::GetTexture(fileName.c_str(), srgb);
+            // std::string fileName = FileSystem::GetFileName(str.C_Str());
+            // texture = Resources::GetTexture(fileName.c_str(), srgb);
             break;
         }
     }
