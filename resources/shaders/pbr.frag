@@ -31,7 +31,7 @@ void main()
     vec3 ambient = globalAmbient.rgb * material.albedo * material.ao;
 #endif
     
-    vec3 color = ambient + Lo;
+    vec3 color = ambient + Lo + material.emissive;
 
     FragColor = vec4(color, 1.0);
 }

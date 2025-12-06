@@ -131,7 +131,7 @@ void PBRMaterial::Queue() {
     shader->SetFloat("uMaterial.metallic", metallic);
     shader->SetFloat("uMaterial.roughness", roughness);
     shader->SetFloat("uMaterial.ao", ao);
-    // TODO emissive
+    shader->SetVec3("uMaterial.emissive", emissive);
 
     if(hasTextures) {
         unsigned int texSlot = 0U;

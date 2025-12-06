@@ -5,7 +5,9 @@
 #include <gyo/mesh/Model.h>
 #include <gyo/mesh/Mesh.h>
 #include <gyo/geometry/Geometry.h>
+#include <gyo/shading/GoochMaterial.h>
 #include <gyo/shading/Material.h>
+#include <gyo/shading/PBRMaterial.h>
 #include <gyo/shading/PhongMaterial.h>
 #include <gyo/shading/Texture2D.h>
 #include <gyo/utilities/Clock.h>
@@ -88,6 +90,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     tangents.reserve(mesh->mNumVertices);
 
     // process vertices
+
     for(unsigned int i = 0; i < mesh->mNumVertices; i++) {
         positions.emplace_back(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
         normals.emplace_back(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
@@ -105,6 +108,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     LOGD("Processing %u faces", mesh->mNumFaces);
 
     // process indices
+
     for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
         aiFace face = mesh->mFaces[i];
         for(unsigned int j = 0; j < face.mNumIndices; j++) {
@@ -112,34 +116,107 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
         }
     }
 
-    // process material
-    Texture2D* diffMap = nullptr;
-    Texture2D* specMap = nullptr;
-    Texture2D* nrmMap = nullptr;
+    Geometry* geo = new Geometry{ positions, normals, texCoords, tangents, indices };
+
+    // process material 0
+
+    Material* mat = nullptr;
     if(mesh->mMaterialIndex >= 0) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
+        // assemble our texture types
+    
+        std::unordered_set<aiTextureType> texTypes;
+        for(int i = 0; i < AI_TEXTURE_TYPE_MAX; i++) {
+            aiTextureType type = static_cast<aiTextureType>(i);
+            if(material->GetTextureCount(type) > 0) {
+                texTypes.insert(type);
+            }
+        }
+
+        // determine which material type to use depending on the textures
+
         LOGD("Processing material with %u properties", material->mNumProperties);
+
         LogMaterialProperties(material);
         LogMaterialTextureTypes(material, scene);
 
-        diffMap = LoadMaterialTexture(material, aiTextureType_DIFFUSE, scene);
-        specMap = LoadMaterialTexture(material, aiTextureType_SPECULAR, scene);
-        nrmMap = LoadMaterialTexture(material, aiTextureType_NORMALS, scene);
+        bool isPBR =
+            texTypes.contains(aiTextureType_METALNESS) |
+            texTypes.contains(aiTextureType_DIFFUSE_ROUGHNESS) |
+            texTypes.contains(aiTextureType_GLTF_METALLIC_ROUGHNESS);
+
+        if(isPBR) {
+            Texture2D* albedoMap = nullptr;
+            Texture2D* normalMap = nullptr;
+            Texture2D* metallicMap = nullptr;
+            Texture2D* roughnessMap = nullptr;
+            Texture2D* metallicRoughnessMap = nullptr;
+            Texture2D* aoMap = nullptr;
+            Texture2D* emissiveMap = nullptr;
+
+            albedoMap = LoadMaterialTexture(material, aiTextureType_BASE_COLOR, scene, true);
+            if(!albedoMap) albedoMap = LoadMaterialTexture(material, aiTextureType_DIFFUSE, scene, true);
+
+            normalMap = LoadMaterialTexture(material, aiTextureType_NORMALS, scene);
+
+            metallicRoughnessMap = LoadMaterialTexture(material, aiTextureType_GLTF_METALLIC_ROUGHNESS, scene);
+            if(!metallicRoughnessMap) {
+                metallicMap = LoadMaterialTexture(material, aiTextureType_METALNESS, scene);
+                roughnessMap = LoadMaterialTexture(material, aiTextureType_DIFFUSE_ROUGHNESS, scene);
+            }
+
+            aoMap = LoadMaterialTexture(material, aiTextureType_AMBIENT_OCCLUSION, scene);
+            if(!aoMap) aoMap = LoadMaterialTexture(material, aiTextureType_LIGHTMAP, scene);
+
+            emissiveMap = LoadMaterialTexture(material, aiTextureType_EMISSION_COLOR, scene);
+            if(!emissiveMap) emissiveMap = LoadMaterialTexture(material, aiTextureType_EMISSIVE, scene);
+
+            mat = new PBRMaterial(
+                true,
+                glm::vec3(1.0),
+                metallicMap || metallicRoughnessMap ? 1.0 : 0.0,
+                roughnessMap || metallicRoughnessMap ? 1.0 : 0.5,
+                1.0,
+                emissiveMap ? glm::vec3(1.0) : glm::vec3(0.0),
+                albedoMap,
+                normalMap,
+                metallicMap,
+                roughnessMap,
+                metallicRoughnessMap,
+                aoMap,
+                emissiveMap
+            );
+        }
+        else {
+            Texture2D* diffuseMap = nullptr;
+            Texture2D* specularMap = nullptr;
+            Texture2D* normalMap = nullptr;
+    
+            diffuseMap = LoadMaterialTexture(material, aiTextureType_DIFFUSE, scene, true);
+            if(!diffuseMap) diffuseMap = LoadMaterialTexture(material, aiTextureType_BASE_COLOR, scene, true);
+
+            specularMap = LoadMaterialTexture(material, aiTextureType_SPECULAR, scene);
+            
+            normalMap = LoadMaterialTexture(material, aiTextureType_NORMALS, scene);
+
+            mat = new PhongMaterial(
+                glm::vec4(1),
+                glm::vec4(1),
+                128,
+                diffuseMap, specularMap, normalMap);
+        }
+    }
+    else {
+        mat = new GoochMaterial();
     }
 
-    return new Mesh(
-        new Geometry{ positions, normals, texCoords, tangents, indices },
-        new PhongMaterial(glm::vec4(1), glm::vec4(1), 128, diffMap, specMap, nrmMap));
+    return new Mesh(geo, mat);
 }
 
-Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, const aiScene* scene) {
-    LOGD("Attempting to load %s material texture", TextureTypeToString(type));
-
+Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type, const aiScene* scene, bool srgb) {
     Texture2D* texture = nullptr;
     
-    // TODO return an array of textures of type
-
     aiString str;
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiReturn result = mat->GetTexture(type, i, &str);
@@ -150,18 +227,18 @@ Texture2D* ModelLoader::LoadMaterialTexture(aiMaterial* mat, aiTextureType type,
         
         const aiTexture* aiTex = scene->GetEmbeddedTexture(str.C_Str());
         if(aiTex) {
-            LOGD(" Found embedded texture '%s', %ux%u - %s", str.C_Str(), aiTex->mWidth, aiTex->mHeight, aiTex->achFormatHint);
+            LOGD(" Loading embedded %s texture '%s', %ux%u - %s", TextureTypeToString(type), str.C_Str(), aiTex->mWidth, aiTex->mHeight, aiTex->achFormatHint);
             
-            texture = TextureLoader::LoadEmbeddedTexture(aiTex, type == aiTextureType_DIFFUSE);
+            texture = TextureLoader::LoadEmbeddedTexture(aiTex, srgb);
             break;
         }
         else {
-            LOGD(" Found referenced texture '%s'", str.C_Str());
+            LOGD(" Found referenced %s texture '%s'", TextureTypeToString(type), str.C_Str());
 
             // NOTE: this assumes referenced textures use file names (not paths),
             // and are placed in the /textures folder.
             std::string fileName = FileSystem::GetFileName(str.C_Str());
-            texture = Resources::GetTexture(fileName.c_str(), type == aiTextureType_DIFFUSE);
+            texture = Resources::GetTexture(fileName.c_str(), srgb);
             break;
         }
     }
@@ -179,24 +256,22 @@ void ModelLoader::LogMaterialProperties(aiMaterial* mat) {
 }
 
 void ModelLoader::LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene) {
+    LOGT("Logging material texture types:");
+    
     for(unsigned int t = aiTextureType_NONE; t <= AI_TEXTURE_TYPE_MAX; t++) {
         aiTextureType type = static_cast<aiTextureType>(t);
         unsigned int count = mat->GetTextureCount(type);
 
-        if(count > 0) {
-            LOGT("Found %u textures of type %s", count, TextureTypeToString(type));
-        }
-        
         aiString str;
         for(unsigned int i = 0; i < count; i++) {
             mat->GetTexture(type, i, &str);
             
             const aiTexture* aiTex = scene->GetEmbeddedTexture(str.C_Str());
             if(aiTex) {
-                LOGT(" Embedded texture '%s', %ux%u - %s", str.C_Str(), aiTex->mWidth, aiTex->mHeight, aiTex->achFormatHint);
+                LOGT(" Embedded %s texture '%s', %ux%u - %s", TextureTypeToString(type), str.C_Str(), aiTex->mWidth, aiTex->mHeight, aiTex->achFormatHint);
             }
             else {
-                LOGT(" Referenced texture '%s'", str.C_Str());
+                LOGT(" Referenced %s texture '%s'", TextureTypeToString(type), str.C_Str());
             }
         }
     }
@@ -204,6 +279,7 @@ void ModelLoader::LogMaterialTextureTypes(aiMaterial* mat, const aiScene* scene)
 
 const char* ModelLoader::TextureTypeToString(aiTextureType type) {
     switch(type) {
+        // legacy api materials
         case aiTextureType_NONE:                   return "NONE";
         case aiTextureType_DIFFUSE:                return "DIFFUSE";
         case aiTextureType_SPECULAR:               return "SPECULAR";
@@ -216,7 +292,7 @@ const char* ModelLoader::TextureTypeToString(aiTextureType type) {
         case aiTextureType_DISPLACEMENT:           return "DISPLACEMENT";
         case aiTextureType_LIGHTMAP:               return "LIGHTMAP (AO)";
         case aiTextureType_REFLECTION:             return "REFLECTION";
-
+        // pbr materials
         case aiTextureType_BASE_COLOR:             return "BASE_COLOR";
         case aiTextureType_NORMAL_CAMERA:          return "NORMAL_CAMERA";
         case aiTextureType_EMISSION_COLOR:         return "EMISSION_COLOR";
@@ -229,7 +305,7 @@ const char* ModelLoader::TextureTypeToString(aiTextureType type) {
         case aiTextureType_SHEEN:                  return "SHEEN";
         case aiTextureType_CLEARCOAT:              return "CLEARCOAT";
         case aiTextureType_TRANSMISSION:           return "TRANSMISSION";
-
+        // Maya material declerations
         case aiTextureType_MAYA_BASE:              return "MAYA_BASE";
         case aiTextureType_MAYA_SPECULAR:          return "MAYA_SPECULAR";
         case aiTextureType_MAYA_SPECULAR_COLOR:    return "MAYA_SPECULAR_COLOR";
@@ -237,6 +313,7 @@ const char* ModelLoader::TextureTypeToString(aiTextureType type) {
 
         case aiTextureType_ANISOTROPY:             return "ANISOTROPY";
 
+        // GLTF material declerations
         case aiTextureType_GLTF_METALLIC_ROUGHNESS:return "GLTF_METALLIC_ROUGHNESS";
 
         default:                                   return "UNRECOGNIZED_aiTextureType";

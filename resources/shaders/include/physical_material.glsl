@@ -15,6 +15,7 @@ struct PhysicalMaterialUniforms {
     float metallic;
     float roughness;
     float ao;
+    vec3 emissive;
 
 #ifdef TEX_ALBEDO
     sampler2D albedoMap;
@@ -46,6 +47,8 @@ struct PhysicalMaterialUniforms {
 };
 uniform PhysicalMaterialUniforms uMaterial;
 
+// our material definition used for lighting calculations
+
 struct PhysicalMaterial {
     vec3 albedo;
     vec3 worldNormal;
@@ -54,6 +57,8 @@ struct PhysicalMaterial {
     float ao;
     vec3 emissive;
 };
+
+// derive our material properties from our uniforms
 
 PhysicalMaterial getMaterialProps(
     vec3 normal,
@@ -66,6 +71,7 @@ PhysicalMaterial getMaterialProps(
     material.metallic = uMaterial.metallic;
     material.roughness = uMaterial.roughness;
     material.ao = uMaterial.ao;
+    material.emissive = uMaterial.emissive;
 
 #ifdef TEX_ALBEDO
     vec3 albedoSample = texture(uMaterial.albedoMap, texCoord).rgb;
