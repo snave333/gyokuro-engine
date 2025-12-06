@@ -15,6 +15,8 @@ This project is my journey following the tutorials and guides from [Learn OpenGL
 
 For a full feature list and roadmap of planned features, see [the list below](#roadmap).
 
+![Helmet screenshot](media/pbr-damaged-helmet-brown-photo-studio.jpg)
+
 ## Example Usage
 
 ```cpp
@@ -111,8 +113,8 @@ For more examples, see the runnable projects in the [samples](samples) folder.
 * [x] Model loading
   * [x] Separate model/texture file loading
   * [x] Embedded texture support (glb)
-* [ ] PBR
-  * [ ] Material (supports albedo, normal, metallic/roughness, and ao map)
+* [x] PBR
+  * [x] Material (supports albedo, normal, metallic/roughness, ao, & emission maps)
   * [x] Analytic lights
   * [x] IBL
 * [x] MSAA
