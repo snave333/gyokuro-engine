@@ -1,6 +1,8 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include <gyo/utilities/FrameTimer.h>
+
 struct GLFWwindow;
 
 namespace gyo {
@@ -31,6 +33,7 @@ private:
 
     // timing
     double lastUpdateTime;
+    FrameTimer gpuTimer;
 
     // our glfw callbacks
     static void glfwOnError(int error, const char* description);

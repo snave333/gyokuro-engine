@@ -82,6 +82,7 @@ set(PRIVATE_HEADERS
     src/gyo/utilities/Clock.h
     src/gyo/utilities/FileSystem.h
     src/gyo/utilities/FrameStats.h
+    src/gyo/utilities/FrameTimer.h
     src/gyo/utilities/GetError.h
     src/gyo/utilities/Hash.h
     src/gyo/utilities/Log.h

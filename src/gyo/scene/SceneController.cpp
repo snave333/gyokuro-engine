@@ -282,6 +282,13 @@ void SceneController::RenderStats() {
     stream << std::fixed << renderer->stats.frame;
     strings.push_back(std::string("frame: ") + stream.str() + std::string(" ms"));
 
+    // gpu ms
+
+    stream.str("");
+    stream.clear();
+    stream << std::fixed << renderer->stats.gpuMs;
+    strings.push_back(std::string("gpu: ") + stream.str() + std::string(" ms"));
+
     // view frustum culling
 
     stream.str("");

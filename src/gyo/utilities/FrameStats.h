@@ -5,6 +5,7 @@ namespace gyo {
 
 struct FrameStats {
     float frame = 0;
+    float gpuMs = 0;
     
     float geometryMs = 0;
     float vfcMs = 0;

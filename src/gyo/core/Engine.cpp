@@ -70,7 +70,10 @@ Engine::Engine(unsigned int ptWidth, unsigned int ptHeight, unsigned int msaaSam
         isRunning = true;
         return;
     }
-    
+
+    // init our frame time query now that glad is initialized
+    gpuTimer.Initialize();
+
     // set our gl window size
     int pxWidth, pxHeight;
     glfwGetFramebufferSize(window, &pxWidth, &pxHeight);
@@ -124,9 +127,15 @@ void Engine::Frame() {
     // input
     processInput(window, dt);
 
-    // update and render our scene
+    // CPU update
     sceneController->Update(dt);
+
+    // render our scene
+    gpuTimer.StartQuery();
     sceneController->Render();
+    gpuTimer.EndQuery();
+
+    renderer->stats.gpuMs = gpuTimer.lastGPUMs;
 
     // swap the buffers and poll IO events
     glfwSwapBuffers(window);
