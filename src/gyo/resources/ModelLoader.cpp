@@ -116,7 +116,7 @@ Mesh* ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
         }
     }
 
-    Geometry* geo = new Geometry{ positions, normals, texCoords, tangents, indices };
+    Geometry* geo = new Geometry( positions, normals, texCoords, tangents, indices );
 
     // process material 0
 

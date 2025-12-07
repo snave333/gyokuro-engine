@@ -84,7 +84,7 @@ void TangentsRenderer::Update(const glm::mat4& modelMatrix, const glm::mat4& nor
     shader->SetMat4("normalMatrix", normalMatrix);
 }
 
-void TangentsRenderer::Draw() {
+void TangentsRenderer::Draw() const {
     shader->Use();
 
     glBindVertexArray(VAO);

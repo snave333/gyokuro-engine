@@ -39,11 +39,8 @@ Camera::Camera(glm::mat4 projection) {
     glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
     glCheckError();
 
-    // the size of our ubo
-    buffer.resize(bufferSize);
-    
     // allocate enough memory for the 2 matrices and position
-    glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_STREAM_DRAW);
     glCheckError();
 
     // link the range of the entire buffer to binding point 0
@@ -61,27 +58,27 @@ Camera::~Camera() {
 
 void Camera::UpdateViewMatrixUniform(const glm::mat4& view, const glm::vec3& viewPos) {
     // update the camera properties in our uniform buffer
-
-    size_t offset = 0L;
-
-    memcpy(buffer.data() + offset, glm::value_ptr(projection), sizeof(glm::mat4));
-    offset += sizeof(glm::mat4);
-
-    memcpy(buffer.data() + offset, glm::value_ptr(view), sizeof(glm::mat4));
-    offset += sizeof(glm::mat4);
-
-    memcpy(buffer.data() + offset, glm::value_ptr(glm::vec4(viewPos, 0)), sizeof(glm::vec4));
-    offset += sizeof(glm::vec4);
-
-    // copy the data to the gpu
-
+    
     glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
     glCheckError();
-
-    void* gpuPtr = glMapBufferRange(GL_UNIFORM_BUFFER, 0, buffer.size(), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+    
+    uint8_t* gpuPtr = (uint8_t*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, bufferSize, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
     glCheckError();
     if (gpuPtr) {
-        memcpy(gpuPtr, buffer.data(), buffer.size());
+        // copy the data to the gpu
+
+        size_t offset = 0L;
+
+        // we only need to do this once on startup, unless the projection is changing often
+        memcpy(gpuPtr + offset, glm::value_ptr(projection), sizeof(glm::mat4));
+        offset += sizeof(glm::mat4);
+
+        memcpy(gpuPtr + offset, glm::value_ptr(view), sizeof(glm::mat4));
+        offset += sizeof(glm::mat4);
+
+        memcpy(gpuPtr + offset, glm::value_ptr(glm::vec4(viewPos, 0)), sizeof(glm::vec4));
+        offset += sizeof(glm::vec4);
+
         glUnmapBuffer(GL_UNIFORM_BUFFER);
         glCheckError();
     }

@@ -13,7 +13,7 @@ public:
     LightsUBO();
     ~LightsUBO();
 
-    void UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights);
+    void UpdateValues(glm::vec3 ambient, const std::vector<LightNode*>& lights);
 private:
     // the byte size of our ubo
     const signed long int bufferSize = 448L;

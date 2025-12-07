@@ -6,7 +6,7 @@ namespace gyo {
 struct IDrawable {
     virtual ~IDrawable() {}
 
-    virtual void Draw() = 0;
+    virtual void Draw() const = 0;
 };
 
 } // namespace gyo

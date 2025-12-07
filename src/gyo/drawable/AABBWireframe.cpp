@@ -93,7 +93,7 @@ void AABBWireframe::Update(const AABB& aabb) {
     glCheckError();
 }
 
-void AABBWireframe::Draw() {
+void AABBWireframe::Draw() const {
     shader->Use();
     shader->SetVec4("color", color);
 

@@ -11,7 +11,7 @@ public:
     LightNode(Light* light);
     ~LightNode();
 
-    const Light* GetLight() { return light; }
+    const Light* GetLight() const { return light; }
 
 private:
     Light* light;

@@ -13,7 +13,7 @@ public:
     Skybox(TextureCube* cubeMap);
     ~Skybox();
 
-    void Draw(glm::mat4 view, glm::mat4 projection);
+    void Draw(glm::mat4 view, glm::mat4 projection) const;
 
 private:
     TextureCube* cubeMap = nullptr;

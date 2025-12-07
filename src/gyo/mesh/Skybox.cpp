@@ -22,7 +22,7 @@ Skybox::~Skybox() {
     mesh = nullptr;
 }
 
-void Skybox::Draw(glm::mat4 view, glm::mat4 projection) {
+void Skybox::Draw(glm::mat4 view, glm::mat4 projection) const {
     // remove translation from the view matrix
     glm::mat4 viewNoTranslation = glm::mat4(glm::mat3(view));
 

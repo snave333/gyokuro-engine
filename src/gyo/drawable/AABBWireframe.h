@@ -18,7 +18,7 @@ public:
     ~AABBWireframe() override;
 
     void Update(const AABB& aabb);
-    void Draw() override;
+    void Draw() const override;
 
 private:
     glm::vec4 color;

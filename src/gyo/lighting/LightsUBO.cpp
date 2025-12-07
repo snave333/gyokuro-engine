@@ -37,7 +37,7 @@ LightsUBO::LightsUBO() {
     glCheckError();
 
     // allocate enough memory for all of the light uniform values
-    glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
     glCheckError();
 
     // link the range of the entire buffer to binding point 0
@@ -53,7 +53,7 @@ LightsUBO::~LightsUBO() {
     glCheckError();
 }
 
-void LightsUBO::UpdateValues(glm::vec3 ambient, std::vector<LightNode*> lights) {
+void LightsUBO::UpdateValues(glm::vec3 ambient, const std::vector<LightNode*>& lights) {
     // separate all of our lights into their respective types
 
     const DirectionalLight* directionalLight = nullptr;

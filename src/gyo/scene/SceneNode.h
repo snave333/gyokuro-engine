@@ -30,9 +30,9 @@ public:
     const glm::mat4& GetTransform();
     const glm::mat4& GetNormalMatrix();
 
-    glm::vec3 GetForward();
-    glm::vec3 GetRight();
-    glm::vec3 GetUp();
+    glm::vec3 GetForward() const;
+    glm::vec3 GetRight() const;
+    glm::vec3 GetUp() const;
 
     void Translate(float x, float y, float z);
     void Translate(const glm::vec3 &translation);
@@ -57,7 +57,7 @@ protected:
 private:
     bool isTransformDirty = true;
 
-    void UpdateMatrices();
+    inline void UpdateMatrices();
 };
 
 } // namespace gyo

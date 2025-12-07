@@ -23,7 +23,7 @@ void SceneNode::SetDirty() {
     isTransformDirty = true;
 }
 
-void SceneNode::UpdateMatrices() {
+inline void SceneNode::UpdateMatrices() {
     transform = glm::mat4(1.0f);
     
     transform = glm::translate(transform, position);
@@ -35,15 +35,15 @@ void SceneNode::UpdateMatrices() {
     isTransformDirty = false;
 }
 
-glm::vec3 SceneNode::GetForward() {
+glm::vec3 SceneNode::GetForward() const {
     return glm::rotate(rotation, glm::vec3(0, 0, 1));
 }
 
-glm::vec3 SceneNode::GetRight() {
+glm::vec3 SceneNode::GetRight() const {
     return glm::rotate(rotation, glm::vec3(1, 0, 0));
 }
 
-glm::vec3 SceneNode::GetUp() {
+glm::vec3 SceneNode::GetUp() const {
     return glm::rotate(rotation, glm::vec3(0, 1, 0));
 }
 

@@ -25,7 +25,6 @@ protected:
 private:
     // the byte size of our ubo
     const signed long int bufferSize = 144L;
-    std::vector<uint8_t> buffer;
     
     unsigned int uboMatrices;
 };

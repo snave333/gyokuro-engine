@@ -30,7 +30,7 @@ public:
     ~TangentsRenderer() override;
 
     void Update(const glm::mat4& modelMatrix, const glm::mat4& normalMatrix);
-    void Draw() override;
+    void Draw() const override;
 
 private:
     float lineLength;
