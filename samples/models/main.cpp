@@ -9,22 +9,20 @@ void loadScene(SceneController& sc);
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
 
-    gyo::Engine* engine = new gyo::Engine(1280, 720);
+    gyo::Engine engine(1280, 720);
 
-    if(!engine->IsRunning()) {
+    if(!engine.IsRunning()) {
         std::cerr << "Engine failed to start." << std::endl;
         return 1;
     }
 
-    loadScene(engine->sc());
+    loadScene(engine.sc());
 
-    while(engine->IsRunning()) {
-        engine->Frame();
+    while(engine.IsRunning()) {
+        engine.Frame();
     }
 
     std::cout << "Shutting down..." << std::endl;
-    
-    delete engine;
 
     return 0;
 }
@@ -34,17 +32,17 @@ void loadScene(SceneController& sc) {
 
     // some lighting
 
-    glm::vec3 pointLight1Color = glm::vec3(0.8f, 0.8f, 1);
+    glm::vec3 pointLight1Color(0.8f, 0.8f, 1);
     LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color * 2.0f));
     ModelNode* pointLight1Model = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f)))));
-    glm::vec3 p1Position = { 3, -2, -2 };
+    glm::vec3 p1Position(3, -2, -2);
     pointLight1->Translate(p1Position);
     pointLight1Model->Translate(p1Position);
 
-    glm::vec3 pointLight2Color = glm::vec3(1, 1, 0.8f);
+    glm::vec3 pointLight2Color(1, 1, 0.8f);
     LightNode* pointLight2 = new LightNode(new PointLight(pointLight2Color * 4.0f));
     ModelNode* pointLight2Model = new ModelNode(new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(glm::vec4(pointLight2Color, 1.0f)))));
-    glm::vec3 p2Position = { -3, 2, -2 };
+    glm::vec3 p2Position(-3, 2, -2);
     pointLight2->Translate(p2Position);
     pointLight2Model->Translate(p2Position);
 

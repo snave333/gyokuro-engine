@@ -9,22 +9,20 @@ void loadScene(SceneController& sc);
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
 
-    gyo::Engine* engine = new gyo::Engine(1280, 720);
+    gyo::Engine engine(1280, 720);
 
-    if(!engine->IsRunning()) {
+    if(!engine.IsRunning()) {
         std::cerr << "Engine failed to start." << std::endl;
         return 1;
     }
 
-    loadScene(engine->sc());
+    loadScene(engine.sc());
 
-    while(engine->IsRunning()) {
-        engine->Frame();
+    while(engine.IsRunning()) {
+        engine.Frame();
     }
 
     std::cout << "Shutting down..." << std::endl;
-    
-    delete engine;
 
     return 0;
 }
@@ -32,7 +30,7 @@ int main(int argc, const char * argv[]) {
 void loadScene(SceneController& sc) {
     // add the lights first
 
-    glm::vec3 pointLight1Color = glm::vec3(0.2f, 0.6f, 1);
+    glm::vec3 pointLight1Color(0.2f, 0.6f, 1);
     LightNode* pointLight1 = new LightNode(new PointLight(pointLight1Color));
     ModelNode* pointLight1Model = new ModelNode(new Model(new Mesh(new Sphere(0.1f), new UnlitMaterial(glm::vec4(pointLight1Color, 1.0f)))));
     pointLight1->Translate(3, -1, 4);
@@ -40,7 +38,7 @@ void loadScene(SceneController& sc) {
     sc.AddNode(pointLight1);
     sc.AddNode(pointLight1Model);
 
-    glm::vec3 pointLight2Color = glm::vec3(1, 0.6f, 0.2f);
+    glm::vec3 pointLight2Color(1, 0.6f, 0.2f);
     LightNode* pointLight2 = new LightNode(new PointLight(pointLight2Color * 10.0f));
     ModelNode* pointLight2Model = new ModelNode(new Model(new Mesh(new Sphere(0.18f), new UnlitMaterial(glm::vec4(pointLight2Color, 1.0f)))));
     pointLight2->Translate(-3, -1, 4);
@@ -48,7 +46,7 @@ void loadScene(SceneController& sc) {
     sc.AddNode(pointLight2);
     sc.AddNode(pointLight2Model);
 
-    glm::vec3 spotLight1Color = glm::vec3(0.6f, 0.2f, 1.0f);
+    glm::vec3 spotLight1Color(0.6f, 0.2f, 1.0f);
     LightNode* spotLight1 = new LightNode(new SpotLight(spotLight1Color * 6.0f, 20.0f));
     ModelNode* spotLight1Model = new ModelNode(new Model(new Mesh(new Pyramid(0.1f, 0.2f), new UnlitMaterial(glm::vec4(spotLight1Color, 1.0f)))));
     spotLight1->Translate(4, 1, -5);
@@ -58,7 +56,7 @@ void loadScene(SceneController& sc) {
     sc.AddNode(spotLight1);
     sc.AddNode(spotLight1Model);
 
-    glm::vec3 spotLight2Color = glm::vec3(1.0f, 0.2f, 0.2f);
+    glm::vec3 spotLight2Color(1.0f, 0.2f, 0.2f);
     LightNode* spotLight2 = new LightNode(new SpotLight(spotLight2Color * 6.0f, 40.0f));
     ModelNode* spotLight2Model = new ModelNode(new Model(new Mesh(new Pyramid(0.15f, 0.2f), new UnlitMaterial(glm::vec4(spotLight2Color, 1.0f)))));
     spotLight2->Translate(2, 1, -5);

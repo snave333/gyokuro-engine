@@ -22,19 +22,19 @@ For a full feature list and roadmap of planned features, see [the list below](#r
 ```cpp
 // start the rendering engine
 
-gyo::Engine* engine = new gyo::Engine(1920, 1080);
-if(!engine->IsRunning()) {
+gyo::Engine engine(1920, 1080);
+if(!engine.IsRunning()) {
     std::cerr << "Gyokuro failed to start!" << std::endl;
     return 1;
 }
 
 // create our scene
 
-SceneController& sc = engine->sc();
+SceneController& sc = engine.sc();
 
 sc.SetEnvironment("brown_photostudio_2k.hdr");
 
-glm::vec3 spotLightColor = { 1.0f, 0.2f, 0.2f };
+glm::vec3 spotLightColor(1.0f, 0.2f, 0.2f);
 LightNode* spotLight = new LightNode(new SpotLight(spotLightColor * 6.0f, 40.0f));
 spotLight->Translate(2, 1, -5);
 spotLight->Rotate(45, -15, 0);
@@ -42,7 +42,7 @@ sc.AddNode(spotLight);
 
 ModelNode* helmet = new ModelNode(Resources::GetModel("DamagedHelmet.glb", true));
 sc.AddNode(helmet);
-glm::vec3 rotationAxis = { 0.0f, 1.0f, 0.0f };
+glm::vec3 rotationAxis(0.0f, 1.0f, 0.0f);
 
 sc.AddUpdateFunction([helmet, rotationAxis](float dt) {
     helmet->Rotate(dt * 15, rotationAxis);
@@ -50,8 +50,8 @@ sc.AddUpdateFunction([helmet, rotationAxis](float dt) {
 
 // render the scene to the window
 
-while(engine->IsRunning()) {
-    engine->Frame();
+while(engine.IsRunning()) {
+    engine.Frame();
 }
 ```
 

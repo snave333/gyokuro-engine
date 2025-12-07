@@ -9,23 +9,21 @@ void loadScene(SceneController& sc);
 int main(int argc, const char * argv[]) {
     std::cout << "Starting..." << std::endl;
 
-    gyo::Engine* engine = new gyo::Engine(1280, 720);
+    gyo::Engine engine(1280, 720);
 
-    if(!engine->IsRunning()) {
+    if(!engine.IsRunning()) {
         std::cerr << "Engine failed to start." << std::endl;
         return 1;
     }
 
-    loadScene(engine->sc());
+    loadScene(engine.sc());
 
-    while(engine->IsRunning()) {
-        engine->Frame();
+    while(engine.IsRunning()) {
+        engine.Frame();
     }
 
     std::cout << "Shutting down..." << std::endl;
     
-    delete engine;
-
     return 0;
 }
 
