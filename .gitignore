@@ -51,3 +51,7 @@ CMakeUserPresets.json
 # MISC
 
 build/
+
+# CLANGD
+
+.cache/
