@@ -405,7 +405,10 @@ void Renderer::EndGeometryPass() {
     if(msaaSamples > 0) {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intermediateFramebuffer);
-        glBlitFramebuffer(0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBlitFramebuffer(
+            0, 0, size.x, size.y,
+            0, 0, size.x, size.y,
+            GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
 
     // unbind our framebuffer, and render the full screen quad

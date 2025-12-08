@@ -32,20 +32,22 @@ public:
     }
 
     void StartQuery() {
-        int previous = (frameIndex + 1) % 2;
-        int current = frameIndex % 2;
+        unsigned int previous = (frameIndex + 1) % 2;
+        unsigned int current = frameIndex % 2;
 
-        // first read our previous frame's results
+        // first read our previous frame's results (if this isn't the first frame)
 
-        GLuint available = 0;
-        glGetQueryObjectuiv(gpuQueries[previous], GL_QUERY_RESULT_AVAILABLE, &available);
-        glCheckError();
-
-        if(available) {
-            GLuint64 ns = 0;
-            glGetQueryObjectui64v(gpuQueries[previous], GL_QUERY_RESULT, &ns);
+        if(current != 0) {
+            GLuint available = 0;
+            glGetQueryObjectuiv(gpuQueries[previous], GL_QUERY_RESULT_AVAILABLE, &available);
             glCheckError();
-            lastGPUMs = float(ns) / 1e6; // ns to ms
+
+            if(available) {
+                GLuint64 ns = 0;
+                glGetQueryObjectui64v(gpuQueries[previous], GL_QUERY_RESULT, &ns);
+                glCheckError();
+                lastGPUMs = float(ns) / 1e6; // ns to ms
+            }
         }
 
         // now begin timing this frame

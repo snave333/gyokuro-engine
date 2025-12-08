@@ -18,7 +18,6 @@
 #include <gyo/utilities/Clock.h>
 #include <gyo/utilities/GetError.h>
 
-#include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
