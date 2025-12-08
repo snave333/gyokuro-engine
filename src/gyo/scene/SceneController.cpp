@@ -1,7 +1,5 @@
 
-#include <iostream>
 #include <string>
-#include <sstream>
 #include <algorithm>
 
 #include <gyo/scene/SceneController.h>
@@ -172,11 +170,8 @@ void SceneController::RenderScene() {
     CLOCKT(geometry_pass, &renderer->stats.geometryMs);
     
     // view frustum culling
-    {
-        CLOCKT(frustum_culling, &renderer->stats.vfcMs);
 
-        FrustumCull(camera->GetFrustum(), models, visibleModels);
-    }
+    FrustumCull(camera->GetFrustum(), models, visibleModels);
 
     // update the camera view matrix for our shaders
     camera->UpdateViewMatrixUniform();
@@ -208,16 +203,13 @@ void SceneController::RenderScene() {
     }
 
     // opaque pass
-    {
-        CLOCKT(render_opaque, &renderer->stats.opaqueMs);
 
-        renderer->RenderOpaque(opaqueDrawCalls, this->environment);
+    renderer->RenderOpaque(opaqueDrawCalls, this->environment);
 
-        if(skybox != nullptr) {
-            renderer->RenderSkybox(skybox, camera->GetView(), camera->GetProjection());
-            renderer->stats.drawCalls++;
-            renderer->stats.tris += 12;
-        }
+    if(skybox != nullptr) {
+        renderer->RenderSkybox(skybox, camera->GetView(), camera->GetProjection());
+        renderer->stats.drawCalls++;
+        renderer->stats.tris += 12;
     }
 
     for(IDrawable* drawable : drawables) {
@@ -226,24 +218,21 @@ void SceneController::RenderScene() {
     }
 
     // transparency pass
-    {
-        CLOCKT(render_alpha, &renderer->stats.alphaMs);
 
-        // sort furthest to closest length squared from camera position
-        // NOTE this doesn't take rotation or scale into account, and only uses
-        // the mesh position for comparison
-        // TODO investigate more robust methods for sorting
+    // sort furthest to closest length squared from camera position
+    // NOTE this doesn't take rotation or scale into account, and only uses
+    // the mesh position for comparison
+    // TODO investigate more robust methods for sorting
 
-        const glm::vec3& camPosition = camera->GetPosition();
-        std::sort(alphaDrawCalls.begin(), alphaDrawCalls.end(), [camPosition](const DrawCall& a, const DrawCall& b) {
-            glm::vec3 aPos = { a.transform[3][0], a.transform[3][1], a.transform[3][2] };
-            glm::vec3 bPos = { b.transform[3][0], b.transform[3][1], b.transform[3][2] };
+    const glm::vec3& camPosition = camera->GetPosition();
+    std::sort(alphaDrawCalls.begin(), alphaDrawCalls.end(), [camPosition](const DrawCall& a, const DrawCall& b) {
+        glm::vec3 aPos = { a.transform[3][0], a.transform[3][1], a.transform[3][2] };
+        glm::vec3 bPos = { b.transform[3][0], b.transform[3][1], b.transform[3][2] };
 
-            return glm::length2(aPos - camPosition) > glm::length2(bPos - camPosition);
-        });
+        return glm::length2(aPos - camPosition) > glm::length2(bPos - camPosition);
+    });
 
-        renderer->RenderTransparent(alphaDrawCalls);
-    }
+    renderer->RenderTransparent(alphaDrawCalls);
 }
 
 void SceneController::FrustumCull(
@@ -273,58 +262,21 @@ void SceneController::FrustumCull(
 void SceneController::RenderStats() {
     CLOCKT(render_ui, &renderer->stats.uiMs);
 
-    std::vector<std::string> strings = {};
-    std::ostringstream stream;
-    stream.precision(0);
+    const FrameStats& stats = renderer->stats;
 
-    // fps
+    renderer->stats.drawCalls++; // the ui draw call below
 
-    stream << std::fixed << renderer->stats.frame;
-    strings.push_back(std::string("frame: ") + stream.str() + std::string(" ms"));
+    // assemble the stats
 
-    // gpu ms
+    std::vector<std::string> strings = {
+        std::format("frame: {:.2f} ms", renderer->stats.frame),
+        std::format("cpu: {:.2f} ms", renderer->stats.cpuMs),
+        std::format("gpu: {:.2f} ms", renderer->stats.gpuMs),
+        std::format("draw calls: {}", renderer->stats.drawCalls),
+        std::format("tris: {}", renderer->stats.tris)
+    };
 
-    stream.str("");
-    stream.clear();
-    stream << std::fixed << renderer->stats.gpuMs;
-    strings.push_back(std::string("gpu: ") + stream.str() + std::string(" ms"));
-
-    // view frustum culling
-
-    stream.str("");
-    stream.clear();
-    stream << std::fixed << renderer->stats.vfcMs;
-    strings.push_back(std::string("- vfc: ") + stream.str() + std::string(" ms"));
-
-    // opaque pass
-
-    stream.str("");
-    stream.clear();
-    stream << std::fixed << renderer->stats.opaqueMs;
-    strings.push_back(std::string("- opaque pass: ") + stream.str() + std::string(" ms"));
-
-    // alpha pass
-
-    stream.str("");
-    stream.clear();
-    stream << std::fixed << renderer->stats.alphaMs;
-    strings.push_back(std::string("- alpha pass: ") + stream.str() + std::string(" ms"));
-
-    // total ui pass
-
-    stream.str("");
-    stream.clear();
-    stream << std::fixed << renderer->stats.uiMs;
-    strings.push_back(std::string("- ui: ") + stream.str() + std::string(" ms"));
-    
-    // total geometry pass
-
-    stream.str("");
-    stream.clear();
-    stream << std::fixed << renderer->stats.geometryMs;
-    strings.push_back(std::string("total: ") + stream.str() + std::string(" ms"));
-    
-    // now draw the stats
+    // queue the stats strings
 
     unsigned int edgeBuffer = 8;
     unsigned int fontSize = 20;
@@ -335,16 +287,6 @@ void SceneController::RenderStats() {
         textRenderer->QueueStringRender(strings[i], edgeBuffer, y);
         y += fontSize + spacing;
     }
-    // the ui draw call below
-    renderer->stats.drawCalls++;
-
-    // number of draw calls
-
-    textRenderer->QueueStringRender(std::string("draw calls: ") + std::to_string(renderer->stats.drawCalls), 180, edgeBuffer + fontSize + spacing);
-
-    // number of tris
-
-    textRenderer->QueueStringRender(std::string("tris: ") + std::to_string(renderer->stats.tris), 180, edgeBuffer);
 
     // finally, execute the render
 

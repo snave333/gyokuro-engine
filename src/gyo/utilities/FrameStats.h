@@ -5,16 +5,14 @@ namespace gyo {
 
 struct FrameStats {
     float frame = 0;
+    float cpuMs = 0;
     float gpuMs = 0;
-    
-    float geometryMs = 0;
-    float vfcMs = 0;
-    float opaqueMs = 0;
-    float alphaMs = 0;
-    float uiMs = 0; // previous frame
-    
     unsigned int drawCalls = 0;
     unsigned int tris = 0;
+    
+    float geometryMs = 0;
+    float uiMs = 0; // previous frame
+    float postProcessMs = 0;
 
     void Reset() {
         drawCalls = 0;

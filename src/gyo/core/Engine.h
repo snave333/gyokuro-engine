@@ -32,7 +32,7 @@ private:
     bool isRunning = false;
 
     // timing
-    double lastUpdateTime;
+    double lastUpdateTimeSec;
     FrameTimer gpuTimer;
 
     // our glfw callbacks
