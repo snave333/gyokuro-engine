@@ -4,7 +4,6 @@
 #include <gyo/shading/TextureDefines.h>
 #include <gyo/resources/Resources.h>
 #include <gyo/resources/IBLEnvironmentLoader.h>
-// #include <gyo/utilities/Log.h>
 
 namespace gyo {
 

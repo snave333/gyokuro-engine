@@ -3,8 +3,6 @@
 #include <gyo/shading/Texture2D.h>
 #include <gyo/utilities/Log.h>
 
-#include <iostream>
-
 namespace gyo {
 
 void Font::Dispose() {

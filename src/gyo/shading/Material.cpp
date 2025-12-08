@@ -4,8 +4,6 @@
 #include <gyo/shading/ShaderSemantics.h>
 #include <gyo/utilities/Log.h>
 
-#include <iostream>
-
 namespace gyo {
 
 bool Material::ValidateShaderAttributes() {

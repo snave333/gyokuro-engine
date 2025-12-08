@@ -1,8 +1,6 @@
 #ifndef TEXTURE_DEFINES_H
 #define TEXTURE_DEFINES_H
 
-#include <cstdint>
-
 namespace gyo {
 
 #define TEX_NORMAL              "TEX_NORMAL"

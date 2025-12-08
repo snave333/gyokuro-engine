@@ -2,7 +2,6 @@
 #include <gyo/resources/DataLoader.h>
 #include <gyo/utilities/Log.h>
 
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>

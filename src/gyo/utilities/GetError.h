@@ -1,9 +1,6 @@
 #ifndef GET_ERROR_H
 #define GET_ERROR_H
 
-#include <string>
-#include <iostream>
-
 #include <glad/glad.h>
 
 namespace gyo {

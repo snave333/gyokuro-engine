@@ -1,6 +1,10 @@
 #ifndef SHADER_SEMANTICS_H
 #define SHADER_SEMANTICS_H
 
+#include <glad/glad.h>
+
+#include <unordered_map>
+
 namespace gyo {
 
 #define SEMANTIC_POSITION   0x00000001

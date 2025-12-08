@@ -1,6 +1,9 @@
 
 #include <gyo/utilities/GetError.h>
 
+#include <string>
+#include <iostream>
+
 namespace gyo {
 
 GLenum glCheckError_(const char *file, int line)

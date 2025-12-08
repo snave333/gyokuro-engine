@@ -1,6 +1,4 @@
 
-#include <iostream>
-
 #include <gyo/renderer/Renderer.h>
 #include <gyo/renderer/ScreenQuad.h>
 #include <gyo/renderer/DrawCall.h>

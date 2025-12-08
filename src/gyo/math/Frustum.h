@@ -2,7 +2,6 @@
 #define FRUSTUM_H
 
 #include <glm/glm.hpp>
-#include <iostream>
 #include <array>
 
 #include <gyo/math/AABB.h>

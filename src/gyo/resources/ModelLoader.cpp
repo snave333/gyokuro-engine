@@ -14,8 +14,6 @@
 #include <gyo/utilities/FileSystem.h>
 #include <gyo/utilities/Log.h>
 
-#include <iostream>
-
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 

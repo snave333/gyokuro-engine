@@ -21,8 +21,6 @@
 #include <gyo/utilities/GetError.h>
 #include <gyo/utilities/Log.h>
 
-#include <iostream>
-
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>

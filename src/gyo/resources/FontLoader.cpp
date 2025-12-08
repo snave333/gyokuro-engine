@@ -6,7 +6,6 @@
 #include <gyo/utilities/FileSystem.h>
 #include <gyo/utilities/Log.h>
 
-#include <iostream>
 #include <map>
 
 #include <glad/glad.h>

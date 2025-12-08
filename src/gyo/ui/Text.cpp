@@ -1,8 +1,6 @@
 
 #include <gyo/ui/Text.h>
 
-#include <iostream>
-
 #include <gyo/ui/Font.h>
 #include <gyo/shading/Shader.h>
 #include <gyo/resources/Resources.h>

@@ -3,8 +3,6 @@
 #include <gyo/utilities/GetError.h>
 #include <gyo/utilities/Log.h>
 
-#include <iostream>
-
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
