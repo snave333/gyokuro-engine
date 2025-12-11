@@ -31,7 +31,7 @@ struct GlyphVertex {
 
 class Text {
 public:
-    Text(const char* fontName, const glm::ivec2& viewportSize, const float& pixelsPerEm, const float& pixelRange);
+    Text(const char* fontName, const glm::ivec2& viewportSize, const float& pixelScale, const float& pixelsPerEm, const float& pixelRange);
     ~Text();
 
     void UpdateViewportSize(const glm::ivec2& size);
@@ -46,6 +46,7 @@ public:
 
 private:
     float pixelsPerEm;
+    float pixelScale;
 
     Font* font = nullptr;
     Shader* shader = nullptr;

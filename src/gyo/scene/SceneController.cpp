@@ -38,8 +38,8 @@ SceneController::SceneController(Renderer* r, const int& width, const int& heigh
 
     // our ui layer
 
-    // textRenderer = new Text("SourceCodePro-Regular-MSDF", size, 33.9375f, 6);
-    textRenderer = new Text("Ubuntu-Regular-MSDF", size, 33.125f, 6);
+    // textRenderer = new Text("SourceCodePro-Regular-MSDF", size, renderer->GetPixelScale(), 33.9375f, 6);
+    textRenderer = new Text("Ubuntu-Regular-MSDF", size, renderer->GetPixelScale(), 33.125f, 6);
 }
 
 SceneController::~SceneController() {
@@ -267,8 +267,11 @@ void SceneController::RenderStats() {
 
     // assemble the stats
 
+    const float frameTimeMs = renderer->stats.frameMs.Get();
+    const int fps = frameTimeMs != 0.0f ? std::roundf(1000 / frameTimeMs) : 0;
+
     std::vector<std::string> strings = {
-        std::format("frame: {:.1f} ms", renderer->stats.frame.Get()),
+        std::format("fps: {} ({:.1f} ms)", fps, frameTimeMs),
         std::format("cpu: {:.1f} ms", renderer->stats.cpuMs.Get()),
         std::format("gpu: {:.1f} ms", renderer->stats.gpuMs.Get()),
         std::format("draw calls: {}", renderer->stats.drawCalls),

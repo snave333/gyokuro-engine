@@ -13,8 +13,9 @@
 
 namespace gyo {
 
-Renderer::Renderer(const int& width, const int& height, int msaaSamples) {
+Renderer::Renderer(const int& width, const int& height, int msaaSamples, float pixelScale) {
     size = glm::ivec2(width, height);
+    this->pixelScale = pixelScale;
 
     PrintGLInfo();
 

@@ -36,8 +36,8 @@ Engine::Engine(unsigned int ptWidth, unsigned int ptHeight, unsigned int msaaSam
 #endif
 
     // create the window object; if no dimensions are specified, go full screen
+    GLFWmonitor* primaryMoniter = glfwGetPrimaryMonitor();
     if(ptWidth == 0 || ptHeight == 0) {
-        GLFWmonitor* primaryMoniter = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(primaryMoniter);
 
         glfwWindowHint(GLFW_RED_BITS, mode->redBits);
@@ -77,6 +77,10 @@ Engine::Engine(unsigned int ptWidth, unsigned int ptHeight, unsigned int msaaSam
     glfwGetFramebufferSize(window, &pxWidth, &pxHeight);
     glViewport(0, 0, pxWidth, pxHeight);
     glCheckError();
+
+    float xscale, yscale;
+    glfwGetMonitorContentScale(primaryMoniter, &xscale, &yscale);
+    LOGI("Monitor pixel scale: %.2f", xscale);
     
     // listen for resize event
     glfwSetFramebufferSizeCallback(window, Engine::glfwOnResize);
@@ -89,7 +93,7 @@ Engine::Engine(unsigned int ptWidth, unsigned int ptHeight, unsigned int msaaSam
 
     Resources::Initialize();
 
-    renderer = new Renderer(pxWidth, pxHeight, msaaSamples);
+    renderer = new Renderer(pxWidth, pxHeight, msaaSamples, xscale);
     sceneController = new SceneController(renderer, pxWidth, pxHeight);
 
     isRunning = true;
@@ -120,7 +124,7 @@ void Engine::Frame() {
     double currentTimeSec = glfwGetTime();
     double dt = currentTimeSec - lastUpdateTimeSec;
     lastUpdateTimeSec = currentTimeSec;
-    renderer->stats.frame.PushSample(dt * 1e3); // sec to ms
+    renderer->stats.frameMs.PushSample(dt * 1e3); // sec to ms
 
     // input
     processInput(window, dt);

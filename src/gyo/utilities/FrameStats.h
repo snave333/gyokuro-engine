@@ -48,7 +48,7 @@ private:
 };
 
 struct FrameStats {
-    SmoothedStat frame;
+    SmoothedStat frameMs;
     SmoothedStat cpuMs;
     SmoothedStat gpuMs;
     unsigned int drawCalls = 0;

@@ -11,8 +11,9 @@
 
 namespace gyo {
 
-Text::Text(const char* fontName, const glm::ivec2& viewportSize, const float& _pixelsPerEm, const float& pixelRange) {
-    pixelsPerEm = _pixelsPerEm;
+Text::Text(const char* fontName, const glm::ivec2& viewportSize, const float& pixelScale, const float& pixelsPerEm, const float& pixelRange) {
+    this->pixelsPerEm = pixelsPerEm;
+    this->pixelScale = pixelScale;
 
     font = Resources::GetFont(fontName, pixelsPerEm, pixelRange);
     shader = Resources::GetShader("glyph.vert", "glyph.frag");
@@ -84,7 +85,12 @@ void Text::UpdateViewportSize(const glm::ivec2& size) {
 }
 
 void Text::QueueStringRender(std::string text, int x, int y, unsigned int fontSize, glm::vec4 color) {
-    renderQueue.emplace_back(text, x, y, fontSize, color);
+    renderQueue.emplace_back(
+        text,
+        x * this->pixelScale,
+        y * this->pixelScale,
+        fontSize * this->pixelScale,
+        color);
     pendingGlyphs += text.length();
 }
 

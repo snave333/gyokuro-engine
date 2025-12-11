@@ -18,7 +18,7 @@ class Renderer {
 public:
     FrameStats stats;
 
-    Renderer(const int& width, const int& height, int msaaSamples);
+    Renderer(const int& width, const int& height, int msaaSamples, float pixelScale);
     ~Renderer();
 
     void CreateFrameBuffer();
@@ -32,9 +32,12 @@ public:
     void RenderUI();
     void EndFrame();
 
+    const float& GetPixelScale() { return pixelScale; }
+
 private:
     glm::ivec2 size;
     unsigned int msaaSamples;
+    float pixelScale;
 
     RenderState state;
 
