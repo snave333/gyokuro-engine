@@ -120,7 +120,7 @@ void Engine::Frame() {
     double currentTimeSec = glfwGetTime();
     double dt = currentTimeSec - lastUpdateTimeSec;
     lastUpdateTimeSec = currentTimeSec;
-    renderer->stats.frame = dt * 1e3; // sec to ms
+    renderer->stats.frame.PushSample(dt * 1e3); // sec to ms
 
     // input
     processInput(window, dt);
@@ -134,9 +134,9 @@ void Engine::Frame() {
     gpuTimer.EndQuery();
 
     // query our gpu time, and update our cpu time
-    renderer->stats.gpuMs = gpuTimer.lastGPUMs;
+    renderer->stats.gpuMs.PushSample(gpuTimer.lastGPUMs);
     currentTimeSec = glfwGetTime();
-    renderer->stats.cpuMs = currentTimeSec - lastUpdateTimeSec;
+    renderer->stats.cpuMs.PushSample(currentTimeSec - lastUpdateTimeSec);
 
     // swap the buffers and poll IO events
     glfwSwapBuffers(window);

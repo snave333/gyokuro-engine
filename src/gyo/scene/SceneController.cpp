@@ -268,9 +268,9 @@ void SceneController::RenderStats() {
     // assemble the stats
 
     std::vector<std::string> strings = {
-        std::format("frame: {:.2f} ms", renderer->stats.frame),
-        std::format("cpu: {:.2f} ms", renderer->stats.cpuMs),
-        std::format("gpu: {:.2f} ms", renderer->stats.gpuMs),
+        std::format("frame: {:.1f} ms", renderer->stats.frame.Get()),
+        std::format("cpu: {:.1f} ms", renderer->stats.cpuMs.Get()),
+        std::format("gpu: {:.1f} ms", renderer->stats.gpuMs.Get()),
         std::format("draw calls: {}", renderer->stats.drawCalls),
         std::format("tris: {}", renderer->stats.tris)
     };
