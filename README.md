@@ -144,5 +144,6 @@ For more examples, see the runnable projects in the [samples](samples) folder.
 ## Attributions
 
 * "Dice.fbx" 3D model and textures by [Josh Cook](https://www.linkedin.com/in/josh-cook-380a3a147/).
-* "Battle Damaged Sci-fi Helmet - PBR" 3D model by "leonardo-carrion" [on Sketchfab here](https://skfb.ly/QNwv).
+* "Battle Damaged Sci-fi Helmet - PBR" 3D model by "leonardo-carrion" on Sketchfab [here](https://skfb.ly/QNwv).
 * "Cerberus" revolver 3D model by Andrew Maximov [here](https://artisaverb.info/PBT.html).
+* PBR Textures and HDRIs from [freepbr.com](https://freepbr.com/) and [polyhaven.com](https://polyhaven.com/)

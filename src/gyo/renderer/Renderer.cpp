@@ -403,11 +403,14 @@ void Renderer::EndGeometryPass() {
     // copy the MS buffer to the normal colorbuffer of intermediate framebuffer
     if(msaaSamples > 0) {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+        glCheckError();
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intermediateFramebuffer);
+        glCheckError();
         glBlitFramebuffer(
             0, 0, size.x, size.y,
             0, 0, size.x, size.y,
             GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glCheckError();
     }
 
     // unbind our framebuffer, and render the full screen quad
